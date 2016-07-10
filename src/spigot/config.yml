@@ -1,0 +1,12 @@
+chat:
+  globalPrefix: "|"
+  spectator:
+    see: true
+    talk: true
+
+game:
+  teamSize: 4
+
+  start:
+    countDownLength: 10
+    resistanceLength: 20

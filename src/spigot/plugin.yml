@@ -1,0 +1,31 @@
+name: NuzlockeUHC
+version: 0.1
+description: Helps organize UHC events, Pokémon style.
+author: PhotonBurst
+
+main: st.photonbur.UHC.Nuzlocke.Nuzlocke
+website: https://github.com/PhotonBursted/Vaks-UHC
+
+commands:
+  register:
+    description: Registers a player into playing the match.
+    permission: Nuzlocke.startMatch
+  startUHC:
+    description: Regulates hug parties. Oh, also, UHC events.
+    permission: Nuzlocke.startMatch
+  unregister:
+    description: Unregisters a player out of the match.
+    permission: Nuzlocke.startMatch
+
+permissions:
+  Nuzlocke.*:
+    description: Grants access to all commands in VaksUHC.
+    children:
+      Nuzlocke.startMatch: true
+      Nuzlocke.movePlayer: true
+  Nuzlocke.startMatch:
+    description: Allows the starting of a match
+    default: op
+  Nuzlocke.movePlayer:
+    description: Allows moving players between teams
+    default: op
