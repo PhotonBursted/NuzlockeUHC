@@ -33,7 +33,7 @@ public class GameCountDown extends BukkitRunnable {
         }
         else {
             nuz.getServer().broadcastMessage("GO!");
-            nuz.getGameManager().setPlayerEffects();
+            nuz.getGameManager().startGame();
             this.cancel();
         }
     }

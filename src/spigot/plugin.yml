@@ -7,6 +7,9 @@ main: st.photonbur.UHC.Nuzlocke.Nuzlocke
 website: https://github.com/PhotonBursted/Vaks-UHC
 
 commands:
+  list:
+    description: Lists all players.
+    permission: Nuzlocke.startMatch
   register:
     description: Registers a player into playing the match.
     permission: Nuzlocke.startMatch

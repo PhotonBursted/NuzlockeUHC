@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scoreboard.Team;
-import st.photonbur.UHC.Nuzlocke.Entities.PlayerState;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
@@ -44,6 +43,10 @@ public class ChatListener implements Listener {
             default:
                 break;
         }
+    }
+
+    public enum ChatMessageFormat {
+        GLOBAL, TEAM, SPECTATOR
     }
 
     @EventHandler
@@ -86,8 +89,12 @@ public class ChatListener implements Listener {
         }
     }
 
+    public enum PlayerState {
+        ONLINE, TEAMMEMBER, SPECTATOR, SELF
+    }
+
     void setFormat(ChatMessageFormat cmf, AsyncPlayerChatEvent e) {
-        String message = "";
+        String messageStart = "";
         Team team = nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(e.getPlayer().getName());
         String prefix = "", suffix = "";
         if(team != null) {
@@ -97,23 +104,28 @@ public class ChatListener implements Listener {
 
         switch(cmf) {
             case GLOBAL:
-                message += "[G]";
+                messageStart += "[G]";
                 break;
             case TEAM:
-                message += "[T]";
+                messageStart += "[T]";
                 break;
             case SPECTATOR:
-                message += "[S]";
+                messageStart += "[S]";
                 break;
             default:
         }
 
-        e.setFormat(message
-                    + " <" + prefix + e.getPlayer().getName() + suffix + "> "
-                    + e.getMessage().substring(
-                        e.getMessage().startsWith(nuz.getSettings().getGlobalChatPrefix()) ? nuz.getSettings().getGlobalChatPrefix().length() : 0,
-                        e.getMessage().length()
-                    )
+        String message = e.getMessage().substring(
+                e.getMessage().startsWith(nuz.getSettings().getGlobalChatPrefix()) ? nuz.getSettings().getGlobalChatPrefix().length() : 0,
+                e.getMessage().length()
         );
+        if(message.length() == 0) {
+            e.setCancelled(true);
+        } else {
+            e.setFormat(messageStart
+                        + " <" + prefix + e.getPlayer().getName() + suffix + "> "
+                        + message
+            );
+        }
     }
 }

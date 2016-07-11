@@ -1,16 +1,16 @@
 package st.photonbur.UHC.Nuzlocke.Entities;
 
-import org.bukkit.Color;
+import org.bukkit.ChatColor;
 
 public class Player {
-    Color teamColor;
+    ChatColor teamColor;
     String name;
     Role role;
 
     public Player(String name, Role role) {
         setName(name);
         setRole(role);
-        setTeam(null);
+        setTeamColor(null);
     }
 
     public String getName() {
@@ -21,7 +21,7 @@ public class Player {
         return role;
     }
 
-    public Color getTeam() {
+    public ChatColor getTeamColor() {
         return teamColor;
     }
 
@@ -33,7 +33,7 @@ public class Player {
         role = newRole;
     }
 
-    public void setTeam(Color newTeam) {
-        teamColor = newTeam;
+    public void setTeamColor(ChatColor newTeamColor) {
+        this.teamColor = newTeamColor;
     }
 }

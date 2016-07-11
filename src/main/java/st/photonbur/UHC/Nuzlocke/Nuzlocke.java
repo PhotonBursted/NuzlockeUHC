@@ -4,12 +4,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
+import st.photonbur.UHC.Nuzlocke.Commands.ListPlayers;
 import st.photonbur.UHC.Nuzlocke.Commands.RegisterPlayer;
 import st.photonbur.UHC.Nuzlocke.Commands.StartUHC;
 import st.photonbur.UHC.Nuzlocke.Commands.UnregisterPlayer;
 import st.photonbur.UHC.Nuzlocke.Game.GameManager;
 import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
+import st.photonbur.UHC.Nuzlocke.Game.TeamManager;
 import st.photonbur.UHC.Nuzlocke.Listeners.ChatListener;
 import st.photonbur.UHC.Nuzlocke.Listeners.PlayerConnectListener;
 
@@ -18,11 +21,13 @@ import java.util.logging.Level;
 public class Nuzlocke extends JavaPlugin {
     private GameManager gameManager;
     private PlayerManager playerManager;
+    private TeamManager teamManager;
 
     void loadCommands() {
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startUHC").setExecutor(new StartUHC(this));
         getCommand("unregister").setExecutor(new UnregisterPlayer(this));
+        getCommand("list").setExecutor(new ListPlayers(this));
     }
 
     void loadListeners(Listener... ls) {
@@ -37,6 +42,7 @@ public class Nuzlocke extends JavaPlugin {
 
         gameManager = new GameManager(this);
         playerManager = new PlayerManager(this);
+        teamManager = new TeamManager(this);
 
         loadCommands();
         loadListeners(
@@ -49,6 +55,10 @@ public class Nuzlocke extends JavaPlugin {
         }
     }
 
+    public void onDisable() {
+        gameManager.getScoreboard().getTeams().stream().forEach(Team::unregister);
+    }
+
     public GameManager getGameManager() {
         return gameManager;
     }
@@ -59,5 +69,9 @@ public class Nuzlocke extends JavaPlugin {
 
     public Settings getSettings() {
         return gameManager.getSettings();
+    }
+
+    public TeamManager getTeamManager() {
+        return teamManager;
     }
 }

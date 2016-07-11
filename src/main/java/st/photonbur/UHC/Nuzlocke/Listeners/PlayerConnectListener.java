@@ -16,12 +16,10 @@ public class PlayerConnectListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if(nuz.getPlayerManager().getPlayer(p) == null) {
-            if(!nuz.getGameManager().isGameInProgress()) {
-                nuz.getPlayerManager().registerPlayer(p.getName());
-            } else {
-                nuz.getPlayerManager().unregisterPlayer(p.getName());
-            }
+        if(!nuz.getGameManager().isGameInProgress()) {
+            nuz.getPlayerManager().registerPlayer(p.getName());
+        } else {
+            nuz.getPlayerManager().unregisterPlayer(p.getName());
         }
     }
 }

@@ -14,7 +14,7 @@ public class StartUHC implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(command.getName().equalsIgnoreCase("startuhc")) {
-            nuz.getGameManager().startGame();
+            nuz.getGameManager().initGame();
         }
 
         return true;
