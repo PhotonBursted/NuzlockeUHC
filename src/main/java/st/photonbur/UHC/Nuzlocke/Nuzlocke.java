@@ -3,11 +3,7 @@ package st.photonbur.UHC.Nuzlocke;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Team;
-import st.photonbur.UHC.Nuzlocke.Commands.ListPlayers;
-import st.photonbur.UHC.Nuzlocke.Commands.RegisterPlayer;
-import st.photonbur.UHC.Nuzlocke.Commands.StartUHC;
-import st.photonbur.UHC.Nuzlocke.Commands.UnregisterPlayer;
+import st.photonbur.UHC.Nuzlocke.Commands.*;
 import st.photonbur.UHC.Nuzlocke.Game.GameManager;
 import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
@@ -15,17 +11,20 @@ import st.photonbur.UHC.Nuzlocke.Game.TeamManager;
 import st.photonbur.UHC.Nuzlocke.Listeners.ChatListener;
 import st.photonbur.UHC.Nuzlocke.Listeners.DeathListener;
 import st.photonbur.UHC.Nuzlocke.Listeners.PlayerConnectListener;
+import st.photonbur.UHC.Nuzlocke.Tasks.TaskManager;
 
 import java.util.logging.Level;
 
 public class Nuzlocke extends JavaPlugin {
     private GameManager gameManager;
     private PlayerManager playerManager;
+    private TaskManager taskManager;
     private TeamManager teamManager;
 
     void loadCommands() {
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
+        getCommand("stopMatch").setExecutor(new StopUHC(this));
         getCommand("unregister").setExecutor(new UnregisterPlayer(this));
         getCommand("list").setExecutor(new ListPlayers(this));
     }
@@ -42,6 +41,7 @@ public class Nuzlocke extends JavaPlugin {
 
         gameManager = new GameManager(this);
         playerManager = new PlayerManager(this);
+        taskManager = new TaskManager(this);
         teamManager = new TeamManager(this);
 
         loadCommands();
@@ -54,22 +54,23 @@ public class Nuzlocke extends JavaPlugin {
         Bukkit.getOnlinePlayers().stream().forEach(p -> playerManager.registerPlayer(p.getName()));
     }
 
+    @Override
     public void onDisable() {
-        gameManager.getScoreboard().getTeams().stream().forEach(Team::unregister);
+        gameManager.cleanUp();
     }
 
     public GameManager getGameManager() {
         return gameManager;
     }
-
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
-
     public Settings getSettings() {
         return gameManager.getSettings();
     }
-
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
     public TeamManager getTeamManager() {
         return teamManager;
     }

@@ -6,12 +6,12 @@ import org.bukkit.Note;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-public class GameCountDown extends BukkitRunnable {
+public class GameCountdown extends BukkitRunnable {
     private final Nuzlocke nuz;
 
     private int counter;
 
-    public GameCountDown(Nuzlocke nuz, int counter) {
+    public GameCountdown(Nuzlocke nuz, int counter) {
         this.nuz = nuz;
         if (counter < 1) {
             throw new IllegalArgumentException("Counter must be greater than 1");
@@ -32,9 +32,9 @@ public class GameCountDown extends BukkitRunnable {
             counter--;
         }
         else {
+            this.cancel();
             nuz.getServer().broadcastMessage("GO!");
             nuz.getGameManager().startGame();
-            this.cancel();
         }
     }
 }

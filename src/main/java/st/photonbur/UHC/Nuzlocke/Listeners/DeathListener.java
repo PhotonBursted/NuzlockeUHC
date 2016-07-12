@@ -24,9 +24,11 @@ public class DeathListener implements Listener {
             nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
             new HandleDeadPlayer(nuz, p).runTaskLater(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
         }
+
+        nuz.getTaskManager().getSBU().updateScores();
     }
 
-    class HandleDeadPlayer extends BukkitRunnable {
+    private class HandleDeadPlayer extends BukkitRunnable {
         Nuzlocke nuz;
         Player p;
 

@@ -4,7 +4,13 @@ chat:
     see: true
     talk: true
 
+eventName: "Vexian UHC S4"
+
 game:
+  markers:
+    gentlemenDuration: 1
+    episodeDuration: 1
+
   teamSize: 4
 
   start:

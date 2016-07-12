@@ -16,6 +16,9 @@ commands:
   startMatch:
     description: Regulates hug parties. Oh, also, UHC events.
     permission: Nuzlocke.startMatch
+  stopMatch:
+    description: Stops the quarrel.
+    permission: Nuzlocke.startMatch
   unregister:
     description: Unregisters a player out of the match.
     permission: Nuzlocke.startMatch

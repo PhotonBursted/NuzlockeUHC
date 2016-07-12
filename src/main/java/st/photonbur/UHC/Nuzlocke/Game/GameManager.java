@@ -3,14 +3,21 @@ package st.photonbur.UHC.Nuzlocke.Game;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
-import st.photonbur.UHC.Nuzlocke.Tasks.GameCountDown;
+import st.photonbur.UHC.Nuzlocke.Tasks.EventMarkerAnnouncer;
+import st.photonbur.UHC.Nuzlocke.Tasks.GameCountdown;
+import st.photonbur.UHC.Nuzlocke.Tasks.ScoreboardUpdater;
 
 public class GameManager {
     private boolean gameInProgress = false;
+    EventMarkerAnnouncer ema;
+    GameCountdown gcd;
     Nuzlocke nuz;
     Scoreboard scoreboard;
+    ScoreboardUpdater sbu;
     Settings settings;
 
 
@@ -21,6 +28,12 @@ public class GameManager {
         settings.loadSettings();
 
         scoreboard = nuz.getServer().getScoreboardManager().getMainScoreboard();
+    }
+
+    public void cleanUp() {
+        getScoreboard().getTeams().stream().forEach(Team::unregister);
+        getScoreboard().getObjectives().stream().forEach(Objective::unregister);
+        nuz.getTaskManager().cancelAll();
     }
 
     public Scoreboard getScoreboard() {
@@ -58,19 +71,19 @@ public class GameManager {
         gameInProgress = true;
 
         preparePlayers();
-        startCountDown();
+        nuz.getTaskManager().registerTasks();
+        nuz.getTaskManager().startCountDown();
     }
 
     public void startGame() {
         setPlayerEffects();
         nuz.getPlayerManager().divideRoles();
+        nuz.getTaskManager().startEventMarkers();
+        nuz.getTaskManager().startScoreboardUpdater();
     }
 
     public void stopGame() {
         gameInProgress = false;
-    }
-
-    public void startCountDown() {
-        new GameCountDown(nuz, getSettings().getCountDownLength()).runTaskTimer(nuz, 0L, 20L);
+        cleanUp();
     }
 }

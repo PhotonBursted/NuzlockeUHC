@@ -4,19 +4,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class TeamManager {
-    Map<String, ChatColor> colors;
+    ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> teams = new ArrayList<>();
+    Map<String, ChatColor> colors = generateColorMap();
     Nuzlocke nuz;
-    Random r;
+    Random r = new Random();
 
     public TeamManager(Nuzlocke nuz) {
         this.nuz = nuz;
-        r = new Random();
-        colors = generateColorMap();
     }
 
     private Map<String, ChatColor> generateColorMap() {
@@ -51,6 +51,12 @@ public class TeamManager {
         team.setSuffix(ChatColor.RESET + "");
         team.setDisplayName("Team " + playerName);
         team.addEntry(playerName);
+
+        teams.add(new st.photonbur.UHC.Nuzlocke.Entities.Team(nuz, nuz.getPlayerManager().getPlayer(playerName), "Team "+ playerName));
+    }
+
+    public ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> getTeams() {
+        return teams;
     }
 
     private String randomTeamColorName() {

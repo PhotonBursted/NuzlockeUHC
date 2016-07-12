@@ -13,12 +13,12 @@ public class RegisterPlayer implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if(command.getName().equalsIgnoreCase("register")) {
             if(args.length > 0) {
-                nuz.getPlayerManager().registerPlayer(args[0], commandSender);
+                nuz.getPlayerManager().registerPlayer(args[0], sender);
             } else {
-                nuz.getPlayerManager().registerPlayer(commandSender.getName(), commandSender);
+                nuz.getPlayerManager().registerPlayer(sender.getName(), sender);
             }
         }
 
