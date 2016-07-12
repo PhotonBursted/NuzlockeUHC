@@ -13,7 +13,7 @@ commands:
   register:
     description: Registers a player into playing the match.
     permission: Nuzlocke.startMatch
-  startUHC:
+  startMatch:
     description: Regulates hug parties. Oh, also, UHC events.
     permission: Nuzlocke.startMatch
   unregister:
@@ -25,10 +25,6 @@ permissions:
     description: Grants access to all commands in VaksUHC.
     children:
       Nuzlocke.startMatch: true
-      Nuzlocke.movePlayer: true
   Nuzlocke.startMatch:
     description: Allows the starting of a match
-    default: op
-  Nuzlocke.movePlayer:
-    description: Allows moving players between teams
-    default: op
+    default: true

@@ -1,7 +1,6 @@
 package st.photonbur.UHC.Nuzlocke;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
@@ -14,6 +13,7 @@ import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
 import st.photonbur.UHC.Nuzlocke.Game.TeamManager;
 import st.photonbur.UHC.Nuzlocke.Listeners.ChatListener;
+import st.photonbur.UHC.Nuzlocke.Listeners.DeathListener;
 import st.photonbur.UHC.Nuzlocke.Listeners.PlayerConnectListener;
 
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ public class Nuzlocke extends JavaPlugin {
 
     void loadCommands() {
         getCommand("register").setExecutor(new RegisterPlayer(this));
-        getCommand("startUHC").setExecutor(new StartUHC(this));
+        getCommand("startMatch").setExecutor(new StartUHC(this));
         getCommand("unregister").setExecutor(new UnregisterPlayer(this));
         getCommand("list").setExecutor(new ListPlayers(this));
     }
@@ -47,12 +47,11 @@ public class Nuzlocke extends JavaPlugin {
         loadCommands();
         loadListeners(
             new ChatListener(this),
+            new DeathListener(this),
             new PlayerConnectListener(this)
         );
 
-        for(Player p: Bukkit.getOnlinePlayers()) {
-            playerManager.registerPlayer(p.getName());
-        }
+        Bukkit.getOnlinePlayers().stream().forEach(p -> playerManager.registerPlayer(p.getName()));
     }
 
     public void onDisable() {

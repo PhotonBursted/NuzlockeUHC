@@ -36,7 +36,6 @@ public class TeamManager {
         map.put("RED", ChatColor.RED);
         map.put("LIGHT_PURPLE", ChatColor.LIGHT_PURPLE);
         map.put("YELLOW", ChatColor.YELLOW);
-        map.put("WHITE", ChatColor.WHITE);
 
         return map;
     }

@@ -10,14 +10,17 @@ import st.photonbur.UHC.Nuzlocke.Entities.Trainer;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PlayerManager {
     ArrayList<Player> players;
     Nuzlocke nuz;
+    Random r;
 
     public PlayerManager(Nuzlocke nuz) {
         this.nuz = nuz;
         this.players = new ArrayList<>();
+        this.r = new Random();
     }
 
     public void addPlayer(Player p) {
@@ -51,7 +54,7 @@ public class PlayerManager {
     }
 
     Player findNewParticipant() {
-        Player target = players.stream().findAny().get();
+        Player target = players.get(r.nextInt(players.size()));
         return target.getRole() == Role.PARTICIPANT && !(target instanceof Trainer) ? target : findNewParticipant();
     }
 
@@ -60,7 +63,7 @@ public class PlayerManager {
     }
 
     public Player getPlayer(String name) {
-        return players.stream().filter(p -> p.getName().equals(name)).findFirst().get();
+        return players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null);
     }
 
     public ArrayList<Player> getPlayers() {
@@ -68,16 +71,11 @@ public class PlayerManager {
     }
 
     public void registerPlayer(String name) {
-        if(Bukkit.getPlayer(name) != null) {
-            if(players.stream().anyMatch(p -> p.getName().equals(name))) {
-                removePlayer(name);
-            }
-            addPlayer(new Player(name, Role.PARTICIPANT));
-        }
+        substitutePlayer(name, Role.PARTICIPANT);
     }
 
     public void registerPlayer(String name, CommandSender sender) {
-        if(Bukkit.getPlayer(name) != null) {
+        if(Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name))) {
             if(getPlayer(name) == null) {
                 registerPlayer(name);
                 sender.sendMessage(ChatColor.RED + "[!] You just registered " + ChatColor.BOLD + name + ChatColor.RED + " into playing this game.");
@@ -108,17 +106,34 @@ public class PlayerManager {
         players.removeAll(toRemove);
     }
 
-    public void unregisterPlayer(String name) {
-        if(Bukkit.getPlayer(name) != null) {
+    public void substitutePlayer(String name, Role newRole) {
+        nuz.getLogger().info("Player "+ name + (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name)) ? " is online" : " couldn't be found"));
+        if(Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name))) {
+            String pc = (getPlayer(name) == null ? "Player" : getPlayer(name).getClass().getSimpleName());
+            Pokemon.Type pt = (pc.equals("Pokemon") ? getPlayer(name).getType() : null);
+
             if(players.stream().anyMatch(p -> p.getName().equals(name))) {
                 removePlayer(name);
             }
-            addPlayer(new Player(name, Role.SPECTATOR));
+            switch(pc) {
+                case "Pokemon":
+                    addPlayer(new Pokemon(name, newRole, pt));
+                    break;
+                case "Trainer":
+                    addPlayer(new Trainer(name, newRole));
+                    break;
+                default:
+                    addPlayer(new Player(name, newRole));
+            }
         }
     }
 
+    public void unregisterPlayer(String name) {
+        substitutePlayer(name, Role.SPECTATOR);
+    }
+
     public void unregisterPlayer(String name, CommandSender sender) {
-        if(Bukkit.getPlayer(name) != null) {
+        if(Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name))) {
             if(getPlayer(name) == null) {
                 unregisterPlayer(name);
                 sender.sendMessage(ChatColor.RED + "[!] You just unregistered " + ChatColor.BOLD + name + ChatColor.RED + " from playing this game.");

@@ -1,6 +1,5 @@
 package st.photonbur.UHC.Nuzlocke.Game;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,33 +36,34 @@ public class GameManager {
     }
 
     void preparePlayers() {
-        for(Player player: Bukkit.getOnlinePlayers()) {
+        for(Player player: nuz.getServer().getOnlinePlayers()) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 10, 10, true));
             player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, 20, true));
         }
     }
 
     public void setPlayerEffects() {
-        for(Player player: Bukkit.getOnlinePlayers()) {
-            if(nuz.getPlayerManager().getPlayer(player) != null) {
-                for(PotionEffect effect : player.getActivePotionEffects()) {
-                    player.removePotionEffect(effect.getType());
-                }
-                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, getSettings().getResistanceLength() * 20, 10, true));
+        nuz.getServer().getOnlinePlayers()
+                .stream()
+                .filter(player -> nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> player.getName().equals(p.getName())))
+                .forEach(player -> {
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
             }
-        }
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, getSettings().getResistanceLength() * 20, 10, true));
+        });
     }
 
     public void initGame() {
         gameInProgress = true;
 
         preparePlayers();
-        nuz.getPlayerManager().divideRoles();
         startCountDown();
     }
 
     public void startGame() {
         setPlayerEffects();
+        nuz.getPlayerManager().divideRoles();
     }
 
     public void stopGame() {

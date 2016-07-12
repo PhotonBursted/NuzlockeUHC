@@ -1,16 +1,14 @@
 package st.photonbur.UHC.Nuzlocke.Entities;
 
-import org.bukkit.ChatColor;
-
 public class Player {
-    ChatColor teamColor;
     String name;
     Role role;
+    Pokemon.Type type;
 
     public Player(String name, Role role) {
         setName(name);
         setRole(role);
-        setTeamColor(null);
+        setType(null);
     }
 
     public String getName() {
@@ -21,8 +19,8 @@ public class Player {
         return role;
     }
 
-    public ChatColor getTeamColor() {
-        return teamColor;
+    public Pokemon.Type getType() {
+        return null;
     }
 
     public void setName(String newName) {
@@ -33,7 +31,7 @@ public class Player {
         role = newRole;
     }
 
-    public void setTeamColor(ChatColor newTeamColor) {
-        this.teamColor = newTeamColor;
+    public void setType(Pokemon.Type newType) {
+        type = newType;
     }
 }

@@ -10,3 +10,6 @@ game:
   start:
     countDownLength: 10
     resistanceLength: 20
+
+death:
+  delay: 10

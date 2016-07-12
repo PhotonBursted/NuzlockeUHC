@@ -6,6 +6,7 @@ public class Settings {
     private FileConfiguration config;
 
     private int countDownLength;
+    private int deathHandleDelay;
     private String globalChatPrefix;
     private int resistanceLength;
     private boolean spectatorSeeAll;
@@ -19,6 +20,7 @@ public class Settings {
 
     void loadSettings() {
         countDownLength = config.getInt("game.start.countDownLength");
+        deathHandleDelay = config.getInt("death.delay");
         globalChatPrefix = config.getString("chat.globalPrefix");
         resistanceLength = config.getInt("game.start.resistanceLength");
         spectatorSeeAll = config.getBoolean("chat.spectator.see");
@@ -26,8 +28,8 @@ public class Settings {
         teamSize = config.getInt("game.teamSize");
     }
 
-    //GETTERS
     public int getCountDownLength() { return countDownLength; }
+    public int getDeathHandleDelay() { return deathHandleDelay; }
     public String getGlobalChatPrefix() { return globalChatPrefix; }
     public int getResistanceLength() { return resistanceLength;}
     public boolean doSpectatorSeeAll() { return spectatorSeeAll; }

@@ -13,7 +13,7 @@ public class StartUHC implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(command.getName().equalsIgnoreCase("startuhc")) {
+        if(command.getName().equalsIgnoreCase("startmatch")) {
             nuz.getGameManager().initGame();
         }
 
