@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class TeamManager {
-    ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> teams = new ArrayList<>();
-    Map<String, ChatColor> colors = generateColorMap();
-    Nuzlocke nuz;
-    Random r = new Random();
+    private final ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> teams = new ArrayList<>();
+    private final Map<String, ChatColor> colors = generateColorMap();
+    private final Nuzlocke nuz;
+    private final Random r = new Random();
 
     public TeamManager(Nuzlocke nuz) {
         this.nuz = nuz;

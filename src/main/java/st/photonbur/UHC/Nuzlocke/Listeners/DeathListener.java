@@ -1,6 +1,5 @@
 package st.photonbur.UHC.Nuzlocke.Listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,9 +7,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
+import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class DeathListener implements Listener {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public DeathListener(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -20,7 +20,7 @@ public class DeathListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity().getPlayer();
         if(nuz.getSettings().getDeathHandleDelay() != -1) {
-            p.sendMessage("" + ChatColor.RED + "[!] You will be moved over to the spectator channel within " + nuz.getSettings().getDeathHandleDelay() + " seconds");
+            p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
             nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
             new HandleDeadPlayer(nuz, p).runTaskLater(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
         }
@@ -29,8 +29,8 @@ public class DeathListener implements Listener {
     }
 
     private class HandleDeadPlayer extends BukkitRunnable {
-        Nuzlocke nuz;
-        Player p;
+        final Nuzlocke nuz;
+        final Player p;
 
         public HandleDeadPlayer(Nuzlocke nuz, Player p) {
             this.nuz = nuz;

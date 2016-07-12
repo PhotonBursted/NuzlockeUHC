@@ -13,12 +13,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ScoreboardUpdater extends BukkitRunnable {
-    Map<String, String> buffer = new LinkedHashMap<>();
-    Map<String, String> entries = new LinkedHashMap<>();
-    long time = 0;
-    Objective eventInfo;
-    Nuzlocke nuz;
-    Scoreboard scoreboard;
+    private Map<String, String> buffer = new LinkedHashMap<>();
+    private final Map<String, String> entries = new LinkedHashMap<>();
+    private long time = 0;
+    private Objective eventInfo;
+    private final Nuzlocke nuz;
+    private final Scoreboard scoreboard;
 
     public ScoreboardUpdater(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -29,7 +29,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     private void clearScores() {
-        buffer.values().stream().forEach(e -> scoreboard.resetScores(e));
+        buffer.values().stream().forEach(scoreboard::resetScores);
     }
 
     private void displayScores() {

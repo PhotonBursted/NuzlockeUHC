@@ -7,18 +7,12 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
-import st.photonbur.UHC.Nuzlocke.Tasks.EventMarkerAnnouncer;
-import st.photonbur.UHC.Nuzlocke.Tasks.GameCountdown;
-import st.photonbur.UHC.Nuzlocke.Tasks.ScoreboardUpdater;
 
 public class GameManager {
     private boolean gameInProgress = false;
-    EventMarkerAnnouncer ema;
-    GameCountdown gcd;
-    Nuzlocke nuz;
-    Scoreboard scoreboard;
-    ScoreboardUpdater sbu;
-    Settings settings;
+    private final Nuzlocke nuz;
+    private final Scoreboard scoreboard;
+    private final Settings settings;
 
 
     public GameManager(Nuzlocke nuz) {
@@ -48,14 +42,14 @@ public class GameManager {
         return gameInProgress;
     }
 
-    void preparePlayers() {
+    private void preparePlayers() {
         for(Player player: nuz.getServer().getOnlinePlayers()) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 10, 10, true));
             player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, 20, true));
         }
     }
 
-    public void setPlayerEffects() {
+    private void setPlayerEffects() {
         nuz.getServer().getOnlinePlayers()
                 .stream()
                 .filter(player -> nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> player.getName().equals(p.getName())))

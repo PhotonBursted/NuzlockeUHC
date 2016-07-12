@@ -3,7 +3,7 @@ package st.photonbur.UHC.Nuzlocke.Game;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Settings {
-    private FileConfiguration config;
+    private final FileConfiguration config;
 
     private int countDownLength;
     private int deathHandleDelay;

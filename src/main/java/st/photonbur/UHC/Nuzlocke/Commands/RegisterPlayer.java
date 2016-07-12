@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class RegisterPlayer implements CommandExecutor {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public RegisterPlayer(Nuzlocke nuz) {
         this.nuz = nuz;

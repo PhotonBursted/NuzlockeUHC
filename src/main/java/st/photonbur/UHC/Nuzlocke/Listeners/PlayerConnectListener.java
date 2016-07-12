@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class PlayerConnectListener implements Listener {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public PlayerConnectListener (Nuzlocke nuz) {
         this.nuz = nuz;
@@ -19,7 +19,7 @@ public class PlayerConnectListener implements Listener {
         if(!nuz.getGameManager().isGameInProgress()) {
             nuz.getPlayerManager().registerPlayer(p.getName());
         } else {
-            nuz.getPlayerManager().unregisterPlayer(p.getName());
+            nuz.getPlayerManager().deregisterPlayer(p.getName());
         }
     }
 }

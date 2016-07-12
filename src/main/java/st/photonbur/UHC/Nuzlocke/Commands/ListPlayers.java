@@ -8,9 +8,10 @@ import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
+import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class ListPlayers implements CommandExecutor {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public ListPlayers(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -21,7 +22,7 @@ public class ListPlayers implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if(command.getName().equalsIgnoreCase("list")) {
-            sender.sendMessage("" + ChatColor.BLUE + ChatColor.BOLD + "Participants:");
+            sender.sendMessage(StringLib.ListPlayers$Participants);
 
             if(nuz.getGameManager().isGameInProgress() && nuz.getPlayerManager().getPlayer(sender.getName()).getRole() == Role.SPECTATOR) {
                 sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, true));
@@ -29,7 +30,7 @@ public class ListPlayers implements CommandExecutor {
                 sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, false));
             }
 
-            sender.sendMessage("" + ChatColor.BLUE + ChatColor.BOLD + "Spectators:");
+            sender.sendMessage(StringLib.ListPlayers$Spectators);
             sender.sendMessage(listPlayersByRole(Role.SPECTATOR, false));
         }
 
@@ -48,7 +49,7 @@ public class ListPlayers implements CommandExecutor {
                           +  ", "
             );
         } else {
-            message[0] += "" + ChatColor.BLUE + ChatColor.ITALIC + "No players found  ";
+            message[0] += StringLib.ListPlayers$NoPlayersFound;
         }
         return message[0].substring(0, message[0].length() - 2);
     }

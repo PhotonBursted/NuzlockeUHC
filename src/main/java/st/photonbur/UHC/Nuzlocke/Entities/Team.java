@@ -5,9 +5,9 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import java.util.ArrayList;
 
 public class Team {
-    ArrayList<Player> members = new ArrayList<>();
-    Nuzlocke nuz;
-    String name;
+    private final ArrayList<Player> members = new ArrayList<>();
+    private final Nuzlocke nuz;
+    private final String name;
 
     public Team(Nuzlocke nuz, Player player, String name) {
         addPlayer(player);
@@ -15,7 +15,7 @@ public class Team {
         this.nuz = nuz;
     }
 
-    public void addPlayer(Player player) {
+    private void addPlayer(Player player) {
         members.add(player);
     }
 
@@ -23,17 +23,16 @@ public class Team {
         return (int) members.stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT).count();
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 
     @Override
     public String toString() {
-        final String[] message = {getName() + " (" + countStillAlive() + "/" + getTeamSize() + ")\n"};
-        return message[0];
+        return getName() + " (" + countStillAlive() + "/" + getTeamSize() + ")\n";
     }
 
-    public int getTeamSize() {
+    private int getTeamSize() {
         return members.size();
     }
 }

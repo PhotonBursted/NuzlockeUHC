@@ -1,7 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,15 +8,24 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
+import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class ChatListener implements Listener {
-    Nuzlocke nuz;
+    public enum ChatMessageFormat {
+        GLOBAL, TEAM, SPECTATOR
+    }
+
+    public enum PlayerState {
+        ONLINE, TEAMMEMBER, SPECTATOR, SELF
+    }
+
+    private final Nuzlocke nuz;
 
     public ChatListener(Nuzlocke nuz) {
         this.nuz = nuz;
     }
 
-    public void addPlayersBeing(PlayerState ps, AsyncPlayerChatEvent e) {
+    private void addPlayersBeing(PlayerState ps, AsyncPlayerChatEvent e) {
         switch(ps) {
             case ONLINE:
                 for(Player p: Bukkit.getOnlinePlayers()) {
@@ -43,10 +51,6 @@ public class ChatListener implements Listener {
             default:
                 break;
         }
-    }
-
-    public enum ChatMessageFormat {
-        GLOBAL, TEAM, SPECTATOR
     }
 
     @EventHandler
@@ -77,7 +81,7 @@ public class ChatListener implements Listener {
                         setFormat(ChatMessageFormat.GLOBAL, e);
                     } else {
                         addPlayersBeing(PlayerState.SELF, e);
-                        e.setFormat(ChatColor.RED +"[!] Spectators aren't allowed to chat globally!"+ ChatColor.RESET);
+                        e.setFormat(StringLib.ChatListener$SpectatorNotAllowed);
                     }
                 } else {
                     addPlayersBeing(PlayerState.SPECTATOR, e);
@@ -89,11 +93,7 @@ public class ChatListener implements Listener {
         }
     }
 
-    public enum PlayerState {
-        ONLINE, TEAMMEMBER, SPECTATOR, SELF
-    }
-
-    void setFormat(ChatMessageFormat cmf, AsyncPlayerChatEvent e) {
+    private void setFormat(ChatMessageFormat cmf, AsyncPlayerChatEvent e) {
         String messageStart = "";
         Team team = nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(e.getPlayer().getName());
         String prefix = "", suffix = "";

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class TaskManager {
-    private ArrayList<BukkitRunnable> tasks = new ArrayList<>();
-    EventMarkerAnnouncer ema;
-    GameCountdown gcd;
-    Nuzlocke nuz;
-    ScoreboardUpdater sbu;
+    private final ArrayList<BukkitRunnable> tasks = new ArrayList<>();
+    private EventMarkerAnnouncer ema;
+    private GameCountdown gcd;
+    private final Nuzlocke nuz;
+    private ScoreboardUpdater sbu;
 
     public TaskManager(Nuzlocke nuz) {
         this.nuz = nuz;

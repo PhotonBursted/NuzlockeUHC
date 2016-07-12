@@ -1,11 +1,11 @@
 package st.photonbur.UHC.Nuzlocke.Tasks;
 
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
+import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class EventMarkerAnnouncer extends BukkitRunnable {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
     private long time = 0;
     private int episodeCounter = 0;
 
@@ -27,14 +27,14 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
     @Override
     public void run() {
         if(time == (nuz.getSettings().getGentlemenDuration() * 60) && nuz.getSettings().getGentlemenDuration() > 0) {
-            nuz.getServer().broadcastMessage(ChatColor.DARK_RED + "[!] The pact has crumbled. Combat is now enabled." + ChatColor.RESET);
+            nuz.getServer().broadcastMessage(StringLib.EMA$GentlemenRuleEnd);
         }
 
         if(time % (nuz.getSettings().getEpisodeDuration() * 60) == 0 && nuz.getSettings().getEpisodeDuration() > 0) {
             if(episodeCounter == 0) {
-                nuz.getServer().broadcastMessage(ChatColor.GOLD + "[!] Markers have started!");
+                nuz.getServer().broadcastMessage(StringLib.EMA$MarkerStart);
             } else {
-                nuz.getServer().broadcastMessage(ChatColor.GOLD + "[!] There's that. Another episode down." + ChatColor.ITALIC + " (end of EP" + getEpisodeNo() + ")");
+                nuz.getServer().broadcastMessage(String.format(StringLib.EMA$EpisodeEnd, getEpisodeNo()));
             }
 
             episodeCounter++;

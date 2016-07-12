@@ -1,13 +1,13 @@
 package st.photonbur.UHC.Nuzlocke.Commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
+import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class StartUHC implements CommandExecutor {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public StartUHC(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -17,7 +17,7 @@ public class StartUHC implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if(command.getName().equalsIgnoreCase("startmatch")) {
             if(nuz.getGameManager().isGameInProgress()) {
-                sender.sendMessage(ChatColor.DARK_RED + "[!] Game is already underway!");
+                sender.sendMessage(StringLib.StartUHC$GameUnderway);
             } else {
                 nuz.getGameManager().initGame();
             }

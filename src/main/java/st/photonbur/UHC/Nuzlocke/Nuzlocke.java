@@ -21,15 +21,15 @@ public class Nuzlocke extends JavaPlugin {
     private TaskManager taskManager;
     private TeamManager teamManager;
 
-    void loadCommands() {
+    private void loadCommands() {
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
         getCommand("stopMatch").setExecutor(new StopUHC(this));
-        getCommand("unregister").setExecutor(new UnregisterPlayer(this));
+        getCommand("unregister").setExecutor(new DeregisterPlayer(this));
         getCommand("list").setExecutor(new ListPlayers(this));
     }
 
-    void loadListeners(Listener... ls) {
+    private void loadListeners(Listener... ls) {
         for(Listener l: ls) {
             Bukkit.getPluginManager().registerEvents(l, this);
         }

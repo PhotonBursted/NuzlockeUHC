@@ -23,8 +23,8 @@ public class Pokemon extends Player {
         STEEL("Steel", ChatColor.GRAY),
         FAIRY("Fairy", ChatColor.LIGHT_PURPLE);
 
-        private ChatColor color;
-        private String name;
+        private final ChatColor color;
+        private final String name;
 
         Type(String name, ChatColor color) {
             this.name = name;
@@ -64,7 +64,7 @@ public class Pokemon extends Player {
         return type;
     }
 
-    public void setType(Type t) {
+    void setType(Type t) {
         this.type = t;
     }
 }

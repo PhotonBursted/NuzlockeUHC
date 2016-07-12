@@ -5,10 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-public class UnregisterPlayer implements CommandExecutor {
-    Nuzlocke nuz;
+public class DeregisterPlayer implements CommandExecutor {
+    private final Nuzlocke nuz;
 
-    public UnregisterPlayer(Nuzlocke nuz) {
+    public DeregisterPlayer(Nuzlocke nuz) {
         this.nuz = nuz;
     }
 
@@ -16,9 +16,9 @@ public class UnregisterPlayer implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(command.getName().equalsIgnoreCase("unregister")) {
             if(args.length > 0) {
-                nuz.getPlayerManager().unregisterPlayer(args[0], commandSender);
+                nuz.getPlayerManager().deregisterPlayer(args[0], commandSender);
             } else {
-                nuz.getPlayerManager().unregisterPlayer(commandSender.getName(), commandSender);
+                nuz.getPlayerManager().deregisterPlayer(commandSender.getName(), commandSender);
             }
         }
 
