@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
@@ -18,14 +19,20 @@ public class DeathListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        Player p = e.getEntity().getPlayer();
-        if(nuz.getSettings().getDeathHandleDelay() != -1) {
-            p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
-            nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
-            new HandleDeadPlayer(nuz, p).runTaskLater(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
-        }
+        if(nuz.getGameManager().isGameInProgress()) {
+            Player p = e.getEntity().getPlayer();
 
-        nuz.getTaskManager().getSBU().updateScores();
+            if(nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT) {
+                if(nuz.getSettings().getDeathHandleDelay() != -1) {
+                    p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
+                    nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
+                    new HandleDeadPlayer(nuz, p).runTaskLater(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
+                }
+
+                nuz.getTaskManager().getSBU().updateScores();
+                nuz.getDiscordBot().announce(DiscordBot.Event.DEATH, e.getDeathMessage().replaceAll(".*§..*", ""));
+            }
+        }
     }
 
     private class HandleDeadPlayer extends BukkitRunnable {

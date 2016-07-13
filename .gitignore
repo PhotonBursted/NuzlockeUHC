@@ -6,3 +6,5 @@
 # IntelliJ stuff
 .idea
 *.iml
+/out/
+/target/

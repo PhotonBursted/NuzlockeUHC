@@ -6,6 +6,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class GameManager {
@@ -62,7 +63,7 @@ public class GameManager {
     }
 
     public void initGame() {
-        gameInProgress = true;
+        nuz.getDiscordBot().announce(DiscordBot.Event.START);
 
         preparePlayers();
         nuz.getTaskManager().registerTasks();
@@ -70,6 +71,8 @@ public class GameManager {
     }
 
     public void startGame() {
+        gameInProgress = true;
+
         setPlayerEffects();
         nuz.getPlayerManager().divideRoles();
         nuz.getTaskManager().startEventMarkers();

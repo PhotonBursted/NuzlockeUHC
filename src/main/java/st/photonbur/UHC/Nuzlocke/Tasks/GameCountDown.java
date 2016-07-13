@@ -24,7 +24,7 @@ class GameCountdown extends BukkitRunnable {
             nuz.getServer().broadcastMessage(String.format(StringLib.GCD$CountdownStart, counter));
         }
         else if(counter > 0 && counter < nuz.getSettings().getCountDownLength()) {
-            nuz.getServer().broadcastMessage(StringLib.GCD$CountdownProgress);
+            nuz.getServer().broadcastMessage(String.format(StringLib.GCD$CountdownProgress, counter));
         }
         else {
             this.cancel();

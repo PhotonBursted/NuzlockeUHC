@@ -4,24 +4,24 @@ import org.bukkit.ChatColor;
 
 public class Pokemon extends Player {
     public enum Type {
-        NORMAL("Normal", ChatColor.DARK_GRAY),
-        FIRE("Fire", ChatColor.GOLD),
-        WATER("Water", ChatColor.BLUE),
-        ELECTRIC("Electric", ChatColor.YELLOW),
-        GRASS("Grass", ChatColor.GREEN),
-        ICE("Ice", ChatColor.AQUA),
-        FIGHTING("Fighting", ChatColor.DARK_RED),
-        POISON("Poison", ChatColor.DARK_PURPLE),
-        GROUND("Ground", ChatColor.GOLD),
-        FLYING("Flying", ChatColor.WHITE),
-        PSYCHIC("Psychic", ChatColor.LIGHT_PURPLE),
-        BUG("Bug", ChatColor.DARK_GREEN),
-        ROCK("Rock", ChatColor.DARK_RED),
-        GHOST("Ghost", ChatColor.DARK_PURPLE),
-        DRAGON("Dragon", ChatColor.DARK_BLUE),
-        DARK("Dark", ChatColor.BLACK),
-        STEEL("Steel", ChatColor.GRAY),
-        FAIRY("Fairy", ChatColor.LIGHT_PURPLE);
+        NORMAL("[NRM]", ChatColor.DARK_GRAY),
+        FIRE("[FIR]", ChatColor.GOLD),
+        WATER("[WTR]", ChatColor.BLUE),
+        ELECTRIC("[ELC]", ChatColor.YELLOW),
+        GRASS("[GRS]", ChatColor.GREEN),
+        ICE("[ICE]", ChatColor.AQUA),
+        FIGHTING("[FGT]", ChatColor.DARK_RED),
+        POISON("[PSN]", ChatColor.DARK_PURPLE),
+        GROUND("[GRD]", ChatColor.GOLD),
+        FLYING("[FLY]", ChatColor.WHITE),
+        PSYCHIC("[PSY]", ChatColor.LIGHT_PURPLE),
+        BUG("[BUG]", ChatColor.DARK_GREEN),
+        ROCK("[RCK]", ChatColor.DARK_RED),
+        GHOST("[GHO]", ChatColor.DARK_PURPLE),
+        DRAGON("[DRG]", ChatColor.DARK_BLUE),
+        DARK("[DRK]", ChatColor.BLACK),
+        STEEL("[STL]", ChatColor.GRAY),
+        FAIRY("[FAI]", ChatColor.LIGHT_PURPLE);
 
         private final ChatColor color;
         private final String name;

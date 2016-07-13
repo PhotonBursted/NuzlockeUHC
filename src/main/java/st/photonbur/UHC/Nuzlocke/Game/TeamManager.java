@@ -1,7 +1,9 @@
 package st.photonbur.UHC.Nuzlocke.Game;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Team;
+import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.ArrayList;
@@ -57,6 +59,13 @@ public class TeamManager {
 
     public ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> getTeams() {
         return teams;
+    }
+
+    public int teamsAlive() {
+        return (int) (getTeams().stream().filter(team -> team.countStillAlive() > 0).count()
+                    + Bukkit.getOnlinePlayers().stream().filter(
+                        p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT
+                    ).count());
     }
 
     private String randomTeamColorName() {

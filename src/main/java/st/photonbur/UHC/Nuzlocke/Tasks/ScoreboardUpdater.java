@@ -1,6 +1,5 @@
 package st.photonbur.UHC.Nuzlocke.Tasks;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -15,7 +14,6 @@ import java.util.Map;
 public class ScoreboardUpdater extends BukkitRunnable {
     private Map<String, String> buffer = new LinkedHashMap<>();
     private final Map<String, String> entries = new LinkedHashMap<>();
-    private long time = 0;
     private Objective eventInfo;
     private final Nuzlocke nuz;
     private final Scoreboard scoreboard;
@@ -29,7 +27,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     private void clearScores() {
-        buffer.values().stream().forEach(scoreboard::resetScores);
+        buffer.values().forEach(scoreboard::resetScores);
     }
 
     private void displayScores() {
@@ -49,8 +47,6 @@ public class ScoreboardUpdater extends BukkitRunnable {
         buffer = new LinkedHashMap<>(entries);
 
         updateScores();
-
-        time++;
     }
 
     private void setupEntries(String... scores) {
@@ -65,9 +61,8 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     public void updateScores() {
-        entries.replace("playersLeft", "Players left:    " + ChatColor.BOLD + (int) nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count());
-        entries.replace("teamsLeft", "Teams left:      " + ChatColor.BOLD + (int) (nuz.getTeamManager().getTeams().stream().filter(team -> team.countStillAlive() > 0).count()
-                                                                                 + Bukkit.getOnlinePlayers().stream().filter(p -> scoreboard.getEntryTeam(p.getName()) == null).count()));
+        entries.replace("playersLeft", "Players left: " + ChatColor.BOLD + (int) nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count());
+        entries.replace("teamsLeft", "Teams left: " + ChatColor.BOLD + nuz.getTeamManager().teamsAlive());
         entries.replace("episode", "     Episode "+ ChatColor.BOLD + nuz.getTaskManager().getEMA().getEpisodeNo());
         entries.replace("timeLeft", "       .: "+ nuz.getTaskManager().getEMA().getEpisodeTimeLeft() +" :.");
 

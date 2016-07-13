@@ -101,7 +101,15 @@ public class PlayerManager {
     }
 
     public void registerPlayer(String targetName) {
-        substitutePlayer(targetName, Role.PARTICIPANT);
+        if (getPlayers().stream().anyMatch(p -> p.getName().equals(targetName))) {
+            if (getPlayer(targetName).getClass().getSimpleName().equals("Player")) {
+                Bukkit.getPlayer(targetName).sendMessage(StringLib.PlayerManager$MatchStarted);
+            } else {
+                substitutePlayer(targetName, Role.PARTICIPANT);
+            }
+        } else {
+            substitutePlayer(targetName, Role.PARTICIPANT);
+        }
     }
 
     public void registerPlayer(String targetName, CommandSender sender) {

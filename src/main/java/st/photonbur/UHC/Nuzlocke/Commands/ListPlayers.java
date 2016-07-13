@@ -5,31 +5,59 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scoreboard.Team;
-import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
+import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Command regarding the listing of players. It separates players and spectators, and shows who's in what group on demand.
+ * @see st.photonbur.UHC.Nuzlocke.Entities.Player
+ * @see Role
+ */
 public class ListPlayers implements CommandExecutor {
+    /**
+     * The main plugin instance
+     */
     private final Nuzlocke nuz;
 
+    /**
+     * Constructs the command's instance
+     * @param nuz The main plugin instance
+     */
     public ListPlayers(Nuzlocke nuz) {
         this.nuz = nuz;
     }
 
     // Full list (w/ roles): Spectator, game running
     // Full list (w\ roles): Everything else
+    /**
+     * Called when a command is issued
+     * @param sender A reference to who executed the command
+     * @param command The command being issued
+     * @param s A pure copy of the message entered in chat
+     * @param args The split up message without the command name
+     * @return The success of the command
+     */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        // If the command matches the desired name, continue executing the command
         if(command.getName().equalsIgnoreCase("list")) {
+            // Send a "participant" header message to the issuer
             sender.sendMessage(StringLib.ListPlayers$Participants);
 
+            // Decide whether or not to show specifics per player (Pokemon.Type for example)
             if(nuz.getGameManager().isGameInProgress() && nuz.getPlayerManager().getPlayer(sender.getName()).getRole() == Role.SPECTATOR) {
                 sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, true));
             } else {
                 sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, false));
             }
 
+            // List all spectators
             sender.sendMessage(StringLib.ListPlayers$Spectators);
             sender.sendMessage(listPlayersByRole(Role.SPECTATOR, false));
         }
@@ -37,20 +65,67 @@ public class ListPlayers implements CommandExecutor {
         return true;
     }
 
-    private String listPlayersByRole(Role role, boolean showRole) {
-        final String[] message = {"" + ChatColor.RESET + "- "};
-        final Team[] team = {null};
+    /**
+     * Lists the players in a certain role
+     * @param role The role to check with
+     * @param showDetails Whether or not to show specifics of the player
+     * @return The message to show
+     */
+    private String listPlayersByRole(Role role, boolean showDetails) {
+        String message = "";
+        final ArrayList<String> playerList = new ArrayList<>();
         if (nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> p.getRole() == role)) {
-            nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == role).forEach(
-                    p -> message[0] +=
-                            ((team[0] = nuz.getGameManager().getScoreboard().getEntryTeam(p.getName())) != null ? team[0].getPrefix() : ChatColor.RESET + "")
-                          +  ChatColor.ITALIC + p.getName() + ChatColor.BLUE
-                          + (role == Role.PARTICIPANT && showRole ? (" (" + (p instanceof Pokemon ? p.getType().getColor() + p.getType().getName() + ChatColor.BLUE + " Pokémon": p.getClass().getSimpleName()) + ")") : "")
-                          +  ", "
-            );
+            playerList.addAll(teamedPlayers(role));
+            playerList.addAll(teamlessPlayers(role));
+
+            for(int i=0; i<playerList.size(); i+=3) {
+                List<String> segment = playerList.subList(i, Math.min(i+3, playerList.size()));
+                message += i == 0 ? "- " : "\n   ";
+                for(int j=0; j<segment.size(); j++) {
+                    Team team = nuz.getGameManager().getScoreboard().getEntryTeam(playerList.get(i+j));
+                    Player p = nuz.getPlayerManager().getPlayer(playerList.get(i+j));
+
+                    if(showDetails) {
+                        if(p.getClass().getSimpleName().equals("Pokemon")) {
+                            message += p.getType().getColor() + p.getType().getName();
+                        } else {
+                            message += (team == null ? ChatColor.RESET : team.getPrefix()) + "[" + p.getClass().getSimpleName() + "]";
+                        }
+                        message += " ";
+                    }
+                    message += (team == null ? ChatColor.RESET : team.getPrefix()) + playerList.get(i+j);
+
+                    if(i+j < playerList.size()-1) {
+                        message += ChatColor.RESET + ", ";
+                    }
+                }
+            }
         } else {
-            message[0] += StringLib.ListPlayers$NoPlayersFound;
+            message += StringLib.ListPlayers$NoPlayersFound;
         }
-        return message[0].substring(0, message[0].length() - 2);
+
+        return message;
+    }
+
+    private List<String> teamedPlayers(Role role) {
+        List<String> playerList = new ArrayList<>();
+        nuz.getGameManager().getScoreboard().getTeams().stream().forEach(t ->
+                playerList.addAll(
+                        t.getEntries().stream().filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == role).sorted().collect(Collectors.toList())
+                )
+        );
+        return playerList;
+    }
+
+    private List<String> teamlessPlayers(Role role) {
+        List<Player> teamlessPlayers = nuz.getPlayerManager().getPlayers().stream()
+                .filter(p -> !nuz.getGameManager().getScoreboard().getTeams().stream().anyMatch(t -> t.getEntries().contains(p.getName())))
+                .filter(p -> p.getRole() == role)
+                .collect(Collectors.toList());
+        List<String> teamlessNames = new ArrayList<>();
+
+        teamlessPlayers.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        teamlessPlayers.forEach(p -> teamlessNames.add(p.getName()));
+        return teamlessNames;
     }
 }
