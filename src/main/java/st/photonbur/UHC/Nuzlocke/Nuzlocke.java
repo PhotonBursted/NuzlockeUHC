@@ -77,6 +77,7 @@ public class Nuzlocke extends JavaPlugin {
     @Override
     public void onDisable() {
         gameManager.cleanUp();
+        discordBot.stop();
     }
 
     public DiscordBot getDiscordBot() {

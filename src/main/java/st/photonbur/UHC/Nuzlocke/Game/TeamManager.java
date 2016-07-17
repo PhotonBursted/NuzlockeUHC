@@ -6,14 +6,27 @@ import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class TeamManager {
+    class ColorCollection {
+        private ChatColor cc;
+        private Color c;
+
+        public ColorCollection(ChatColor cc, Color c) {
+            this.cc = cc;
+            this.c = c;
+        }
+
+        ChatColor getChatColor() { return cc; }
+        Color getColor() { return c; }
+    }
     private final ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> teams = new ArrayList<>();
-    private final Map<String, ChatColor> colors = generateColorMap();
+    private final Map<String, ColorCollection> colors = generateColorMap();
     private final Nuzlocke nuz;
     private final Random r = new Random();
 
@@ -21,47 +34,54 @@ public class TeamManager {
         this.nuz = nuz;
     }
 
-    private Map<String, ChatColor> generateColorMap() {
-        Map<String, ChatColor> map = new HashMap<>();
-        map.put("BLACK", ChatColor.BLACK);
-        map.put("DARK_BLUE", ChatColor.DARK_BLUE);
-        map.put("DARK_GREEN", ChatColor.DARK_GREEN);
-        map.put("DARK_AQUA", ChatColor.DARK_AQUA);
-        map.put("DARK_RED", ChatColor.DARK_RED);
-        map.put("DARK_PURPLE", ChatColor.DARK_PURPLE);
-        map.put("GOLD", ChatColor.GOLD);
-        map.put("GRAY", ChatColor.GRAY);
-        map.put("DARK_GRAY", ChatColor.DARK_GRAY);
-        map.put("BLUE", ChatColor.BLUE);
-        map.put("GREEN", ChatColor.GREEN);
-        map.put("AQUA", ChatColor.AQUA);
-        map.put("RED", ChatColor.RED);
-        map.put("LIGHT_PURPLE", ChatColor.LIGHT_PURPLE);
-        map.put("YELLOW", ChatColor.YELLOW);
+    private Map<String, ColorCollection> generateColorMap() {
+        Map<String, ColorCollection> map = new HashMap<>();
+        map.put("BLACK", new ColorCollection(ChatColor.BLACK, new Color(0, 0, 0)));
+        map.put("DARK_BLUE", new ColorCollection(ChatColor.DARK_BLUE, new Color(0, 0, 170)));
+        map.put("DARK_GREEN", new ColorCollection(ChatColor.DARK_GREEN, new Color(0, 170, 0)));
+        map.put("DARK_AQUA", new ColorCollection(ChatColor.DARK_AQUA, new Color(0, 170, 170)));
+        map.put("DARK_RED", new ColorCollection(ChatColor.DARK_RED, new Color(170, 0, 0)));
+        map.put("DARK_PURPLE", new ColorCollection(ChatColor.DARK_PURPLE, new Color(170, 0, 170)));
+        map.put("GOLD", new ColorCollection(ChatColor.GOLD, new Color(255, 170, 0)));
+        map.put("GRAY", new ColorCollection(ChatColor.GRAY, new Color(170, 170, 170)));
+        map.put("DARK_GRAY", new ColorCollection(ChatColor.DARK_GRAY, new Color(85, 85, 85)));
+        map.put("BLUE", new ColorCollection(ChatColor.BLUE, new Color(85, 85, 255)));
+        map.put("GREEN", new ColorCollection(ChatColor.GREEN, new Color(85, 255, 85)));
+        map.put("AQUA", new ColorCollection(ChatColor.AQUA, new Color(85, 255, 255)));
+        map.put("RED", new ColorCollection(ChatColor.RED, new Color(255, 85, 85)));
+        map.put("LIGHT_PURPLE", new ColorCollection(ChatColor.LIGHT_PURPLE, new Color(255, 85, 255)));
+        map.put("YELLOW", new ColorCollection(ChatColor.YELLOW, new Color(255, 255, 85)));
 
         return map;
     }
 
     public void createTeam(String playerName) {
-        String teamName;
+        final String[] teamName = new String[1];
         do {
-            teamName = randomTeamColorName();
-        } while (nuz.getGameManager().getScoreboard().getTeam(teamName) != null);
+            teamName[0] = randomTeamColorName();
+        } while (nuz.getGameManager().getScoreboard().getTeam(teamName[0]) != null);
 
-        Team team = nuz.getGameManager().getScoreboard().registerNewTeam(teamName);
-        team.setPrefix(colors.get(teamName) + "");
+        Team team = nuz.getGameManager().getScoreboard().registerNewTeam(teamName[0]);
+        team.setPrefix(colors.get(teamName[0]).getChatColor().toString());
         team.setSuffix(ChatColor.RESET + "");
         team.setDisplayName("Team " + playerName);
         team.addEntry(playerName);
 
+        nuz.getDiscordBot().addTeam(playerName, colors.get(teamName[0]).getColor());
+
         teams.add(new st.photonbur.UHC.Nuzlocke.Entities.Team(nuz, nuz.getPlayerManager().getPlayer(playerName), "Team "+ playerName));
+
+        synchronized (nuz.getPlayerManager().teamBuilderLock) {
+            nuz.getPlayerManager().isBuildingTeam = false;
+            nuz.getPlayerManager().teamBuilderLock.notifyAll();
+        }
     }
 
     public ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> getTeams() {
         return teams;
     }
 
-    public int teamsAlive() {
+    public int teamsAliveCount() {
         return (int) (getTeams().stream().filter(team -> team.countStillAlive() > 0).count()
                     + Bukkit.getOnlinePlayers().stream().filter(
                         p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT
@@ -72,4 +92,3 @@ public class TeamManager {
         return colors.keySet().toArray(new String[colors.keySet().size()])[r.nextInt(colors.keySet().size())];
     }
 }
-

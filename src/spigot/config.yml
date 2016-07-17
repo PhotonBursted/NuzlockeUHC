@@ -7,9 +7,29 @@ chat:
 eventName: "Vexian UHC S4"
 
 game:
+  environment:
+    worldborder:
+      enable: true
+
+      initialSize: 15
+      endSize: 10
+
+      shrink:
+        enable: true
+
+        delay: 0
+        time: 5
+      warning:
+        type: "distance"
+        amount: 10
+
   markers:
-    gentlemenDuration: 1
     episodeDuration: 1
+    gentlemenDuration: 1
+    worldborder:
+      start: true
+      progress: 1
+      end: true
 
   teamSize: 4
 

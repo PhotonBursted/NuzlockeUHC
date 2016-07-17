@@ -10,10 +10,14 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class PlayerManager {
     private final ArrayList<Player> players;
+    public boolean isBuildingTeam = false;
+    public final Object teamBuilderLock = new Object();
     private final Nuzlocke nuz;
     private final Random r;
 
@@ -28,6 +32,7 @@ public class PlayerManager {
     }
 
     public void deregisterPlayer(String targetName) {
+        nuz.getDiscordBot().deregisterPlayer(targetName);
         substitutePlayer(targetName, Role.SPECTATOR);
     }
 
@@ -60,11 +65,20 @@ public class PlayerManager {
     public void divideRoles() {
         ArrayList<Player> toAdd = new ArrayList<>();
         ArrayList<Player> toRemove = new ArrayList<>();
-        int trainerAmount = (int) Math.max(Math.ceil((players.size() + 1) / nuz.getSettings().getTeamSize()), 1);
+        int trainerAmount = (int) Math.max(Math.ceil((players.size() + 1) / nuz.getSettings().getTeamSize()), 2);
 
         for (int i = 0; i < trainerAmount; i++) {
-            Player target = findNewParticipant();
+            Player target = findNewTrainer();
+            isBuildingTeam = true;
             nuz.getTeamManager().createTeam(target.getName());
+
+            synchronized (teamBuilderLock) {
+                while(isBuildingTeam) try {
+                    teamBuilderLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             toAdd.add(new Trainer(target.getName(), Role.PARTICIPANT));
             toRemove.add(target);
         }
@@ -83,9 +97,11 @@ public class PlayerManager {
         players.removeAll(toRemove);
     }
 
-    private Player findNewParticipant() {
-        Player target = players.get(r.nextInt(players.size()));
-        return target.getRole() == Role.PARTICIPANT && !(target instanceof Trainer) ? target : findNewParticipant();
+    private Player findNewTrainer() {
+        List<Player> candidates = players.stream()
+                .filter(p -> p.getRole() == Role.PARTICIPANT && nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null)
+                .collect(Collectors.toList());
+        return candidates.get(r.nextInt(candidates.size()));
     }
 
     public Player getPlayer(org.bukkit.entity.Player q) {
@@ -102,12 +118,14 @@ public class PlayerManager {
 
     public void registerPlayer(String targetName) {
         if (getPlayers().stream().anyMatch(p -> p.getName().equals(targetName))) {
-            if (getPlayer(targetName).getClass().getSimpleName().equals("Player")) {
+            if (getPlayer(targetName).getClass().getSimpleName().equals("Player") && nuz.getGameManager().isGameInProgress()) {
                 Bukkit.getPlayer(targetName).sendMessage(StringLib.PlayerManager$MatchStarted);
             } else {
+                nuz.getDiscordBot().registerPlayer(targetName);
                 substitutePlayer(targetName, Role.PARTICIPANT);
             }
         } else {
+            nuz.getDiscordBot().registerPlayer(targetName);
             substitutePlayer(targetName, Role.PARTICIPANT);
         }
     }
@@ -144,17 +162,36 @@ public class PlayerManager {
         players.removeAll(toRemove);
     }
 
-    private void substitutePlayer(String name, Role newRole) {
-        if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name))) {
-            String pc = (getPlayer(name) == null ? "Player" : getPlayer(name).getClass().getSimpleName());
-            Pokemon.Type pt = (pc.equals("Pokemon") ? getPlayer(name).getType() : null);
+    public void removeClasses() {
+        ArrayList<Player> toAdd = new ArrayList<>();
+        ArrayList<Player> toRemove = new ArrayList<>();
 
+        getPlayers().stream().filter(p -> !p.getClass().getSimpleName().equals("Player")).forEach(p -> {
+            toAdd.add(new Player(p.getName(), p.getRole()));
+            toRemove.add(p);
+        });
+
+        getPlayers().removeAll(toRemove);
+        getPlayers().addAll(toAdd);
+    }
+
+    private void substitutePlayer(String name, Role newRole) {
+        substitutePlayer(
+                name,
+                newRole,
+                Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(name)) ?
+                (getPlayer(name) == null ? "Player" : getPlayer(name).getClass().getSimpleName()) : null
+        );
+    }
+
+    private void substitutePlayer(String name, Role newRole, String pc) {
+        if(pc != null) {
             if (players.stream().anyMatch(p -> p.getName().equals(name))) {
                 removePlayer(name);
             }
             switch (pc) {
                 case "Pokemon":
-                    addPlayer(new Pokemon(name, newRole, pt));
+                    addPlayer(new Pokemon(name, newRole, getPlayer(name).getType()));
                     break;
                 case "Trainer":
                     addPlayer(new Trainer(name, newRole));

@@ -17,11 +17,8 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
         return (episodeCounter < 10 ? "0" : "") + episodeCounter;
     }
 
-    public String getEpisodeTimeLeft() {
-        int min, sec;
-        min = (int) (nuz.getSettings().getEpisodeDuration() - (time / 60) % nuz.getSettings().getEpisodeDuration() - 1);
-        sec = (int) (59 - ((time - 1) % 60));
-        return (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+    public long getRawTime() {
+        return time;
     }
 
     @Override
@@ -38,6 +35,24 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
             }
 
             episodeCounter++;
+        }
+
+        double wbSize = nuz.getGameManager().getOverworld().getWorldBorder().getSize();
+
+        if(nuz.getSettings().isWbShrinkEnabled() &&
+            nuz.getSettings().getWbInitialSize() != nuz.getSettings().getWbEndSize() &&
+            nuz.getSettings().getWbShrinkDuration() > 0) {
+            if(time == nuz.getSettings().getWbShrinkDelay() * 60 &&
+                    nuz.getSettings().doWbStartMarker()) {
+                nuz.getServer().broadcastMessage(StringLib.EMA$WbShrinkStart);
+            } else if(time == (nuz.getSettings().getWbShrinkDelay() + nuz.getSettings().getWbShrinkDuration()) * 60 &&
+                    nuz.getSettings().doWbEndMarker()) {
+                nuz.getServer().broadcastMessage(String.format(StringLib.EMA$WbShrinkEnd, Math.round(wbSize)));
+            } else if(time % (nuz.getSettings().getWbProgressMarkerInterval() * 60) == 0 &&
+                    time > nuz.getSettings().getWbShrinkDelay() * 60 &&
+                    time < (nuz.getSettings().getWbShrinkDelay() + nuz.getSettings().getWbShrinkDuration()) * 60) {
+                nuz.getServer().broadcastMessage(String.format(StringLib.EMA$WbProgressReport, Math.round(wbSize)));
+            }
         }
 
         time++;

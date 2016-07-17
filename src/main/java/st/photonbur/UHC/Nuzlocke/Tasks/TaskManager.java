@@ -10,8 +10,10 @@ public class TaskManager {
     private final ArrayList<BukkitRunnable> tasks = new ArrayList<>();
     private EventMarkerAnnouncer ema;
     private GameCountdown gcd;
+    private Launcher launcher;
     private final Nuzlocke nuz;
     private ScoreboardUpdater sbu;
+    private Worldborder wb;
 
     public TaskManager(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -29,7 +31,9 @@ public class TaskManager {
         register(
                 ema = new EventMarkerAnnouncer(nuz),
                 gcd = new GameCountdown(nuz, nuz.getSettings().getCountDownLength()),
-                sbu = new ScoreboardUpdater(nuz)
+                launcher = new Launcher(),
+                sbu = new ScoreboardUpdater(nuz),
+                wb = new Worldborder(nuz)
         );
     }
 
@@ -41,15 +45,59 @@ public class TaskManager {
         return sbu;
     }
 
-    public void startCountDown() {
-        gcd.runTaskTimer(nuz, 0L, 20L);
+    public Worldborder getWB() {
+        return wb;
     }
 
-    public void startEventMarkers() {
-        ema.runTaskTimer(nuz, 0L, 20L);
+    public Launcher getLauncher() {
+        return launcher;
     }
 
-    public void startScoreboardUpdater() {
-        sbu.runTaskTimer(nuz, 0L, 20L);
+    public void startLauncher() {
+        launcher.runTaskTimerAsynchronously(nuz, 0L, 20L);
+    }
+
+    public class Launcher extends BukkitRunnable {
+        private boolean startCountdown = false;
+        private boolean startEventMarkers = false;
+        private boolean startScoreboardUpdater = false;
+        private boolean startWorldBorder = false;
+
+        @Override
+        public void run() {
+            if(startCountdown) {
+                gcd.runTaskTimer(nuz, 0L, 20L);
+                nuz.getLogger().info("Starting countdown...");
+                startCountdown = false;
+            }
+            if(startEventMarkers) {
+                ema.runTaskTimerAsynchronously(nuz, 0L, 20L);
+                nuz.getLogger().info("Starting event markers...");
+                startEventMarkers = false;
+            }
+            if(startScoreboardUpdater) {
+                sbu.runTaskTimerAsynchronously(nuz, 2L, 20L);
+                nuz.getLogger().info("Starting scoreboard integration...");
+                startScoreboardUpdater = false;
+            }
+            if(startWorldBorder) {
+                wb.runTaskTimerAsynchronously(nuz, 0L, 20L);
+                nuz.getLogger().info("Starting worldborder...");
+                startWorldBorder = false;
+            }
+        }
+
+        public void startCountdown() {
+            startCountdown = true;
+        }
+        public void startEventMarkers() {
+            startEventMarkers = true;
+        }
+        public void startScoreboardUpdater() {
+            startScoreboardUpdater = true;
+        }
+        public void startWorldBorder() {
+            startWorldBorder = true;
+        }
     }
 }

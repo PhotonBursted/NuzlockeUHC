@@ -36,6 +36,15 @@ public class ScoreboardUpdater extends BukkitRunnable {
         }
     }
 
+    private String getEpisodeTimeLeft() {
+        long time = nuz.getTaskManager().getEMA().getRawTime();
+        int min, sec;
+        min = (int) (nuz.getSettings().getEpisodeDuration() - (time / 60) % nuz.getSettings().getEpisodeDuration() - 1);
+        sec = (int) (59 - ((time - 1) % 60));
+        return (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+    }
+
+
     private void launchSidebar() {
         eventInfo = scoreboard.registerNewObjective("eventInfo", "dummy");
         eventInfo.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -62,9 +71,9 @@ public class ScoreboardUpdater extends BukkitRunnable {
 
     public void updateScores() {
         entries.replace("playersLeft", "Players left: " + ChatColor.BOLD + (int) nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count());
-        entries.replace("teamsLeft", "Teams left: " + ChatColor.BOLD + nuz.getTeamManager().teamsAlive());
+        entries.replace("teamsLeft", "Teams left: " + ChatColor.BOLD + nuz.getTeamManager().teamsAliveCount());
         entries.replace("episode", "     Episode "+ ChatColor.BOLD + nuz.getTaskManager().getEMA().getEpisodeNo());
-        entries.replace("timeLeft", "       .: "+ nuz.getTaskManager().getEMA().getEpisodeTimeLeft() +" :.");
+        entries.replace("timeLeft", "       .: "+ getEpisodeTimeLeft() +" :.");
 
         clearScores();
         displayScores();
