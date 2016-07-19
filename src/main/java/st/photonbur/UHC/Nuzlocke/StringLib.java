@@ -3,19 +3,31 @@ package st.photonbur.UHC.Nuzlocke;
 import org.bukkit.ChatColor;
 
 public interface StringLib {
-    String ChatListener$SpectatorNotAllowed     = ChatColor.RED +"[!] Spectators aren't allowed to chat globally!"+ ChatColor.RESET;
+    String ChatListener$SpectatorNotAllowed     = ChatColor.RED + "[!] Spectators aren't allowed to chat globally!"+ ChatColor.RESET;
+
+    String DamageManager$Immune                 = ChatColor.GREEN + "[!] That did no damage at all...";
+    String DamageManager$NotEffective           = ChatColor.GREEN + "[!] Hmm, that wasn't too effective.";
+    String DamageManager$SuperEffective         = ChatColor.GREEN + "[!] Wow, you're super effective against that guy!";
+
+    String DarkType$Dizzy                       = ChatColor.DARK_GREEN + "[!] The light... it's getting too much to handle!";
+    String DarkType$PokeEyes                    = ChatColor.DARK_GREEN + "[!] Oh no, someone poked your eyes out!";
 
     String DeathListener$DeathMove              = ChatColor.RED + "[!] You will be moved over to the spectator channel within %s seconds";
     String DeathListener$TeamWipe               = ChatColor.RED + "[!] Oh no! % has been wiped! %s teams remain...";
-    String DeathListener$TrainerWipe            = ChatColor.RED + "[!] Trainer %s has gone, meaning all team caps have grown by 1 and the Pokémon on their released!";
+    String DeathListener$TrainerWipe            = ChatColor.RED + "[!] Trainer %s has gone, meaning all team caps have grown by 1!";
     String DeathListener$Win                    = ChatColor.RED + "[!] THAT'S IT! Give a big hand to %s, consisting of %s, for reigning supreme in the %s!";
 
     String DiscordBot$AnnounceStart             = "@here Let the games begin!";
     String DiscordBot$GoodbyeMessage            = "Until next time, take it easy!";
     String DiscordBot$TeamWipe                  = "RIP that team! D:\nThere are now %s teams left";
-    String DiscordBot$TrainerWipe               = "RIP that trainer... As they died preemptively, their team has been split; all Pokémon in the team were released";
+    String DiscordBot$TrainerWipe               = "RIP that trainer... As they died preemptively, their team won't be growing anymore!";
     String DiscordBot$WelcomeMessage            = "Hey Vechs, guys here!";
     String DiscordBot$Win                       = "@everyone THAT'S IT! Give a big hand to %s, consisting of %s, for reigning supreme in the %s!";
+
+    String Dragon$NotEnoughXP                   = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
+    String Dragon$RedeemedElytra                = ChatColor.DARK_GREEN + "[!] Redeemed elytra!";
+
+    String Electric$Paralysis                   = ChatColor.DARK_GREEN + "[!] You have been paralyzed!";
 
     String EMA$EpisodeEnd                       = ChatColor.GOLD + "[!] There's that. Another episode down." + ChatColor.ITALIC + " (end of EP%s)";
     String EMA$GentlemenRuleEnd                 = ChatColor.DARK_RED + "[!] The pact has crumbled. Combat is now enabled." + ChatColor.RESET;
@@ -47,6 +59,12 @@ public interface StringLib {
     String PlayerManager$RegisteredOther        = ChatColor.RED + "[!] You just registered " + ChatColor.BOLD + "%s" + ChatColor.RED + " into playing this game.";
     String PlayerManager$RegisteredSelf         = ChatColor.RED + "[!] You just registered yourself for the upcoming match.";
     String PlayerManager$RegisterFail           = ChatColor.RED + "[!] You failed to register " + ChatColor.BOLD + "%s" + ChatColor.RED + " as they couldn't be found.";
+
+    String PokeballDetector$CaughtVictim        = ChatColor.RED + "[!] You have been caught by %s!";
+    String PokeballDetector$CaughtThrower       = ChatColor.RED + "[!] You just caught a wild %s!";
+    String PokeballDetector$NotATrainer         = ChatColor.RED + "[!] Only trainers can catch Pokémon for the team!";
+    String PokeballDetector$TargetOnTeamAlready = ChatColor.RED + "[!] The player you hit was already on a team!";
+    String PokeballDetector$TeamAlreadyFull     = ChatColor.RED + "[!] Your team is already full!";
 
     String StartUHC$GameUnderway                = ChatColor.DARK_RED + "[!] Game is already underway!";
     String StartUHC$NoParticipants              = ChatColor.DARK_RED + "[!] No volunteers to start the game with!";

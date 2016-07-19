@@ -5,13 +5,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import st.photonbur.UHC.Nuzlocke.Commands.*;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
+import st.photonbur.UHC.Nuzlocke.Entities.Types.Dragon;
 import st.photonbur.UHC.Nuzlocke.Game.GameManager;
 import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
 import st.photonbur.UHC.Nuzlocke.Game.TeamManager;
-import st.photonbur.UHC.Nuzlocke.Listeners.ChatListener;
-import st.photonbur.UHC.Nuzlocke.Listeners.DeathListener;
-import st.photonbur.UHC.Nuzlocke.Listeners.PlayerConnectListener;
+import st.photonbur.UHC.Nuzlocke.Listeners.*;
 import st.photonbur.UHC.Nuzlocke.Tasks.TaskManager;
 
 import java.util.logging.Level;
@@ -32,6 +31,7 @@ public class Nuzlocke extends JavaPlugin {
     private void loadCommands() {
         getCommand("deregister").setExecutor(new DeregisterPlayer(this));
         getCommand("list").setExecutor(new ListPlayers(this));
+        getCommand("redeem").setExecutor(new Dragon(this));
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
         getCommand("stopMatch").setExecutor(new StopUHC(this));
@@ -41,7 +41,7 @@ public class Nuzlocke extends JavaPlugin {
      * Links classes to commands
      * @param ls A list of variable length, containing listeners to be registered to the plugin
      */
-    private void loadListeners(Listener... ls) {
+    public void loadListeners(Listener... ls) {
         for(Listener l: ls) {
             Bukkit.getPluginManager().registerEvents(l, this);
         }
@@ -63,8 +63,10 @@ public class Nuzlocke extends JavaPlugin {
         loadCommands();
         loadListeners(
             new ChatListener(this),
+            new DamageManager(this),
             new DeathListener(this),
-            new PlayerConnectListener(this)
+            new PlayerConnectListener(this),
+            new PokeballDetector(this)
         );
 
         Bukkit.getOnlinePlayers().stream().forEach(p -> playerManager.registerPlayer(p.getName()));

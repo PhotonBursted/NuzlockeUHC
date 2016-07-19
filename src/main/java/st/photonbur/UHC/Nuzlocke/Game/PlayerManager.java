@@ -186,12 +186,15 @@ public class PlayerManager {
 
     private void substitutePlayer(String name, Role newRole, String pc) {
         if(pc != null) {
+            Pokemon.Type pt = null;
+            if(pc.equals("Pokemon")) pt = getPlayer(name).getType();
             if (players.stream().anyMatch(p -> p.getName().equals(name))) {
                 removePlayer(name);
             }
+            nuz.getLogger().info("Trying to replace "+ name +" of type "+ pc);
             switch (pc) {
                 case "Pokemon":
-                    addPlayer(new Pokemon(name, newRole, getPlayer(name).getType()));
+                    addPlayer(new Pokemon(name, newRole, pt));
                     break;
                 case "Trainer":
                     addPlayer(new Trainer(name, newRole));

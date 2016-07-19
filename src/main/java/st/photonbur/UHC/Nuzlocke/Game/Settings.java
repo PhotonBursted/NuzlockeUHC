@@ -12,6 +12,7 @@ public class Settings {
     private int gentlemenDuration;
     private String globalChatPrefix;
     private int resistanceLength;
+    private boolean seeTeammateDetails;
     private boolean spectatorSeeAll;
     private boolean spectatorGlobalTalk;
     private int teamSize;
@@ -40,6 +41,7 @@ public class Settings {
         gentlemenDuration = config.getInt("game.markers.gentlemenDuration");
         globalChatPrefix = config.getString("chat.globalPrefix");
         resistanceLength = config.getInt("game.start.resistanceLength");
+        seeTeammateDetails = config.getBoolean("chat.listPlayers.seeTeammateDetails");
         spectatorSeeAll = config.getBoolean("chat.spectator.see");
         spectatorGlobalTalk = config.getBoolean("chat.spectator.talk");
         teamSize = config.getInt("game.teamSize");
@@ -63,6 +65,7 @@ public class Settings {
     public int getGentlemenDuration() { return gentlemenDuration; }
     public String getGlobalChatPrefix() { return globalChatPrefix; }
     public int getResistanceLength() { return resistanceLength;}
+    public boolean doSeeTeammateDetails() { return seeTeammateDetails; }
     public boolean doSpectatorSeeAll() { return spectatorSeeAll; }
     public boolean doSpectatorGlobalTalk() { return spectatorGlobalTalk; }
     public int getTeamSize() { return teamSize; }

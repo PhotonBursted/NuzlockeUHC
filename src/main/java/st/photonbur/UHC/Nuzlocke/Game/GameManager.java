@@ -1,5 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Game;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -9,10 +10,13 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
+import st.photonbur.UHC.Nuzlocke.Entities.Types.EffectManager;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class GameManager {
     private boolean gameInProgress = false;
+    private boolean truceActive = true;
+    private EffectManager effectManager;
     private final Nuzlocke nuz;
     private final Scoreboard scoreboard;
     private final Settings settings;
@@ -20,6 +24,8 @@ public class GameManager {
 
     public GameManager(Nuzlocke nuz) {
         this.nuz = nuz;
+
+        effectManager = new EffectManager(nuz);
 
         settings = new Settings(nuz.getConfig());
         settings.loadSettings();
@@ -35,7 +41,10 @@ public class GameManager {
         nuz.getTaskManager().getWB().reset();
         nuz.getTaskManager().cancelAll();
         nuz.getTeamManager().getTeams().clear();
+        Bukkit.getOnlinePlayers().forEach(p -> p.setMaxHealth(20d));
     }
+
+    public EffectManager getEffectManager() { return effectManager; }
 
     public World getOverworld() {
         return overworld;
@@ -67,20 +76,22 @@ public class GameManager {
         return gameInProgress;
     }
 
+    public boolean isTruceActive() { return truceActive; }
+
     private void preparePlayers() {
         nuz.getPlayerManager().removeClasses();
         for(Player player: nuz.getServer().getOnlinePlayers()) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 10, 10, true));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1, 10, true));
             player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, 20, true));
         }
     }
 
     private void regulatePvP() {
-        overworld.setPVP(false);
+        truceActive = true;
         new BukkitRunnable() {
             @Override
             public void run() {
-                overworld.setPVP(true);
+                truceActive = false;
             }
         }.runTaskLater(nuz, getSettings().getCountDownLength() * 20L + getSettings().getGentlemenDuration() * 60L * 20L);
     }
@@ -99,6 +110,7 @@ public class GameManager {
 
     public void startGame() {
         gameInProgress = true;
+        getEffectManager().giveEffects();
 
         setPlayerEffects();
     }

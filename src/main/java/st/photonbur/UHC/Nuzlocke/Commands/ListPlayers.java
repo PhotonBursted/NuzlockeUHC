@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Player;
+import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
@@ -52,17 +53,27 @@ public class ListPlayers implements CommandExecutor {
 
             // Decide whether or not to show specifics per player (Pokemon.Type for example)
             if(nuz.getGameManager().isGameInProgress() && nuz.getPlayerManager().getPlayer(sender.getName()).getRole() == Role.SPECTATOR) {
-                sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, true));
+                sender.sendMessage(listPlayersByRole(sender, Role.PARTICIPANT, true));
             } else {
-                sender.sendMessage(listPlayersByRole(Role.PARTICIPANT, false));
+                sender.sendMessage(listPlayersByRole(sender, Role.PARTICIPANT, false));
             }
 
             // List all spectators
             sender.sendMessage(StringLib.ListPlayers$Spectators);
-            sender.sendMessage(listPlayersByRole(Role.SPECTATOR, false));
+            sender.sendMessage(listPlayersByRole(sender, Role.SPECTATOR, false));
         }
 
         return true;
+    }
+
+    private String details(Player p, Team team) {
+        String message = "";
+        if(p instanceof Pokemon) {
+            message += p.getType().getColor() + p.getType().getName();
+        } else {
+            message += (team == null ? ChatColor.RESET : team.getPrefix()) + "[" + p.getClass().getSimpleName() + "]";
+        }
+        return message + " ";
     }
 
     /**
@@ -71,7 +82,7 @@ public class ListPlayers implements CommandExecutor {
      * @param showDetails Whether or not to show specifics of the player
      * @return The message to show
      */
-    private String listPlayersByRole(Role role, boolean showDetails) {
+    private String listPlayersByRole(CommandSender sender, Role role, boolean showDetails) {
         String message = "";
         final ArrayList<String> playerList = new ArrayList<>();
         if (nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> p.getRole() == role)) {
@@ -85,14 +96,9 @@ public class ListPlayers implements CommandExecutor {
                     Team team = nuz.getGameManager().getScoreboard().getEntryTeam(playerList.get(i+j));
                     Player p = nuz.getPlayerManager().getPlayer(playerList.get(i+j));
 
-                    if(showDetails) {
-                        if(p.getClass().getSimpleName().equals("Pokemon")) {
-                            message += p.getType().getColor() + p.getType().getName();
-                        } else {
-                            message += (team == null ? ChatColor.RESET : team.getPrefix()) + "[" + p.getClass().getSimpleName() + "]";
-                        }
-                        message += " ";
-                    }
+                    if(showDetails) message += details(p, team);
+                    if(!showDetails && team != null) if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) != null)
+                        if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()).equals(team)) message += details(p, team);
                     message += (team == null ? ChatColor.RESET : team.getPrefix()) + playerList.get(i+j);
 
                     if(i+j < playerList.size()-1) {

@@ -55,6 +55,16 @@ public class TeamManager {
         return map;
     }
 
+    public void addPlayer(String playerName, String teamName) {
+        st.photonbur.UHC.Nuzlocke.Entities.Team target = getTeams().stream().filter(t -> t.contains(teamName)).findFirst().orElse(null);
+        if(target != null) {
+            target.addPlayer(nuz.getPlayerManager().getPlayer(playerName));
+            nuz.getGameManager().getScoreboard().getTeams().stream()
+                    .filter(t -> t.getEntries().contains(teamName))
+                    .findFirst().get().addEntry(playerName);
+        }
+    }
+
     public void createTeam(String playerName) {
         final String[] teamName = new String[1];
         do {

@@ -22,14 +22,16 @@ class GameCountdown extends BukkitRunnable {
 
         if(counter == nuz.getSettings().getCountDownLength()) {
             nuz.getServer().broadcastMessage(String.format(StringLib.GCD$CountdownStart, counter));
-        }
-        else if(counter > 0 && counter < nuz.getSettings().getCountDownLength()) {
+        } else if(counter > 0 && counter < nuz.getSettings().getCountDownLength()) {
             nuz.getServer().broadcastMessage(String.format(StringLib.GCD$CountdownProgress, counter));
-        }
-        else {
+        } else {
             this.cancel();
             nuz.getServer().broadcastMessage(StringLib.GCD$CountdownEnd);
             nuz.getGameManager().startGame();
+        }
+        if(counter == 1) {
+            nuz.getTaskManager().getLauncher().startEventMarkers();
+            nuz.getTaskManager().getLauncher().startScoreboardUpdater();
         }
 
         counter--;

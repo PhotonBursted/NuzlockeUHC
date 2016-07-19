@@ -15,7 +15,7 @@ public class Team {
         this.nuz = nuz;
     }
 
-    private void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         members.add(player);
     }
 

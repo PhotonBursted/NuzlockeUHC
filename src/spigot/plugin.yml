@@ -13,6 +13,9 @@ commands:
   list:
     description: Lists all players.
     permission: Nuzlocke.startMatch
+  redeem:
+    description: Redeems reward when conditions are met
+    permission: Nuzlocke.startMatch
   register:
     description: Registers a player into playing the match.
     permission: Nuzlocke.startMatch

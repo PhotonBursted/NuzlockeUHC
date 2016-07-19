@@ -1,8 +1,14 @@
 chat:
   globalPrefix: "|"
+  listPlayers:
+    seeTeammateDetails: true
+
   spectator:
     see: true
     talk: true
+
+death:
+  delay: 10
 
 eventName: "Vexian UHC S4"
 
@@ -36,6 +42,3 @@ game:
   start:
     countDownLength: 10
     resistanceLength: 20
-
-death:
-  delay: 10
