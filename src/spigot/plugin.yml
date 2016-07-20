@@ -13,7 +13,7 @@ commands:
   list:
     description: Lists all players.
     permission: Nuzlocke.startMatch
-  redeem:
+  getSpecial:
     description: Redeems reward when conditions are met
     permission: Nuzlocke.startMatch
   register:

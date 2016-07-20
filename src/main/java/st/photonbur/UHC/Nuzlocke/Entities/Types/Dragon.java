@@ -3,8 +3,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Types;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +12,7 @@ import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
-public class Dragon extends Type implements CommandExecutor {
+public class Dragon extends Type {
     //Buff: At 25 levels, get access to /redeem to get an elytra
     //Debuff: Random freeze when in cold biome
     public Dragon(Nuzlocke nuz) {
@@ -22,7 +20,22 @@ public class Dragon extends Type implements CommandExecutor {
     }
 
     @Override
-    void continuousEffect() {
+    void giveInitialEffects() { }
+
+    @Override
+    boolean hasEvent() { return false; }
+
+    @Override
+    public void redeem(CommandSender sender, int levelsIn) {
+        if(((Player) sender).getLevel() >= 25) {
+            sender.sendMessage(StringLib.Dragon$RedeemedElytra);
+            ((Player) sender).getInventory().addItem(new ItemStack(Material.ELYTRA));
+            ((Player) sender).giveExpLevels(-25);
+        } else sender.sendMessage(StringLib.Dragon$NotEnoughXP);
+    }
+
+    @Override
+    void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -56,27 +69,5 @@ public class Dragon extends Type implements CommandExecutor {
                         });
             }
         }.runTaskTimer(nuz, 0L, 10 * 20L);
-    }
-
-    @Override
-    boolean hasEvent() { return false; }
-
-    @Override
-    void initialEffects() { }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
-        if(command.getName().equalsIgnoreCase("redeem")) {
-            st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(sender.getName());
-            if(p.getRole() == Role.PARTICIPANT)
-                if(p instanceof Pokemon)
-                    if(p.getType() == Pokemon.Type.DRAGON)
-                        if(((Player) sender).getLevel() >= 25) {
-                            sender.sendMessage(StringLib.Dragon$RedeemedElytra);
-                            ((Player) sender).getInventory().addItem(new ItemStack(Material.ELYTRA));
-                            ((Player) sender).giveExpLevels(-25);
-                        } else sender.sendMessage(StringLib.Dragon$NotEnoughXP);
-        }
-        return true;
     }
 }

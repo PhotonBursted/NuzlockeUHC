@@ -60,11 +60,21 @@ public interface StringLib {
     String PlayerManager$RegisteredSelf         = ChatColor.RED + "[!] You just registered yourself for the upcoming match.";
     String PlayerManager$RegisterFail           = ChatColor.RED + "[!] You failed to register " + ChatColor.BOLD + "%s" + ChatColor.RED + " as they couldn't be found.";
 
+    String Poison$AlreadyRedeemed               = ChatColor.DARK_GREEN + "[!] You've already redeemed your free potion!";
+    String Poison$NotEnoughXP                   = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
+    String Poison$RedeemedPotion                = ChatColor.DARK_GREEN + "[!] Redeemed your free poison potion!";
+
     String PokeballDetector$CaughtVictim        = ChatColor.RED + "[!] You have been caught by %s!";
     String PokeballDetector$CaughtThrower       = ChatColor.RED + "[!] You just caught a wild %s!";
     String PokeballDetector$NotATrainer         = ChatColor.RED + "[!] Only trainers can catch Pokémon for the team!";
     String PokeballDetector$TargetOnTeamAlready = ChatColor.RED + "[!] The player you hit was already on a team!";
     String PokeballDetector$TeamAlreadyFull     = ChatColor.RED + "[!] Your team is already full!";
+
+    String Psychic$NoPlayersInRange             = ChatColor.DARK_GREEN + "[!] There weren't any players close by!";
+    String Psychic$NotEnoughXP                  = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
+    String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Pokémon within %s blocks:";
+
+    String Redeem$InvalidArgs                   = ChatColor.RED + "[!] This redeem operation needs at least 1 argument!";
 
     String StartUHC$GameUnderway                = ChatColor.DARK_RED + "[!] Game is already underway!";
     String StartUHC$NoParticipants              = ChatColor.DARK_RED + "[!] No volunteers to start the game with!";

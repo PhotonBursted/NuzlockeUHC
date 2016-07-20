@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import st.photonbur.UHC.Nuzlocke.Commands.*;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
-import st.photonbur.UHC.Nuzlocke.Entities.Types.Dragon;
+import st.photonbur.UHC.Nuzlocke.Entities.Types.EffectManager;
 import st.photonbur.UHC.Nuzlocke.Game.GameManager;
 import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
@@ -20,6 +20,7 @@ import java.util.logging.Level;
  */
 public class Nuzlocke extends JavaPlugin {
     private DiscordBot discordBot;
+    private EffectManager effectManager;
     private GameManager gameManager;
     private PlayerManager playerManager;
     private TaskManager taskManager;
@@ -30,8 +31,8 @@ public class Nuzlocke extends JavaPlugin {
      */
     private void loadCommands() {
         getCommand("deregister").setExecutor(new DeregisterPlayer(this));
+        getCommand("getSpecial").setExecutor(new Redeem(this));
         getCommand("list").setExecutor(new ListPlayers(this));
-        getCommand("redeem").setExecutor(new Dragon(this));
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
         getCommand("stopMatch").setExecutor(new StopUHC(this));
@@ -55,6 +56,7 @@ public class Nuzlocke extends JavaPlugin {
         getLogger().log(Level.INFO, "Your nuz seems locked...");
 
         discordBot = new DiscordBot(this);
+        effectManager = new EffectManager(this);
         gameManager = new GameManager(this);
         playerManager = new PlayerManager(this);
         taskManager = new TaskManager(this);
@@ -85,6 +87,7 @@ public class Nuzlocke extends JavaPlugin {
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
+    public EffectManager getEffectManager() { return effectManager; }
     public GameManager getGameManager() {
         return gameManager;
     }

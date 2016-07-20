@@ -2,8 +2,10 @@ package st.photonbur.UHC.Nuzlocke.Entities.Types;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
@@ -28,20 +30,30 @@ public class Dark extends Type implements Listener {
         super(nuz);
     }
 
+    @EventHandler
     public void onPoke(EntityDamageByEntityEvent e) {
         if(e.getEntityType() == EntityType.PLAYER && e.getDamager().getType() == EntityType.PLAYER) {
             if(nuz.getPlayerManager().getPlayer((Player) e.getDamager()) != null)
                 if(nuz.getPlayerManager().getPlayer((Player) e.getDamager()) instanceof Pokemon)
                     if(nuz.getPlayerManager().getPlayer((Player) e.getDamager()).getType() == Pokemon.Type.DARK)
                         if(r.nextDouble() <= .4) {
-                            ((Player) e.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1, false, true));
+                            ((Player) e.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0, true));
                             e.getEntity().sendMessage(StringLib.DarkType$PokeEyes);
                         }
         }
     }
 
     @Override
-    void continuousEffect() {
+    void giveInitialEffects() { }
+
+    @Override
+    boolean hasEvent() { return true; }
+
+    @Override
+    public void redeem(CommandSender sender, int levelsIn) { }
+
+    @Override
+    void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -57,8 +69,11 @@ public class Dark extends Type implements Listener {
                             if(light.get(player) >= 750) {
                                 if(!dizzy.getOrDefault(player, false)) player.sendMessage(StringLib.DarkType$Dizzy);
                                 dizzy.replace(player, true);
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 100, 1));
-                            } else if(dizzy.containsKey(player)) dizzy.replace(player, false); else dizzy.put(player, true);
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Integer.MAX_VALUE, 1, true, false));
+                            } else if(dizzy.containsKey(player)) {
+                                dizzy.replace(player, false);
+                                player.removePotionEffect(PotionEffectType.CONFUSION);
+                            } else dizzy.put(player, false);
                         });
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
@@ -70,12 +85,6 @@ public class Dark extends Type implements Listener {
                     light.clear();
                 }
             }
-        }.runTaskTimer(nuz, 0L, 20L);
+        }.runTaskTimer(nuz, 0, 20);
     }
-
-    @Override
-    boolean hasEvent() { return true; }
-
-    @Override
-    void initialEffects() { }
 }

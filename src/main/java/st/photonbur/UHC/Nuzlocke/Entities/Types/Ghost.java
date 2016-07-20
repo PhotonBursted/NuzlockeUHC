@@ -1,22 +1,18 @@
 package st.photonbur.UHC.Nuzlocke.Entities.Types;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-import java.util.Random;
-
-public class Flying extends Type {
-    Random r = new Random();
-
-    //Buff: Feathers. Lots of em.
-    //Debuff: They fall randomly on the ground, as entities. Full inventory/not paying attention might lead to breadcrumb trail
-    public Flying(Nuzlocke nuz) {
+public class Ghost extends Type {
+    //Buff: Invisibility when above 9 hunger
+    public Ghost(Nuzlocke nuz) {
         super(nuz);
     }
 
@@ -24,9 +20,7 @@ public class Flying extends Type {
     void giveInitialEffects() { }
 
     @Override
-    boolean hasEvent() {
-        return false;
-    }
+    boolean hasEvent() { return false; }
 
     @Override
     public void redeem(CommandSender sender, int levelsIn) { }
@@ -39,19 +33,19 @@ public class Flying extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FLYING)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GHOST)) ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.FLYING))
+                        .filter(p -> p.getType().equals(Pokemon.Type.GHOST))
                         .forEach(p -> {
-                            if(r.nextDouble() <= 0.02) {
-                                Location l = nuz.getServer().getPlayer(p.getName()).getLocation();
-                                l.getWorld().dropItemNaturally(l, new ItemStack(Material.FEATHER, r.nextInt(3)));
-                            }
+                            Player player = Bukkit.getPlayer(p.getName());
+                            if(player.getFoodLevel() > 18)
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
+                            else player.removePotionEffect(PotionEffectType.INVISIBILITY);
                         });
             }
-        }.runTaskTimer(nuz, 0L, 300L);
+        }.runTaskTimer(nuz, 0L, 20L);
     }
 }

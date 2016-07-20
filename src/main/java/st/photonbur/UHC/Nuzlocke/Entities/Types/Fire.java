@@ -5,6 +5,7 @@ import org.bukkit.CoalType;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,10 +43,20 @@ public class Fire extends Type implements Listener {
     }
 
     @Override
-    void continuousEffect() {
+    void giveInitialEffects() { }
+
+    @Override
+    boolean hasEvent() { return true; }
+
+    @Override
+    public void redeem(CommandSender sender, int levelsIn) { }
+
+    @Override
+    void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
+                nuz.getLogger().info("Heartbeat "+ this.getClass().getSimpleName());
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
@@ -68,14 +79,6 @@ public class Fire extends Type implements Listener {
                                 }.runTaskLater(nuz, 40L);
                         });
             }
-        }.runTaskTimer(nuz, 0L, 20L);
-    }
-
-    @Override
-    boolean hasEvent() { return true; }
-
-    @Override
-    void initialEffects() {
-
+        }.runTaskTimer(nuz, 0, 20);
     }
 }

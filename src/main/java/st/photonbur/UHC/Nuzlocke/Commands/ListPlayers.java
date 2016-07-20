@@ -66,7 +66,7 @@ public class ListPlayers implements CommandExecutor {
         return true;
     }
 
-    private String details(Player p, Team team) {
+    private static String details(Player p, Team team) {
         String message = "";
         if(p instanceof Pokemon) {
             message += p.getType().getColor() + p.getType().getName();
@@ -74,6 +74,30 @@ public class ListPlayers implements CommandExecutor {
             message += (team == null ? ChatColor.RESET : team.getPrefix()) + "[" + p.getClass().getSimpleName() + "]";
         }
         return message + " ";
+    }
+
+    public static String formatList(ArrayList<String> playerList, boolean showDetails, CommandSender sender, Nuzlocke nuz) {
+        String message = "";
+
+        for(int i=0; i<playerList.size(); i+=3) {
+            List<String> segment = playerList.subList(i, Math.min(i+3, playerList.size()));
+            message += i == 0 ? "- " : "\n   ";
+            for(int j=0; j<segment.size(); j++) {
+                Team team = nuz.getGameManager().getScoreboard().getEntryTeam(playerList.get(i+j));
+                Player p = nuz.getPlayerManager().getPlayer(playerList.get(i+j));
+
+                if(showDetails) message += details(p, team);
+                if(!showDetails && team != null) if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) != null)
+                    if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()).equals(team)) message += details(p, team);
+                message += (team == null ? ChatColor.RESET : team.getPrefix()) + playerList.get(i+j);
+
+                if(i+j < playerList.size()-1) {
+                    message += ChatColor.RESET + ", ";
+                }
+            }
+        }
+
+        return message;
     }
 
     /**
@@ -89,23 +113,7 @@ public class ListPlayers implements CommandExecutor {
             playerList.addAll(teamedPlayers(role));
             playerList.addAll(teamlessPlayers(role));
 
-            for(int i=0; i<playerList.size(); i+=3) {
-                List<String> segment = playerList.subList(i, Math.min(i+3, playerList.size()));
-                message += i == 0 ? "- " : "\n   ";
-                for(int j=0; j<segment.size(); j++) {
-                    Team team = nuz.getGameManager().getScoreboard().getEntryTeam(playerList.get(i+j));
-                    Player p = nuz.getPlayerManager().getPlayer(playerList.get(i+j));
-
-                    if(showDetails) message += details(p, team);
-                    if(!showDetails && team != null) if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) != null)
-                        if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()).equals(team)) message += details(p, team);
-                    message += (team == null ? ChatColor.RESET : team.getPrefix()) + playerList.get(i+j);
-
-                    if(i+j < playerList.size()-1) {
-                        message += ChatColor.RESET + ", ";
-                    }
-                }
-            }
+            message += formatList(playerList, showDetails, sender, nuz);
         } else {
             message += StringLib.ListPlayers$NoPlayersFound;
         }

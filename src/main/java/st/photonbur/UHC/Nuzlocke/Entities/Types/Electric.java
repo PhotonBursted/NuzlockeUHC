@@ -1,5 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Entities.Types;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,10 +46,16 @@ public class Electric extends Type implements Listener {
     }
 
     @Override
-    void continuousEffect() { }
+    void giveInitialEffects() { }
 
     @Override
     boolean hasEvent() { return true; }
+
+    @Override
+    public void redeem(CommandSender sender, int levelsIn) { }
+
+    @Override
+    void runContinuousEffect() { }
 
     public void identifyPlayers(EntityDamageByEntityEvent e) {
         if(e.getEntity().getType() == EntityType.PLAYER) {
@@ -59,9 +66,6 @@ public class Electric extends Type implements Listener {
                 if(((Projectile) e.getDamager()).getShooter() instanceof LivingEntity) damager = (Player) ((Projectile) e.getDamager()).getShooter();
         }
     }
-
-    @Override
-    void initialEffects() { }
 
     void paralyze(Entity... entities) {
         ArrayList<LivingEntity> toParalyze = new ArrayList<>();

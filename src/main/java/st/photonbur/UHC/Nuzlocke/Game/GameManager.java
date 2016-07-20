@@ -10,13 +10,11 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
-import st.photonbur.UHC.Nuzlocke.Entities.Types.EffectManager;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class GameManager {
     private boolean gameInProgress = false;
     private boolean truceActive = true;
-    private EffectManager effectManager;
     private final Nuzlocke nuz;
     private final Scoreboard scoreboard;
     private final Settings settings;
@@ -24,8 +22,6 @@ public class GameManager {
 
     public GameManager(Nuzlocke nuz) {
         this.nuz = nuz;
-
-        effectManager = new EffectManager(nuz);
 
         settings = new Settings(nuz.getConfig());
         settings.loadSettings();
@@ -41,10 +37,11 @@ public class GameManager {
         nuz.getTaskManager().getWB().reset();
         nuz.getTaskManager().cancelAll();
         nuz.getTeamManager().getTeams().clear();
-        Bukkit.getOnlinePlayers().forEach(p -> p.setMaxHealth(20d));
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            p.setMaxHealth(20d); p.setHealth(20d);
+            p.getActivePotionEffects().forEach(e -> p.removePotionEffect(e.getType()));
+        });
     }
-
-    public EffectManager getEffectManager() { return effectManager; }
 
     public World getOverworld() {
         return overworld;
@@ -110,7 +107,7 @@ public class GameManager {
 
     public void startGame() {
         gameInProgress = true;
-        getEffectManager().giveEffects();
+        nuz.getEffectManager().giveEffects();
 
         setPlayerEffects();
     }

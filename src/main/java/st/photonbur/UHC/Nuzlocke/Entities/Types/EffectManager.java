@@ -10,31 +10,33 @@ public class EffectManager {
     ArrayList<Type> allTypes = new ArrayList<>();
     Nuzlocke nuz;
 
-    Bug bug;
-    Dark drk;
-    Dragon drg;
-    Electric elc;
-    Fighting fgt;
-    Fire fir;
-    Flying fly;
+    Bug bug; Dark drk; Dragon drg; Electric elc;
+    Fighting fgt; Fire fir; Flying fly; Ghost gho;
+    Grass gra; Ground grd; Poison psn; Psychic psy;
 
     public EffectManager(Nuzlocke nuz) {
         this.nuz = nuz;
         registerTypes(bug = new Bug(nuz), drk = new Dark(nuz), drg = new Dragon(nuz), elc = new Electric(nuz),
-                      fgt = new Fighting(nuz), fir = new Fire(nuz), fly = new Flying(nuz));
+                      fgt = new Fighting(nuz), fir = new Fire(nuz), fly = new Flying(nuz), gho = new Ghost(nuz),
+                      gra = new Grass(nuz), grd = new Ground(nuz), psn = new Poison(nuz), psy = new Psychic(nuz));
     }
 
     public void giveEffects() {
-        allTypes.forEach(Type::initialEffects);
-        allTypes.forEach(Type::continuousEffect);
+        allTypes.forEach(Type::giveInitialEffects);
+        allTypes.forEach(Type::runContinuousEffect);
     }
 
     private void registerTypes(Type... types) {
         Collections.addAll(allTypes, types);
+
         ArrayList<Listener> listeners = new ArrayList<>();
         for(Type t: types) {
             if(t.hasEvent()) listeners.add(t);
         }
         nuz.loadListeners(listeners.toArray(new Listener[listeners.size()]));
     }
+
+    public Dragon getDRG() { return drg; }
+    public Poison getPSN() { return psn; }
+    public Psychic getPSY() { return psy; }
 }

@@ -2,6 +2,7 @@ package st.photonbur.UHC.Nuzlocke.Listeners;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -49,7 +50,7 @@ public class DamageManager implements Listener {
                 if (nuz.getGameManager().isTruceActive() || e.getDamager().getType() == EntityType.SNOWBALL)
                     e.setDamage(0);
                 else {
-                    Player damager = (Player) e.getDamager();
+                    Player damager = (Player) (e.getDamager() instanceof Projectile ? ((Projectile) e.getDamager()).getShooter() : e.getDamager());
                     int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
                             ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
                     int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon

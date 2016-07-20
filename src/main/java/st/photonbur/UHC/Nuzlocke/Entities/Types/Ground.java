@@ -1,6 +1,7 @@
 package st.photonbur.UHC.Nuzlocke.Entities.Types;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -10,19 +11,30 @@ import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-public class Fighting extends Type {
-    //Buff: Stronger when unarmed
-    public Fighting(Nuzlocke nuz) {
+import java.util.Set;
+
+public class Ground extends Type {
+    //Buff: Fuzt diggah.
+    //Debuff: Acrophobia
+    public Ground(Nuzlocke nuz) {
         super(nuz);
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects() {
+        nuz.getPlayerManager().getPlayers().stream()
+                .filter(p -> p.getRole() == Role.PARTICIPANT)
+                .filter(p -> p instanceof Pokemon)
+                .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
+                .forEach(p ->
+                        Bukkit.getPlayer(p.getName()).addPotionEffect(
+                                new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1, true, false)
+                        )
+                );
+    }
 
     @Override
-    boolean hasEvent() {
-        return false;
-    }
+    boolean hasEvent() { return false; }
 
     @Override
     public void redeem(CommandSender sender, int levelsIn) { }
@@ -35,25 +47,19 @@ public class Fighting extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIGHTING)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GROUND)) ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
+
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.FIGHTING))
+                        .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
-                            if(player.getInventory().getItemInMainHand().getAmount() == 0 &&
-                                    player.getInventory().getItemInOffHand().getAmount() == 0 &&
-                                    player.getFoodLevel() > 13) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
-                            } else {
-                                player.removePotionEffect(PotionEffectType.FAST_DIGGING);
-                                player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-                            }
+                            if(player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 1, true, false));
                         });
             }
-        }.runTaskTimer(nuz, 0L, 10L);
+        }.runTaskTimer(nuz, 0L, 20L);
     }
 }
