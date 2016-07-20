@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ public class Grass extends Type {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return false; }
@@ -36,7 +36,8 @@ public class Grass extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GRASS)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GRASS)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
 
                 nuz.getPlayerManager().getPlayers().stream()
@@ -47,13 +48,13 @@ public class Grass extends Type {
                             Player player = Bukkit.getPlayer(p.getName());
                             Location l = player.getLocation();
 
-                            if(l.getBlock().getType() == Material.LONG_GRASS)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
+                            if(l.getBlock().getType() == Material.DOUBLE_PLANT)
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true, false));
                             else player.removePotionEffect(PotionEffectType.INVISIBILITY);
 
                             if(l.getBlock().getType() == Material.WATER) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1, true, false));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 1, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 0, true, false));
                             } else {
                                 player.removePotionEffect(PotionEffectType.SLOW);
                                 player.removePotionEffect(PotionEffectType.ABSORPTION);

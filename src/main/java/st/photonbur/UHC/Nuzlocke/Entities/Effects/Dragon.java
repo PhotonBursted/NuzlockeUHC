@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ public class Dragon extends Type {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return false; }
@@ -42,7 +42,8 @@ public class Dragon extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DRAGON)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DRAGON)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)

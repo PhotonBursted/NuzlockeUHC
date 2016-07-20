@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
@@ -37,7 +37,7 @@ public class Electric extends Type implements Listener {
                 if(r.nextDouble() <= (10 + victim.getLevel() * 2) / 100F) paralyze(damager);
             if(d.getRole() == Role.PARTICIPANT) if(d instanceof Pokemon) if(d.getType() == Pokemon.Type.ELECTRIC)
                 if(r.nextDouble() <= (10 + damager.getLevel() * 2) / 100F) {
-                    List<Entity> nearbyEntities = victim.getNearbyEntities(5, 5, 5);
+                    List<Entity> nearbyEntities = victim.getNearbyEntities(3, 3, 3);
                     nearbyEntities.add(victim);
                     nearbyEntities.remove(damager);
                     paralyze(nearbyEntities.toArray(new Entity[nearbyEntities.size()]));
@@ -46,7 +46,7 @@ public class Electric extends Type implements Listener {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return true; }

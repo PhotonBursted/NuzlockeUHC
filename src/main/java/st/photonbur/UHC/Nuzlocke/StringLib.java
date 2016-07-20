@@ -9,8 +9,9 @@ public interface StringLib {
     String DamageManager$NotEffective           = ChatColor.GREEN + "[!] Hmm, that wasn't too effective.";
     String DamageManager$SuperEffective         = ChatColor.GREEN + "[!] Wow, you're super effective against that guy!";
 
-    String DarkType$Dizzy                       = ChatColor.DARK_GREEN + "[!] The light... it's getting too much to handle!";
-    String DarkType$PokeEyes                    = ChatColor.DARK_GREEN + "[!] Oh no, someone poked your eyes out!";
+    String Dark$Weakened                        = ChatColor.DARK_GREEN + "[!] The light... it's getting too much to handle!";
+    String Dark$PokeEyesLanded                  = ChatColor.DARK_GREEN + "[!] Finger in their sockets, like it's supposed to be.";
+    String Dark$PokeEyesVictim                  = ChatColor.DARK_GREEN + "[!] Oh no, someone poked your eyes out!";
 
     String DeathListener$DeathMove              = ChatColor.RED + "[!] You will be moved over to the spectator channel within %s seconds";
     String DeathListener$TeamWipe               = ChatColor.RED + "[!] Oh no! % has been wiped! %s teams remain...";
@@ -72,13 +73,18 @@ public interface StringLib {
 
     String Psychic$NoPlayersInRange             = ChatColor.DARK_GREEN + "[!] There weren't any players close by!";
     String Psychic$NotEnoughXP                  = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
-    String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Pokémon within %s blocks:";
+    String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Players within %s blocks of you:";
 
-    String Redeem$InvalidArgs                   = ChatColor.RED + "[!] This redeem operation needs at least 1 argument!";
+    String Redeem$InvalidArgLength              = ChatColor.RED + "[!] This redeem operation needs at least 1 argument!";
+    String Redeem$InvalidInput                  = ChatColor.RED + "[!] You ned to put in at least 5 levels!";
 
     String StartUHC$GameUnderway                = ChatColor.DARK_RED + "[!] Game is already underway!";
     String StartUHC$NoParticipants              = ChatColor.DARK_RED + "[!] No volunteers to start the game with!";
 
+    String Steel$Rusty                          = ChatColor.DARK_GREEN + "[!] You seem to be getting a little rusty!";
+
     String StopUHC$GameNotUnderway              = ChatColor.DARK_RED + "[!] There's no game running at the moment!";
     String StopUHC$Stopped                      = ChatColor.DARK_RED + "[!] The match was stopped!";
+
+    String Trainer$NotEnoughXP                  = ChatColor.DARK_GREEN + "[!] You'll need a little more XP to do that!";
 }

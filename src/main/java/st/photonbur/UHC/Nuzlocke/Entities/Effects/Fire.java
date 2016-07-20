@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.CoalType;
@@ -43,7 +43,7 @@ public class Fire extends Type implements Listener {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return true; }
@@ -56,11 +56,11 @@ public class Fire extends Type implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                nuz.getLogger().info("Heartbeat "+ this.getClass().getSimpleName());
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIRE)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIRE)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
@@ -79,6 +79,6 @@ public class Fire extends Type implements Listener {
                                 }.runTaskLater(nuz, 40L);
                         });
             }
-        }.runTaskTimer(nuz, 0, 20);
+        }.runTaskTimer(nuz, 0, 1L);
     }
 }

@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,7 +24,7 @@ public class Poison extends Type {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return false; }
@@ -38,7 +38,7 @@ public class Poison extends Type {
 
                 ItemStack potion = new ItemStack(Material.SPLASH_POTION);
                 PotionMeta potionEffects = ((PotionMeta) potion.getItemMeta());
-                potionEffects.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 200, 1, true, true), true);
+                potionEffects.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 100, 0, true, true), true);
                 potion.setItemMeta(potionEffects);
 
                 ((Player) sender).getInventory().addItem(potion);
@@ -55,7 +55,8 @@ public class Poison extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.POISON)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.POISON)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
@@ -63,8 +64,10 @@ public class Poison extends Type {
                         .filter(p -> p.getType().equals(Pokemon.Type.POISON))
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
+                            nuz.getLogger().info("For "+ player.getName() +": "+ player.getActivePotionEffects().toString());
                             PotionEffect poison = player.getActivePotionEffects().stream()
-                                    .filter(pe -> pe.getType() == PotionEffectType.POISON).findFirst().orElse(null);
+                                    .filter(effect -> effect.getType() == PotionEffectType.POISON)
+                                    .findAny().orElse(null);
                             if(poison != null) {
                                 player.addPotionEffect(
                                         new PotionEffect(PotionEffectType.CONFUSION, poison.getDuration(), 2)

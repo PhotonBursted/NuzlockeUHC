@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import st.photonbur.UHC.Nuzlocke.Commands.*;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
-import st.photonbur.UHC.Nuzlocke.Entities.Types.EffectManager;
+import st.photonbur.UHC.Nuzlocke.Entities.Effects.EffectManager;
 import st.photonbur.UHC.Nuzlocke.Game.GameManager;
 import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
 import st.photonbur.UHC.Nuzlocke.Game.Settings;
@@ -31,8 +31,8 @@ public class Nuzlocke extends JavaPlugin {
      */
     private void loadCommands() {
         getCommand("deregister").setExecutor(new DeregisterPlayer(this));
-        getCommand("getSpecial").setExecutor(new Redeem(this));
         getCommand("list").setExecutor(new ListPlayers(this));
+        getCommand("redeem").setExecutor(new Redeem(this));
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
         getCommand("stopMatch").setExecutor(new StopUHC(this));

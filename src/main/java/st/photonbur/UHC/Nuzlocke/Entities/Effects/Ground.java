@@ -1,6 +1,7 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -10,14 +11,27 @@ import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-public class Ghost extends Type {
-    //Buff: Invisibility when above 9 hunger
-    public Ghost(Nuzlocke nuz) {
+import java.util.Set;
+
+public class Ground extends Type {
+    //Buff: Fuzt diggah.
+    //Debuff: Acrophobia
+    public Ground(Nuzlocke nuz) {
         super(nuz);
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) {
+        nuz.getPlayerManager().getPlayers().stream()
+                .filter(p -> p.getRole() == Role.PARTICIPANT)
+                .filter(p -> p instanceof Pokemon)
+                .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
+                .forEach(p ->
+                        Bukkit.getPlayer(p.getName()).addPotionEffect(
+                                new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1, false, false)
+                        )
+                );
+    }
 
     @Override
     boolean hasEvent() { return false; }
@@ -33,17 +47,17 @@ public class Ghost extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GHOST)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GROUND)) ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
+
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.GHOST))
+                        .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
-                            if(player.getFoodLevel() > 18)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true, false));
-                            else player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                            if(player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 140, 0, true, false));
                         });
             }
         }.runTaskTimer(nuz, 0L, 20L);

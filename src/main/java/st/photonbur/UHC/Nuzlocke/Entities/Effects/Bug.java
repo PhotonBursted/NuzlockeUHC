@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,12 +22,15 @@ public class Bug extends Type {
     }
 
     @Override
-    void giveInitialEffects() {
+    void giveInitialEffects(boolean startup) {
         nuz.getPlayerManager().getPlayers().stream()
                 .filter(p -> p.getRole() == Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
                 .filter(p -> p.getType() == Pokemon.Type.BUG)
-                .forEach(p -> Bukkit.getPlayer(p.getName()).setMaxHealth(16d));
+                .forEach(p -> {
+                    Bukkit.getPlayer(p.getName()).setMaxHealth(16d);
+                    if(startup) Bukkit.getPlayer(p.getName()).setHealth(16d);
+                });
     }
 
     @Override
@@ -46,7 +49,8 @@ public class Bug extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.BUG)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.BUG)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)

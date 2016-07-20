@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class Fighting extends Type {
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() {
@@ -35,7 +35,8 @@ public class Fighting extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIGHTING)) ||
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIGHTING)) &&
+                        nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
@@ -46,8 +47,8 @@ public class Fighting extends Type {
                             if(player.getInventory().getItemInMainHand().getAmount() == 0 &&
                                     player.getInventory().getItemInOffHand().getAmount() == 0 &&
                                     player.getFoodLevel() > 13) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
                             } else {
                                 player.removePotionEffect(PotionEffectType.FAST_DIGGING);
                                 player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);

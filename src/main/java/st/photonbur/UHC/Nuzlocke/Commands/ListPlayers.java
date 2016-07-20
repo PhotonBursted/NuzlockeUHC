@@ -123,10 +123,12 @@ public class ListPlayers implements CommandExecutor {
 
     private List<String> teamedPlayers(Role role) {
         List<String> playerList = new ArrayList<>();
-        nuz.getGameManager().getScoreboard().getTeams().stream().forEach(t ->
-                playerList.addAll(
-                        t.getEntries().stream().filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == role).sorted().collect(Collectors.toList())
-                )
+        nuz.getGameManager().getScoreboard().getTeams().stream().forEach(t -> {
+                    List<String> entries = t.getEntries().stream().filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == role)
+                            .collect(Collectors.toList());
+                    entries.sort(String.CASE_INSENSITIVE_ORDER);
+                    playerList.addAll(entries);
+                }
         );
         return playerList;
     }
@@ -138,7 +140,7 @@ public class ListPlayers implements CommandExecutor {
                 .collect(Collectors.toList());
         List<String> teamlessNames = new ArrayList<>();
 
-        teamlessPlayers.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        teamlessPlayers.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         teamlessPlayers.forEach(p -> teamlessNames.add(p.getName()));
         return teamlessNames;
     }

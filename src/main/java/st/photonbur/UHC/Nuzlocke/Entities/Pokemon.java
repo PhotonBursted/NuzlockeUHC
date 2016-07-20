@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 public class Pokemon extends Player {
     public enum Type {
-        //NORMAL("[NRM]", ChatColor.DARK_GRAY, 1),
+        NORMAL("[NRM]", ChatColor.DARK_GRAY, 1),
         FIRE("[FIR]", ChatColor.GOLD, 2),
         //WATER("[WTR]", ChatColor.BLUE, 3),
         ELECTRIC("[ELC]", ChatColor.YELLOW, 4),
@@ -19,8 +19,8 @@ public class Pokemon extends Player {
         //ROCK("[RCK]", ChatColor.DARK_RED, 13),
         GHOST("[GHO]", ChatColor.DARK_PURPLE, 14),
         DRAGON("[DRG]", ChatColor.DARK_BLUE, 15),
-        DARK("[DRK]", ChatColor.BLACK, 16);
-        //STEEL("[STL]", ChatColor.GRAY, 17),
+        DARK("[DRK]", ChatColor.BLACK, 16),
+        STEEL("[STL]", ChatColor.GRAY, 17);
         //FAIRY("[FAI]", ChatColor.LIGHT_PURPLE, 18);
 
         private final ChatColor color;

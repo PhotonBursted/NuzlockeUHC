@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Entities.Types;
+package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class Dark extends Type implements Listener {
-    HashMap<Player, Integer> light = new HashMap<>();
-    HashMap<Player, Boolean> dizzy = new HashMap<>();
+    HashMap<Player, Double> light = new HashMap<>();
+    HashMap<Player, Boolean> weak = new HashMap<>();
     Random r = new Random();
 
     //Buff: Pokey eyes! Chance to blind an opponent when attacking
@@ -38,13 +38,14 @@ public class Dark extends Type implements Listener {
                     if(nuz.getPlayerManager().getPlayer((Player) e.getDamager()).getType() == Pokemon.Type.DARK)
                         if(r.nextDouble() <= .4) {
                             ((Player) e.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0, true));
-                            e.getEntity().sendMessage(StringLib.DarkType$PokeEyes);
+                            e.getDamager().sendMessage(StringLib.Dark$PokeEyesLanded);
+                            e.getEntity().sendMessage(StringLib.Dark$PokeEyesVictim);
                         }
         }
     }
 
     @Override
-    void giveInitialEffects() { }
+    void giveInitialEffects(boolean startup) { }
 
     @Override
     boolean hasEvent() { return true; }
@@ -57,6 +58,16 @@ public class Dark extends Type implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if(nuz.getPlayerManager().getPlayers().stream()
+                        .filter(p -> p.getRole() == Role.PARTICIPANT)
+                        .filter(p -> p instanceof Pokemon)
+                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DARK)) &&
+                        nuz.getGameManager().isGameInProgress() ||
+                        !nuz.getGameManager().isGameInProgress()) {
+                    this.cancel();
+                    weak.clear();
+                    light.clear();
+                }
                 nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
@@ -64,26 +75,18 @@ public class Dark extends Type implements Listener {
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             Location l = player.getLocation();
-                            if(light.containsKey(player)) light.replace(player, Math.min(Math.max(-300, light.get(player) + l.getBlock().getLightLevel() - 10), 1200)); else light.put(player, 0);
+                            if(light.containsKey(player)) light.replace(player, Math.min(Math.max(-600, light.get(player) + l.getBlock().getLightLevel() - 12), 2000)); else light.put(player, 0d);
 
-                            if(light.get(player) >= 750) {
-                                if(!dizzy.getOrDefault(player, false)) player.sendMessage(StringLib.DarkType$Dizzy);
-                                dizzy.replace(player, true);
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Integer.MAX_VALUE, 1, true, false));
-                            } else if(dizzy.containsKey(player)) {
-                                dizzy.replace(player, false);
-                                player.removePotionEffect(PotionEffectType.CONFUSION);
-                            } else dizzy.put(player, false);
+                            if(light.get(player) >= 1750) {
+                                if(!weak.getOrDefault(player, false)) player.sendMessage(StringLib.Dark$Weakened);
+                                weak.replace(player, true);
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false));
+                            } else if(weak.containsKey(player)) {
+                                weak.replace(player, false);
+                                player.removePotionEffect(PotionEffectType.WEAKNESS);
+                            } else weak.put(player, false);
                         });
-                if(nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DARK)) ||
-                        !nuz.getGameManager().isGameInProgress()) {
-                    this.cancel();
-                    dizzy.clear();
-                    light.clear();
-                }
+                nuz.getLogger().info("Heartbeat Dark");
             }
         }.runTaskTimer(nuz, 0, 20);
     }
