@@ -40,6 +40,8 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
             episodeCounter++;
         }
 
+        if(time == nuz.getSettings().getEternalDaylight() * 60 * 20) nuz.getServer().broadcastMessage(StringLib.EMA$EternalDaylight);
+
         double wbSize = nuz.getGameManager().getOverworld().getWorldBorder().getSize();
 
         if(nuz.getSettings().isWbShrinkEnabled() &&

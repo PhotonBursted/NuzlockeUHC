@@ -3,7 +3,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -16,8 +15,8 @@ import st.photonbur.UHC.Nuzlocke.StringLib;
 import java.util.HashMap;
 
 public class Water extends Type {
-    HashMap<Player, Double> water = new HashMap<>();
-    HashMap<Player, Boolean> weak = new HashMap<>();
+    private final HashMap<Player, Double> water = new HashMap<>();
+    private final HashMap<Player, Boolean> weak = new HashMap<>();
 
     public Water(Nuzlocke nuz) {
         super(nuz);
@@ -37,9 +36,6 @@ public class Water extends Type {
 
     @Override
     boolean hasEvent() { return false; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {
@@ -62,8 +58,8 @@ public class Water extends Type {
 
                             if(l.getBlock().getType() == Material.WATER || l.getBlock().getType() == Material.STATIONARY_WATER ||
                                     (l.getBlockY() >= l.getWorld().getHighestBlockYAt(l.getBlockX(), l.getBlockZ()) && l.getWorld().hasStorm())) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, false, false));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, false, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
                             } else {
                                 player.removePotionEffect(PotionEffectType.FAST_DIGGING);
                                 player.removePotionEffect(PotionEffectType.SPEED);
@@ -78,7 +74,7 @@ public class Water extends Type {
                             if (water.get(player) >= 1750) {
                                 if (!weak.getOrDefault(player, false)) player.sendMessage(StringLib.Water$Dehydrated);
                                 weak.replace(player, true);
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0));
                             } else if (weak.containsKey(player)) {
                                 weak.replace(player, false);
                                 player.removePotionEffect(PotionEffectType.HUNGER);

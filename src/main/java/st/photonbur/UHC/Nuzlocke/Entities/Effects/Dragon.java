@@ -15,7 +15,7 @@ import st.photonbur.UHC.Nuzlocke.StringLib;
 import java.util.Random;
 
 public class Dragon extends Type {
-    Random r;
+    private Random r = new Random();
 
     //Buff: At 25 levels, get access to /redeem to get an elytra
     //Debuff: Random freeze when in cold biome
@@ -29,7 +29,6 @@ public class Dragon extends Type {
     @Override
     boolean hasEvent() { return false; }
 
-    @Override
     public void redeem(CommandSender sender, int levelsIn) {
         if(((Player) sender).getLevel() >= 25) {
             sender.sendMessage(StringLib.Dragon$RedeemedElytra);

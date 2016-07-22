@@ -19,7 +19,7 @@ public class Pokemon extends Player {
         FLYING("[FLY]", ChatColor.WHITE, 10, StringLib.GiveInfo$Flying),
         PSYCHIC("[PSY]", ChatColor.LIGHT_PURPLE, 11, StringLib.GiveInfo$Psychic),
         BUG("[BUG]", ChatColor.DARK_GREEN, 12, StringLib.GiveInfo$Bug),
-        //ROCK("[RCK]", ChatColor.DARK_RED, 13, StringLib.GiveInfo$Rock),
+        ROCK("[RCK]", ChatColor.DARK_RED, 13, StringLib.GiveInfo$Rock),
         GHOST("[GHO]", ChatColor.DARK_PURPLE, 14, StringLib.GiveInfo$Ghost),
         DRAGON("[DRG]", ChatColor.DARK_BLUE, 15, StringLib.GiveInfo$Dragon),
         DARK("[DRK]", ChatColor.BLACK, 16, StringLib.GiveInfo$Dark),

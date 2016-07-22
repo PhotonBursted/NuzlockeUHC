@@ -13,7 +13,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class PokeballDetector implements Listener {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public PokeballDetector(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -56,7 +56,6 @@ public class PokeballDetector implements Listener {
                         } else {
                             thrower.sendMessage(StringLib.PokeballDetector$TargetOnTeamAlready);
                         }
-                        nuz.getTeamManager().addPlayer(victim.getName(), thrower.getName());
                     }
                 }
             }

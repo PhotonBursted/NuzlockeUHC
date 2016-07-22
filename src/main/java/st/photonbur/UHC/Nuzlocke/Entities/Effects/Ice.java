@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Ice extends Type {
-    HashMap<Player, ArrayList<Block>> frozenBlocks = new HashMap<>();
+    private final HashMap<Player, ArrayList<Block>> frozenBlocks = new HashMap<>();
 
     public Ice(Nuzlocke nuz) {
         super(nuz);
@@ -28,9 +27,6 @@ public class Ice extends Type {
 
     @Override
     boolean hasEvent() { return false; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {
@@ -55,8 +51,8 @@ public class Ice extends Type {
                                 case DESERT: case DESERT_HILLS: case HELL: case MESA: case MESA_CLEAR_ROCK: case MESA_ROCK:
                                 case MUTATED_DESERT: case MUTATED_MESA: case MUTATED_MESA_CLEAR_ROCK: case MUTATED_MESA_ROCK:
                                 case MUTATED_SAVANNA: case MUTATED_SAVANNA_ROCK: case SAVANNA: case SAVANNA_ROCK:
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, false, false));
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, false, false));
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0));
                                     break;
                                 default:
                                     player.removePotionEffect(PotionEffectType.SLOW);

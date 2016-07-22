@@ -7,20 +7,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class EffectManager {
-    ArrayList<Type> allTypes = new ArrayList<>();
-    Nuzlocke nuz;
+    private final ArrayList<Type> allTypes = new ArrayList<>();
+    private final Nuzlocke nuz;
 
-    Bug bug; Dark drk; Dragon drg; Electric elc;
-    Fighting fgt; Fire fir; Flying fly; Ghost gho;
-    Grass gra; Ground grd; Ice ice; Poison psn;
-    Psychic psy; Steel stl; Trainer tra; Water wat;
+    private final Bug bug; private final Dark drk; private final Dragon drg; private final Electric elc;
+    private final Fighting fgt; private final Fire fir; private final Flying fly; private final Ghost gho;
+    private final Grass gra; private final Ground grd; private final Ice ice; private final Poison psn;
+    private final Psychic psy; private final Rock rck; private final Steel stl; private final Trainer tra;
+    private final Water wat;
 
     public EffectManager(Nuzlocke nuz) {
         this.nuz = nuz;
         registerTypes(bug = new Bug(nuz), drk = new Dark(nuz), drg = new Dragon(nuz), elc = new Electric(nuz),
                       fgt = new Fighting(nuz), fir = new Fire(nuz), fly = new Flying(nuz), gho = new Ghost(nuz),
                       gra = new Grass(nuz), grd = new Ground(nuz), ice = new Ice(nuz), psn = new Poison(nuz),
-                      psy = new Psychic(nuz), stl = new Steel(nuz), tra = new Trainer(nuz), wat = new Water(nuz));
+                      psy = new Psychic(nuz), rck = new Rock(nuz), stl = new Steel(nuz), tra = new Trainer(nuz),
+                      wat = new Water(nuz));
     }
 
     public void giveEffects() {

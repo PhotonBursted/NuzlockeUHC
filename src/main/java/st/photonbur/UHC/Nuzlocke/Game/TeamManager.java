@@ -14,8 +14,8 @@ import java.util.Random;
 
 public class TeamManager {
     class ColorCollection {
-        private ChatColor cc;
-        private Color c;
+        private final ChatColor cc;
+        private final Color c;
 
         public ColorCollection(ChatColor cc, Color c) {
             this.cc = cc;
@@ -62,6 +62,8 @@ public class TeamManager {
             nuz.getGameManager().getScoreboard().getTeams().stream()
                     .filter(t -> t.getEntries().contains(teamName))
                     .findFirst().get().addEntry(playerName);
+            nuz.getDiscordBot().movePlayer(playerName, "Team "+ teamName);
+            nuz.getDiscordBot().addRole(playerName, "Team " + teamName);
         }
     }
 

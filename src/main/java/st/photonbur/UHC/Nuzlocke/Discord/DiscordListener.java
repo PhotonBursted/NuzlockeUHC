@@ -6,13 +6,11 @@ import net.dv8tion.jda.events.ShutdownEvent;
 import net.dv8tion.jda.hooks.EventListener;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-public class DiscordListener implements EventListener {
-    DiscordBot bot;
-    Nuzlocke nuz;
+class DiscordListener implements EventListener {
+    private final DiscordBot bot;
 
     public DiscordListener(Nuzlocke nuz) {
         this.bot = nuz.getDiscordBot();
-        this.nuz = nuz;
     }
 
     @Override

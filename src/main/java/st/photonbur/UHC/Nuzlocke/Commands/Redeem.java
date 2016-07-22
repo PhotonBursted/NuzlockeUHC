@@ -10,7 +10,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class Redeem implements CommandExecutor {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public Redeem(Nuzlocke nuz) {
         this.nuz = nuz;

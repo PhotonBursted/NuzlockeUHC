@@ -2,7 +2,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,9 +19,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class Dark extends Type implements Listener {
-    HashMap<Player, Double> light = new HashMap<>();
-    HashMap<Player, Boolean> weak = new HashMap<>();
-    Random r = new Random();
+    private final HashMap<Player, Double> light = new HashMap<>();
+    private final HashMap<Player, Boolean> weak = new HashMap<>();
+    private final Random r = new Random();
 
     //Buff: Pokey eyes! Chance to blind an opponent when attacking
     //Debuff: Too long in bright light gives nausea
@@ -51,9 +50,6 @@ public class Dark extends Type implements Listener {
     boolean hasEvent() { return true; }
 
     @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
-
-    @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
@@ -76,7 +72,7 @@ public class Dark extends Type implements Listener {
                             if(light.get(player) >= 1750) {
                                 if(!weak.getOrDefault(player, false)) player.sendMessage(StringLib.Dark$Weakened);
                                 weak.replace(player, true);
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0));
                             } else if(weak.containsKey(player)) {
                                 weak.replace(player, false);
                                 player.removePotionEffect(PotionEffectType.WEAKNESS);

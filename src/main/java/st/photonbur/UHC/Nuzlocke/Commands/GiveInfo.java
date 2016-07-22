@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GiveInfo implements TabExecutor {
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public GiveInfo(Nuzlocke nuz) {
         this.nuz = nuz;

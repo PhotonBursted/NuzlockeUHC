@@ -32,7 +32,6 @@ public class Trainer extends Type {
         return false;
     }
 
-    @Override
     public void redeem(CommandSender sender, int levelsIn) {
         Player player = Bukkit.getPlayer(sender.getName());
         if(player.getLevel() < levelsIn) sender.sendMessage(StringLib.Trainer$NotEnoughXP);

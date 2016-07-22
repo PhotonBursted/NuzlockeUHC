@@ -1,7 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -21,9 +20,6 @@ public class Ghost extends Type {
 
     @Override
     boolean hasEvent() { return false; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {

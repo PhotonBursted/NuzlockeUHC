@@ -2,7 +2,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -28,16 +27,13 @@ public class Ground extends Type {
                 .filter(p -> p.getType() == Pokemon.Type.GROUND)
                 .forEach(p ->
                         Bukkit.getPlayer(p.getName()).addPotionEffect(
-                                new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1, false, false)
+                                new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1)
                         )
                 );
     }
 
     @Override
     boolean hasEvent() { return false; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {
@@ -56,7 +52,7 @@ public class Ground extends Type {
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             if(player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 140, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 140, 0));
                         });
             }
         }.runTaskTimer(nuz, 0L, 20L);

@@ -14,7 +14,7 @@ public interface StringLib {
     String Dark$PokeEyesVictim                  = ChatColor.DARK_GREEN + "[!] Oh no, someone poked your eyes out!";
 
     String DeathListener$DeathMove              = ChatColor.RED + "[!] You will be moved over to the spectator channel within %s seconds";
-    String DeathListener$TeamWipe               = ChatColor.RED + "[!] Oh no! % has been wiped! %s teams remain...";
+    String DeathListener$TeamWipe               = ChatColor.RED + "[!] Oh no! %s has been wiped! %s teams remain...";
     String DeathListener$TrainerWipe            = ChatColor.RED + "[!] Trainer %s has gone, meaning all team caps have grown by 1!";
     String DeathListener$Win                    = ChatColor.RED + "[!] THAT'S IT! Give a big hand to %s, consisting of %s, for reigning supreme in the %s!";
 
@@ -30,12 +30,15 @@ public interface StringLib {
 
     String Electric$Paralysis                   = ChatColor.DARK_GREEN + "[!] You have been paralyzed!";
 
+    String EMA$EternalDaylight                  = ChatColor.DARK_RED + "[!] From now on, the sun won't crash into the western part of the horizon again. It promises.";
     String EMA$EpisodeEnd                       = ChatColor.GOLD + "[!] There's that. Another episode down." + ChatColor.ITALIC + " (end of EP%s)";
     String EMA$GentlemenRuleEnd                 = ChatColor.DARK_RED + "[!] The pact has crumbled. Combat is now enabled." + ChatColor.RESET;
     String EMA$MarkerStart                      = ChatColor.GOLD + "[!] Markers have started!";
     String EMA$WbProgressReport                 = ChatColor.DARK_PURPLE + "[!] News flash from the front, borders are now at %s blocks' distance!";
     String EMA$WbShrinkEnd                      = ChatColor.DARK_PURPLE + "[!] The world border has been stopped by an unknown force. Playing room? %s blocks.";
     String EMA$WbShrinkStart                    = ChatColor.DARK_PURPLE + "[!] The world border has started closing in!";
+
+    String GameManager$MatchStart                = ChatColor.GOLD + "[!] Please wait... Starting match. Teams are being generated!";
 
     String GCD$CountdownEnd                     = ChatColor.GOLD + "[!] Go, go, go!";
     String GCD$CountdownProgress                = ChatColor.GOLD + "[!] " + ChatColor.BOLD + "%s" + ChatColor.GOLD + "...";
@@ -48,7 +51,7 @@ public interface StringLib {
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 25+ XP levels to buy a set of elytra for 10 levels";
     String GiveInfo$Electric                    = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Attacks have a (5 + XP)% chance of landing a (5 + XP)/10 second paralysis. Also, getting attacked has a (5 + XP)% chance of paralysis.";
     String GiveInfo$Fighting                    = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Having nothing in hand gives Strength 1 and Haste 1";
-    String GiveInfo$Fire                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Chopping wood/mining ore blocks have a 5% chance of burning/smelting";
+    String GiveInfo$Fire                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Chopping wood/mining blocks has a 5% chance of burning/smelting them";
     String GiveInfo$Flying                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Every so often, 1-3 feathers spawn where you have just walked";
     String GiveInfo$Ghost                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when above 9 haunches";
     String GiveInfo$Grass                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when hiding in a plant\n" + ChatColor.RESET +
@@ -63,6 +66,8 @@ public interface StringLib {
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to get 1 free splash potion of poison";
     String GiveInfo$Psychic                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent weakness 1\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem [levels to spend] at 5+ XP levels to scan players within (5 + XP) blocks";
+    String GiveInfo$Rock                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Fortune (on ores, but also rocks\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Carrying 6 stacks of (cobble)stone will increase strength and resistance, but reduce speed";
     String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 amd 1 extra heart. Tanky!\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in rain or water for too long inflicts 'rust'";
     String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently 5 extra hearts\n" + ChatColor.RESET +

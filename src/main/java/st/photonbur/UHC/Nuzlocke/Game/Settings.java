@@ -8,6 +8,7 @@ public class Settings {
     private int countDownLength;
     private int deathHandleDelay;
     private int episodeDuration;
+    private int eternalDaylight;
     private String eventName;
     private int gentlemenDuration;
     private String globalChatPrefix;
@@ -37,6 +38,7 @@ public class Settings {
         countDownLength = config.getInt("game.start.countDownLength");
         deathHandleDelay = config.getInt("death.delay");
         episodeDuration = config.getInt("game.markers.episodeDuration");
+        eternalDaylight = config.getInt("game.environment.eternalDaylight");
         eventName = config.getString("eventName");
         gentlemenDuration = config.getInt("game.markers.gentlemenDuration");
         globalChatPrefix = config.getString("chat.globalPrefix");
@@ -61,6 +63,7 @@ public class Settings {
     public int getCountDownLength() { return countDownLength; }
     public int getDeathHandleDelay() { return deathHandleDelay; }
     public int getEpisodeDuration() { return episodeDuration; }
+    public int getEternalDaylight() { return eternalDaylight; }
     public String getEventName() { return eventName; }
     public int getGentlemenDuration() { return gentlemenDuration; }
     public String getGlobalChatPrefix() { return globalChatPrefix; }

@@ -1,5 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Tasks;
 
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
@@ -8,6 +9,7 @@ import java.util.Collections;
 
 public class TaskManager {
     private final ArrayList<BukkitRunnable> tasks = new ArrayList<>();
+    private DaylightManager dlm;
     private EventMarkerAnnouncer ema;
     private GameCountdown gcd;
     private Launcher launcher;
@@ -21,7 +23,7 @@ public class TaskManager {
     }
 
     public void cancelAll() {
-        tasks.stream().forEach(BukkitRunnable::cancel);
+        tasks.stream().filter(t -> Bukkit.getScheduler().isCurrentlyRunning(t.getTaskId())).forEach(BukkitRunnable::cancel);
     }
 
     private void register(BukkitRunnable... brs) {
@@ -30,6 +32,7 @@ public class TaskManager {
 
     public void registerTasks() {
         register(
+                dlm = new DaylightManager(nuz),
                 ema = new EventMarkerAnnouncer(nuz),
                 gcd = new GameCountdown(nuz, nuz.getSettings().getCountDownLength()),
                 launcher = new Launcher(),
@@ -61,6 +64,7 @@ public class TaskManager {
 
     public class Launcher extends BukkitRunnable {
         private boolean startCountdown = false;
+        private boolean startDaylightManager = false;
         private boolean startEventMarkers = false;
         private boolean startScoreboardUpdater = false;
         private boolean startTruceRegulator = false;
@@ -72,6 +76,11 @@ public class TaskManager {
                 gcd.runTaskTimer(nuz, 0L, 20L);
                 nuz.getLogger().info("Starting countdown...");
                 startCountdown = false;
+            }
+            if(startDaylightManager) {
+                dlm.runTaskLaterAsynchronously(nuz, nuz.getSettings().getEternalDaylight() * 60L * 20L * 20L);
+                nuz.getLogger().info("Starting eternal daylight timer...");
+                startDaylightManager = false;
             }
             if(startEventMarkers) {
                 ema.runTaskTimerAsynchronously(nuz, 0L, 20L);
@@ -85,7 +94,7 @@ public class TaskManager {
             }
             if(startTruceRegulator) {
                 tr.runTaskLaterAsynchronously(nuz, nuz.getSettings().getGentlemenDuration() * 60L * 20L);
-                nuz.getLogger().info("Started truce task...");
+                nuz.getLogger().info("Starting truce task...");
                 startTruceRegulator = false;
             }
             if(startWorldBorder) {
@@ -98,6 +107,7 @@ public class TaskManager {
         public void startCountdown() {
             startCountdown = true;
         }
+        public void startDaylightManager() { startDaylightManager = true; }
         public void startEventMarkers() {
             startEventMarkers = true;
         }

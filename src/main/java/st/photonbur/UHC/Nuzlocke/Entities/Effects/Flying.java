@@ -2,7 +2,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
@@ -12,7 +11,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import java.util.Random;
 
 public class Flying extends Type {
-    Random r = new Random();
+    private final Random r = new Random();
 
     //Buff: Feathers. Lots of em.
     //Debuff: They fall randomly on the ground, as entities. Full inventory/not paying attention might lead to breadcrumb trail
@@ -27,9 +26,6 @@ public class Flying extends Type {
     boolean hasEvent() {
         return false;
     }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {

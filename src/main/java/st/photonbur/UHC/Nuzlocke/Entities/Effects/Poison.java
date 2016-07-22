@@ -15,7 +15,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class Poison extends Type {
-    boolean redeemed = false;
+    private boolean redeemed = false;
 
     //Buff: Poison resistance, short poison potion redemption
     //Debuff: Poison turns to nausea
@@ -29,7 +29,6 @@ public class Poison extends Type {
     @Override
     boolean hasEvent() { return false; }
 
-    @Override
     public void redeem(CommandSender sender, int levelsIn) {
         if(redeemed) sender.sendMessage(StringLib.Poison$AlreadyRedeemed);
         else {

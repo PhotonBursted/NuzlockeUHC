@@ -5,7 +5,6 @@ import org.bukkit.CoalType;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +19,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import java.util.Random;
 
 public class Fire extends Type implements Listener {
-    Random r = new Random();
+    private final Random r = new Random();
 
     //Buff: Smelts blocks upon mining
     //Debuff: Melts ice and snow under feet
@@ -31,16 +30,18 @@ public class Fire extends Type implements Listener {
     @EventHandler
     private void onBlockBreak(BlockBreakEvent e) {
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
-        if(p.getRole() == Role.PARTICIPANT) if(p instanceof Pokemon) if(p.getType() == Pokemon.Type.FIRE)
-            if(r.nextDouble() <= .05) {
+        if (p.getRole() == Role.PARTICIPANT) if(p instanceof Pokemon) if(p.getType() == Pokemon.Type.FIRE)
+            if (r.nextDouble() <= .05) {
                 e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.8f, 1);
-                e.setCancelled(true);
-                if(e.getBlock().getType() == Material.GOLD_ORE)
+                e.getBlock().setType(Material.AIR);
+                if (e.getBlock().getType() == Material.GOLD_ORE)
                     e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
-                if(e.getBlock().getType() == Material.IRON_ORE)
+                if (e.getBlock().getType() == Material.IRON_ORE)
                     e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT));
-                if(e.getBlock().getType() == Material.LOG || e.getBlock().getType() == Material.LOG_2)
+                if (e.getBlock().getType() == Material.LOG || e.getBlock().getType() == Material.LOG_2)
                     e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new Coal(CoalType.CHARCOAL).toItemStack());
+                if (e.getBlock().getType() == Material.STONE)
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.STONE));
             }
     }
 
@@ -49,9 +50,6 @@ public class Fire extends Type implements Listener {
 
     @Override
     boolean hasEvent() { return true; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {

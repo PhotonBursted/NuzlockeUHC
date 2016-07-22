@@ -1,6 +1,5 @@
 package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@SuppressWarnings("ALL")
 public class Electric extends Type implements Listener {
-    Player victim = null, damager = null;
-    Random r = new Random();
+    private Player victim = null;
+    private Player damager = null;
+    private final Random r = new Random();
 
     //Buff: Paralysis AoE on hit
     //Debuff: Chance of charging creepers close by on every hit
@@ -52,12 +53,9 @@ public class Electric extends Type implements Listener {
     boolean hasEvent() { return true; }
 
     @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
-
-    @Override
     void runContinuousEffect() { }
 
-    public void identifyPlayers(EntityDamageByEntityEvent e) {
+    private void identifyPlayers(EntityDamageByEntityEvent e) {
         if(e.getEntity().getType() == EntityType.PLAYER) {
             victim = (Player) e.getEntity();
 
@@ -67,7 +65,7 @@ public class Electric extends Type implements Listener {
         }
     }
 
-    void paralyze(Entity... entities) {
+    private void paralyze(Entity... entities) {
         ArrayList<LivingEntity> toParalyze = new ArrayList<>();
         for(Entity e: entities) {
             if(e instanceof LivingEntity) toParalyze.add((LivingEntity) e);
@@ -75,10 +73,10 @@ public class Electric extends Type implements Listener {
         paralyze(toParalyze.toArray(new LivingEntity[toParalyze.size()]));
     }
 
-    void paralyze(LivingEntity... entities) {
+    private void paralyze(LivingEntity... entities) {
         for(LivingEntity le: entities) {
-            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 50, 30, true, false));
-            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 50, 3, true, false));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 50, 30));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 50, 3));
             le.sendMessage(StringLib.Electric$Paralysis);
         }
     }

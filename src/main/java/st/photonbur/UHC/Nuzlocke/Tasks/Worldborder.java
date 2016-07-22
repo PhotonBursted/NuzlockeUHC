@@ -6,8 +6,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class Worldborder extends BukkitRunnable {
-    boolean setup = false;
-    Nuzlocke nuz;
+    private boolean setup = false;
+    private final Nuzlocke nuz;
 
     public Worldborder(Nuzlocke nuz) {
         this.nuz = nuz;

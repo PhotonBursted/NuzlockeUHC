@@ -3,7 +3,7 @@ package st.photonbur.UHC.Nuzlocke.Entities;
 public class Player {
     private String name;
     private Role role;
-    protected Pokemon.Type type;
+    Pokemon.Type type;
 
     public Player(String name, Role role) {
         setName(name);

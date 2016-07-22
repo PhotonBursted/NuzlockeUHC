@@ -3,7 +3,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -26,9 +25,6 @@ public class Grass extends Type {
     boolean hasEvent() { return false; }
 
     @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
-
-    @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
@@ -48,12 +44,12 @@ public class Grass extends Type {
                             Location l = player.getLocation();
 
                             if(l.getBlock().getType() == Material.DOUBLE_PLANT)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
                             else player.removePotionEffect(PotionEffectType.INVISIBILITY);
 
                             if(l.getBlock().getType() == Material.WATER || l.getBlock().getType() == Material.STATIONARY_WATER) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, false, false));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 0));
                             } else {
                                 player.removePotionEffect(PotionEffectType.SLOW);
                                 player.removePotionEffect(PotionEffectType.ABSORPTION);
@@ -69,7 +65,7 @@ public class Grass extends Type {
                                     player.getInventory().getItemInOffHand().getType() == Material.GOLD_SWORD ||
                                     player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD ||
                                     player.getInventory().getItemInOffHand().getType() == Material.DIAMOND_SWORD)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0));
                             else player.removePotionEffect(PotionEffectType.WEAKNESS);
                         });
             }

@@ -1,5 +1,7 @@
 package st.photonbur.UHC.Nuzlocke.Listeners;
 
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,35 +29,51 @@ public class DeathListener implements Listener {
             if(nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT) {
                 if(nuz.getSettings().getDeathHandleDelay() != -1) {
                     p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
+                    p.setGameMode(GameMode.SPECTATOR);
                     new HandleDeadPlayer(p).runTaskLaterAsynchronously(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
                 }
 
-                if(nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) != null) {
-                    Team team = nuz.getTeamManager().getTeams().stream()
-                            .filter(t -> t.contains(p.getName())).findFirst().orElse(null);
-                    // Checks for a count of one as the team hasn't been updated on the death yet
-                    if(team.countStillAlive() == 1) {
-                        if(nuz.getTeamManager().teamsAliveCount() == 2) {
-                            Team otherTeam = nuz.getTeamManager().getTeams().stream()
-                                    .filter(t -> t.countStillAlive() > 0 && !t.equals(team))
-                                    .findFirst().orElse(null);
-                            nuz.getDiscordBot().announce(DiscordBot.Event.WIN,
-                                    String.format(StringLib.DiscordBot$Win, otherTeam.getName(), otherTeam.membersToString(), nuz.getSettings().getEventName())
-                            );
-                            nuz.getServer().broadcastMessage(
-                                    String.format(StringLib.DeathListener$Win, otherTeam.getName(), otherTeam.membersToString(), nuz.getSettings().getEventName())
-                            );
-                            nuz.getGameManager().stopGame();
+                Team team = nuz.getTeamManager().getTeams().stream()
+                        .filter(t -> t.contains(p.getName())).findFirst().orElse(null);
+                // Checks for a count of one as the team hasn't been updated on the death yet
+                if(team == null || team.countStillAlive() == 1) {
+                    if(nuz.getTeamManager().teamsAliveCount() == 2) {
+                        String teamName, members;
+
+                        Team otherTeam = nuz.getTeamManager().getTeams().stream()
+                                .filter(t -> t.countStillAlive() > 0 && !t.contains(p.getName()))
+                                .findFirst().orElse(null);
+                        if (otherTeam == null) {
+                            members = nuz.getPlayerManager().getPlayers().stream()
+                                    .filter(player -> player.getRole() == Role.PARTICIPANT && !player.getName().equals(p.getName()))
+                                    .findFirst().get().getName();
+                            teamName = "Team "+ members;
                         } else {
-                            nuz.getDiscordBot().announce(DiscordBot.Event.TEAM_WIPE);
-                            nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TeamWipe,
-                                    "Team " + p.getName(), nuz.getTeamManager().teamsAliveCount()));
+                            members = otherTeam.membersToString();
+                            teamName = otherTeam.getName();
                         }
-                    } else if(nuz.getPlayerManager().getPlayer(p.getName()) instanceof Trainer) {
-                        nuz.getDiscordBot().announce(DiscordBot.Event.TRAINER_WIPE);
-                        nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TrainerWipe,
-                                p.getName()));
+
+                        nuz.getDiscordBot().announce(DiscordBot.Event.WIN,
+                                String.format(StringLib.DiscordBot$Win, "**__"+ teamName +"__**", members, nuz.getSettings().getEventName())
+                        );
+                        nuz.getServer().broadcastMessage(
+                                otherTeam == null ? String.format(StringLib.DeathListener$Win, teamName, members, ChatColor.BOLD + nuz.getSettings().getEventName())
+                                        : String.format(StringLib.DeathListener$Win,
+                                        nuz.getGameManager().getScoreboard().getTeam(otherTeam.getName()).getPrefix() + ChatColor.BOLD + otherTeam.getName() + ChatColor.RED,
+                                        otherTeam.membersToString(),
+                                        ChatColor.BOLD + nuz.getSettings().getEventName() )
+                        );
+                        nuz.getGameManager().stopGame();
+                    } else {
+                        nuz.getDiscordBot().announce(DiscordBot.Event.TEAM_WIPE,
+                                String.format("Team " + p.getName(), nuz.getTeamManager().teamsAliveCount() - 1));
+                        nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TeamWipe,
+                                "Team " + p.getName(), nuz.getTeamManager().teamsAliveCount() - 1));
                     }
+                } else if(nuz.getPlayerManager().getPlayer(p.getName()) instanceof Trainer) {
+                    nuz.getDiscordBot().announce(DiscordBot.Event.TRAINER_WIPE);
+                    nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TrainerWipe,
+                            p.getName()));
                 }
 
                 nuz.getDiscordBot().announce(DiscordBot.Event.DEATH, e.getDeathMessage().replaceAll("§.", ""));

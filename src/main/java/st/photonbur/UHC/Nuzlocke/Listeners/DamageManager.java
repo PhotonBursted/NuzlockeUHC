@@ -36,7 +36,7 @@ public class DamageManager implements Listener {
             {1, 1,NE, 1, 1, 1, 1,SE,NE, 1, 1, 1, 1, 1, 1,SE,SE,NE, 1}
     };
 
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
     public DamageManager(Nuzlocke nuz) {
         this.nuz = nuz;
@@ -44,23 +44,25 @@ public class DamageManager implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {
-        if(e.getEntity().getType() == EntityType.PLAYER) {
+        if (e.getEntity().getType() == EntityType.PLAYER) {
             Player victim = (Player) e.getEntity();
-            if(nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
-                if (nuz.getGameManager().isTruceActive() || e.getDamager().getType() == EntityType.SNOWBALL)
-                    e.setCancelled(true);
-                else {
-                    Player damager = (Player) (e.getDamager() instanceof Projectile ? ((Projectile) e.getDamager()).getShooter() : e.getDamager());
-                    int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
-                            ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
-                    int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon
-                            ? nuz.getPlayerManager().getPlayer(victim.getName()).getType().getID() : 0;
-                    double modifier = atkMods[dTypeID][vTypeID];
-                    if(modifier == 0) damager.sendMessage(StringLib.DamageManager$Immune);
-                    if(modifier == NE) damager.sendMessage(StringLib.DamageManager$NotEffective);
-                    if(modifier == SE) damager.sendMessage(StringLib.DamageManager$SuperEffective);
+            if (nuz.getGameManager().isGameInProgress()) {
+                if (nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
+                    if (nuz.getGameManager().isTruceActive() || e.getDamager().getType() == EntityType.SNOWBALL)
+                        e.setCancelled(true);
+                    else {
+                        Player damager = (Player) (e.getDamager() instanceof Projectile ? ((Projectile) e.getDamager()).getShooter() : e.getDamager());
+                        int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
+                                ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
+                        int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon
+                                ? nuz.getPlayerManager().getPlayer(victim.getName()).getType().getID() : 0;
+                        double modifier = atkMods[dTypeID][vTypeID];
+                        if (modifier == 0) damager.sendMessage(StringLib.DamageManager$Immune);
+                        if (modifier == NE) damager.sendMessage(StringLib.DamageManager$NotEffective);
+                        if (modifier == SE) damager.sendMessage(StringLib.DamageManager$SuperEffective);
 
-                    e.setDamage(e.getFinalDamage() * modifier);
+                        e.setDamage(e.getFinalDamage() * modifier);
+                    }
                 }
             }
         }

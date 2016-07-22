@@ -33,7 +33,6 @@ public class Psychic extends Type {
     @Override
     boolean hasEvent() { return false; }
 
-    @Override
     public void redeem(CommandSender sender, int levelsIn) {
         Player player = Bukkit.getPlayer(sender.getName());
         if(levelsIn > player.getLevel()) sender.sendMessage(StringLib.Psychic$NotEnoughXP);

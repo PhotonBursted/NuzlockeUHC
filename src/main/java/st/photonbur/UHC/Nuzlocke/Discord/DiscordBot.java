@@ -40,13 +40,13 @@ public class DiscordBot {
     }
 
     private JDA bot;
-    Nuzlocke nuz;
+    private final Nuzlocke nuz;
 
-    ArrayList<RoleManager> roles = new ArrayList<>();
-    ArrayList<ChannelManager> channels = new ArrayList<>();
-    ChannelManager participantsHangout;
+    private final ArrayList<RoleManager> roles = new ArrayList<>();
+    private final ArrayList<ChannelManager> channels = new ArrayList<>();
+    private ChannelManager participantsHangout;
     Guild guild;
-    final Object LOCK = new Object();
+    private final Object LOCK = new Object();
     RoleManager participants;
     TextChannel general;
 
@@ -71,9 +71,10 @@ public class DiscordBot {
                 .revoke(invertPermissions(new ArrayList<>(Arrays.asList(serverAllowed)), true))
                 .setName("Team "+ playerName)
                 .setMentionable(true)
-                .setColor(color);
+                .setColor(color)
+                .setGrouped(true);
         newRole.update();
-        guild.getManager().addRoleToUser(getUser(playerName), newRole.getRole()).update();
+        addRole(getUser(playerName), newRole);
 
         Permission[] channelAllowedTeam = {
                 Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.VOICE_USE_VAD
@@ -95,11 +96,23 @@ public class DiscordBot {
                 .update();
         newVC.update();
         if(getUser(playerName) != null) if(guild.getVoiceStatusOfUser(getUser(playerName)).inVoiceChannel()) {
-            guild.getManager().moveVoiceUser(getUser(playerName), (VoiceChannel) newVC.getChannel());
+            movePlayer(getUser(playerName), (VoiceChannel) newVC.getChannel());
         }
 
         channels.add(newVC);
         roles.add(newRole);
+    }
+
+    public void addRole(String playerName, String teamName) {
+        addRole(getUser(playerName), teamName);
+    }
+
+    private void addRole(User user, String teamName) {
+        addRole(user, roles.stream().filter(r -> r.getRole().getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
+    }
+
+    private void addRole(User user, RoleManager role) {
+        guild.getManager().addRoleToUser(user, role.getRole()).update();
     }
 
     public void announce(Event e) {
@@ -140,16 +153,28 @@ public class DiscordBot {
         return bot.getUsersByName(name).stream().filter(u -> u.getUsername().equals(name)).findFirst().orElse(null);
     }
 
-    public void logMessage(TextChannel tc, String purpose, String msg) {
+    private void logMessage(TextChannel tc, String purpose, String msg) {
         tc.sendMessage("**[" + purpose.toUpperCase() + "]** " + msg);
     }
 
-    public Permission[] invertPermissions(ArrayList<Permission> allowed, boolean targetGuild) {
+    private Permission[] invertPermissions(ArrayList<Permission> allowed, boolean targetGuild) {
         List<Permission> denied = new ArrayList<>();
         for(Permission p: Permission.values()) {
             if(!allowed.contains(p) && (targetGuild ? p.isGuild() : p.isChannel())) denied.add(p);
         }
         return denied.toArray(new Permission[denied.size()]);
+    }
+
+    public void movePlayer(String playerName, String teamName) {
+        movePlayer(getUser(playerName), teamName);
+    }
+
+    private void movePlayer(User user, String teamName) {
+        movePlayer(user, guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
+    }
+
+    private void movePlayer(User user, VoiceChannel vc) {
+        if(guild.getVoiceStatusOfUser(user).inVoiceChannel()) guild.getManager().moveVoiceUser(user, vc);
     }
 
     public void prepareGame() {
@@ -165,7 +190,7 @@ public class DiscordBot {
             guild.getUsersWithRole(participants.getRole()).stream()
                     .filter(u -> guild.getVoiceStatusOfUser(u).inVoiceChannel())
                     .forEach(
-                            u -> guild.getManager().moveVoiceUser(u, (VoiceChannel) participantsHangout.getChannel())
+                            u -> movePlayer(u, (VoiceChannel) participantsHangout.getChannel())
                     );
 
             Permission[] allowedParticipant = {};

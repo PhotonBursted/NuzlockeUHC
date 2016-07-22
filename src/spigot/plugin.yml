@@ -1,39 +1,75 @@
 name: NuzlockeUHC
-version: 0.1
+version: 1.0
 description: Helps organize UHC events, Pokémon style.
 author: PhotonBurst
 
 main: st.photonbur.UHC.Nuzlocke.Nuzlocke
-website: https://github.com/PhotonBursted/Vaks-UHC
+website: https://github.com/PhotonBursted/NuzlockeUHC
 
 commands:
   deregister:
-    description: Unregisters a player out of the match.
-    permission: Nuzlocke.startMatch
+    description: Deregisters a player out of the match.
+    permission: Nuzlocke.deregister.self
   list:
     description: Lists all players.
-    permission: Nuzlocke.startMatch
+    permission: Nuzlocke.list
   info:
     description: Gives details of the player
-    permission: Nuzlocke.startMatch
+    permission: Nuzlocke.info
   redeem:
     description: Redeems reward when conditions are met
-    permission: Nuzlocke.startMatch
+    permission: Nuzlocke.redeem
   register:
     description: Registers a player into playing the match.
-    permission: Nuzlocke.startMatch
+    permission: Nuzlocke.register.self
   startMatch:
     description: Regulates hug parties. Oh, also, UHC events.
     permission: Nuzlocke.startMatch
   stopMatch:
     description: Stops the quarrel.
-    permission: Nuzlocke.startMatch
+    permission: Nuzlocke.stopMatch
 
 permissions:
   Nuzlocke.*:
     description: Grants access to all commands in VaksUHC.
     children:
+      Nuzlocke.deregister.all: true
+      Nuzlocke.deregister.self: true
+      Nuzlocke.list: true
+      Nuzlocke.info: true
+      Nuzlocke.redeem: true
+      Nuzlocke.register: true
+      Nuzlocke.register.self: true
       Nuzlocke.startMatch: true
+      Nuzlocke.stopMatch: true
+  Nuzlocke.deregister.all:
+    description: Allows for deregistering everyone
+    default: op
+    children:
+      Nuzlocke.deregister.self: true
+  Nuzlocke.deregister.self:
+    description: Allows deregistering yourself
+    default: true
+  Nuzlocke.list:
+    description: Allows displaying a customized list of players/teams
+    default: true
+  Nuzlocke.info:
+    description: Allows display of detailed information of each class
+    default: true
+  Nuzlocke.redeem:
+    description: Allows redeeming of rewards during the match
+    default: true
+  Nuzlocke.register.all:
+    description: Allows registering other players too
+    default: op
+    children:
+      Nuzlocke.register.self: true
+  Nuzlocke.register.self:
+    description: Allows registering yourself
+    default: true
   Nuzlocke.startMatch:
     description: Allows the starting of a match
-    default: true
+    default: op
+  Nuzlocke.stopMatch:
+    description: Allows stopping matches
+    default: op

@@ -3,7 +3,6 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
@@ -13,7 +12,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import java.util.Random;
 
 public class Bug extends Type {
-    Random r = new Random();
+    private final Random r = new Random();
 
     //Buff: Eats leaves, slowly regen health and hunger, decays faster
     //Debuff: Max health -2
@@ -35,9 +34,6 @@ public class Bug extends Type {
 
     @Override
     boolean hasEvent() { return false; }
-
-    @Override
-    public void redeem(CommandSender sender, int levelsIn) { }
 
     @Override
     void runContinuousEffect() {
