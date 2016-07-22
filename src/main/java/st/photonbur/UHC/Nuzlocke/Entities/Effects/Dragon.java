@@ -12,7 +12,11 @@ import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
+import java.util.Random;
+
 public class Dragon extends Type {
+    Random r;
+
     //Buff: At 25 levels, get access to /redeem to get an elytra
     //Debuff: Random freeze when in cold biome
     public Dragon(Nuzlocke nuz) {
@@ -30,7 +34,7 @@ public class Dragon extends Type {
         if(((Player) sender).getLevel() >= 25) {
             sender.sendMessage(StringLib.Dragon$RedeemedElytra);
             ((Player) sender).getInventory().addItem(new ItemStack(Material.ELYTRA));
-            ((Player) sender).giveExpLevels(-25);
+            ((Player) sender).giveExpLevels(-10);
         } else sender.sendMessage(StringLib.Dragon$NotEnoughXP);
     }
 
@@ -42,10 +46,10 @@ public class Dragon extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DRAGON)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.DRAGON) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
                         .filter(p -> p.getType() == Pokemon.Type.DRAGON)
@@ -56,16 +60,18 @@ public class Dragon extends Type {
                                 case COLD_BEACH: case FROZEN_OCEAN: case FROZEN_RIVER: case ICE_FLATS: case ICE_MOUNTAINS: case MUTATED_ICE_FLATS:
                                 case MUTATED_REDWOOD_TAIGA: case MUTATED_REDWOOD_TAIGA_HILLS: case MUTATED_TAIGA: case MUTATED_TAIGA_COLD:
                                 case REDWOOD_TAIGA: case REDWOOD_TAIGA_HILLS: case TAIGA: case TAIGA_COLD: case TAIGA_COLD_HILLS: case TAIGA_HILLS:
-                                    float flyspeed = player.getFlySpeed();
-                                    float walkspeed = player.getWalkSpeed();
-                                    player.setFlySpeed(0F);
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            player.setFlySpeed(flyspeed);
-                                            player.setWalkSpeed(walkspeed);
-                                        }
-                                    }.runTaskLater(nuz, 60L);
+                                    if(r.nextDouble() <= 0.1) {
+                                        float flyspeed = player.getFlySpeed();
+                                        float walkspeed = player.getWalkSpeed();
+                                        player.setFlySpeed(0F);
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                player.setFlySpeed(flyspeed);
+                                                player.setWalkSpeed(walkspeed);
+                                            }
+                                        }.runTaskLater(nuz, 60L);
+                                    }
                             }
                         });
             }

@@ -39,15 +39,15 @@ public class ListPlayers implements CommandExecutor {
     /**
      * Called when a command is issued
      * @param sender A reference to who executed the command
-     * @param command The command being issued
+     * @param cmd The command being issued
      * @param s A pure copy of the message entered in chat
      * @param args The split up message without the command name
      * @return The success of the command
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         // If the command matches the desired name, continue executing the command
-        if(command.getName().equalsIgnoreCase("list")) {
+        if(cmd.getName().equalsIgnoreCase("list")) {
             // Send a "participant" header message to the issuer
             sender.sendMessage(StringLib.ListPlayers$Participants);
 
@@ -88,7 +88,8 @@ public class ListPlayers implements CommandExecutor {
 
                 if(showDetails) message += details(p, team);
                 if(!showDetails && team != null) if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) != null)
-                    if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()).equals(team)) message += details(p, team);
+                    if(nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()).equals(team) && nuz.getSettings().doSeeTeammateDetails())
+                        message += details(p, team);
                 message += (team == null ? ChatColor.RESET : team.getPrefix()) + playerList.get(i+j);
 
                 if(i+j < playerList.size()-1) {

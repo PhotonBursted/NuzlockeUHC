@@ -35,13 +35,13 @@ public class Fighting extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIGHTING)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.FIGHTING) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.FIGHTING))
+                        .filter(p -> p.getType() == Pokemon.Type.FIGHTING)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             if(player.getInventory().getItemInMainHand().getAmount() == 0 &&

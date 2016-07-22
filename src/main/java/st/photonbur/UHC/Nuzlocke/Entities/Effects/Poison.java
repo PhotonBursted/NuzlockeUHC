@@ -55,24 +55,23 @@ public class Poison extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.POISON)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.POISON) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.POISON))
+                        .filter(p -> p.getType() == Pokemon.Type.POISON)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
-                            nuz.getLogger().info("For "+ player.getName() +": "+ player.getActivePotionEffects().toString());
                             PotionEffect poison = player.getActivePotionEffects().stream()
-                                    .filter(effect -> effect.getType() == PotionEffectType.POISON)
+                                    .filter(effect -> effect.toString().contains("POISON"))
                                     .findAny().orElse(null);
                             if(poison != null) {
                                 player.addPotionEffect(
                                         new PotionEffect(PotionEffectType.CONFUSION, poison.getDuration(), 2)
                                 );
-                                player.removePotionEffect(poison.getType());
+                                player.removePotionEffect(PotionEffectType.POISON);
                             }
                         });
             }

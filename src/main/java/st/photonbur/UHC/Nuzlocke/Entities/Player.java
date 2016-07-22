@@ -3,10 +3,12 @@ package st.photonbur.UHC.Nuzlocke.Entities;
 public class Player {
     private String name;
     private Role role;
+    protected Pokemon.Type type;
 
     public Player(String name, Role role) {
         setName(name);
         setRole(role);
+        setType(null);
     }
 
     public String getName() {
@@ -18,7 +20,7 @@ public class Player {
     }
 
     public Pokemon.Type getType() {
-        return null;
+        return type;
     }
 
     private void setName(String newName) {
@@ -29,5 +31,7 @@ public class Player {
         role = newRole;
     }
 
-    void setType(Pokemon.Type newType) {}
+    void setType(Pokemon.Type newType) {
+        type = newType;
+    }
 }

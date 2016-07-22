@@ -39,7 +39,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
     private String getEpisodeTimeLeft() {
         long time = nuz.getTaskManager().getEMA().getRawTime();
         int min, sec;
-        min = (int) (nuz.getSettings().getEpisodeDuration() - (time / 60) % nuz.getSettings().getEpisodeDuration() - 1);
+        min = (int) (nuz.getSettings().getEpisodeDuration() - ((time - 1) / 60) % nuz.getSettings().getEpisodeDuration() - 1);
         sec = (int) (59 - ((time - 1) % 60));
         return (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
     }

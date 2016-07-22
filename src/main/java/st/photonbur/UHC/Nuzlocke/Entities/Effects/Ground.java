@@ -25,7 +25,7 @@ public class Ground extends Type {
         nuz.getPlayerManager().getPlayers().stream()
                 .filter(p -> p.getRole() == Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
-                .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
+                .filter(p -> p.getType() == Pokemon.Type.GROUND)
                 .forEach(p ->
                         Bukkit.getPlayer(p.getName()).addPotionEffect(
                                 new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1, false, false)
@@ -47,13 +47,12 @@ public class Ground extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GROUND)) ||
+                        .noneMatch(p -> p.getType() == Pokemon.Type.GROUND) ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.GROUND))
+                        .filter(p -> p.getType() == Pokemon.Type.GROUND)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             if(player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())

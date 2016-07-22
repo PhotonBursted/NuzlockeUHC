@@ -61,17 +61,13 @@ public class Dark extends Type implements Listener {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.DARK)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.DARK) &&
                         nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) {
-                    this.cancel();
-                    weak.clear();
-                    light.clear();
-                }
-                nuz.getPlayerManager().getPlayers().stream()
+                        !nuz.getGameManager().isGameInProgress()) { this.cancel(); weak.clear(); light.clear(); }
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.DARK))
+                        .filter(p -> p.getType() == Pokemon.Type.DARK)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             Location l = player.getLocation();
@@ -86,8 +82,7 @@ public class Dark extends Type implements Listener {
                                 player.removePotionEffect(PotionEffectType.WEAKNESS);
                             } else weak.put(player, false);
                         });
-                nuz.getLogger().info("Heartbeat Dark");
             }
-        }.runTaskTimer(nuz, 0, 20);
+        }.runTaskTimer(nuz, 0, 20L);
     }
 }

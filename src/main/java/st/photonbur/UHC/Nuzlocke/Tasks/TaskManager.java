@@ -13,6 +13,7 @@ public class TaskManager {
     private Launcher launcher;
     private final Nuzlocke nuz;
     private ScoreboardUpdater sbu;
+    private TruceRegulator tr;
     private Worldborder wb;
 
     public TaskManager(Nuzlocke nuz) {
@@ -33,6 +34,7 @@ public class TaskManager {
                 gcd = new GameCountdown(nuz, nuz.getSettings().getCountDownLength()),
                 launcher = new Launcher(),
                 sbu = new ScoreboardUpdater(nuz),
+                tr = new TruceRegulator(nuz),
                 wb = new Worldborder(nuz)
         );
     }
@@ -61,6 +63,7 @@ public class TaskManager {
         private boolean startCountdown = false;
         private boolean startEventMarkers = false;
         private boolean startScoreboardUpdater = false;
+        private boolean startTruceRegulator = false;
         private boolean startWorldBorder = false;
 
         @Override
@@ -80,6 +83,11 @@ public class TaskManager {
                 nuz.getLogger().info("Starting scoreboard integration...");
                 startScoreboardUpdater = false;
             }
+            if(startTruceRegulator) {
+                tr.runTaskLaterAsynchronously(nuz, nuz.getSettings().getGentlemenDuration() * 60L * 20L);
+                nuz.getLogger().info("Started truce task...");
+                startTruceRegulator = false;
+            }
             if(startWorldBorder) {
                 wb.runTaskTimerAsynchronously(nuz, 0L, 20L);
                 nuz.getLogger().info("Starting worldborder...");
@@ -95,6 +103,9 @@ public class TaskManager {
         }
         public void startScoreboardUpdater() {
             startScoreboardUpdater = true;
+        }
+        public void startTruceRegulator() {
+            startTruceRegulator = true;
         }
         public void startWorldBorder() {
             startWorldBorder = true;

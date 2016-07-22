@@ -22,6 +22,8 @@ public class Worldborder extends BukkitRunnable {
                 WorldBorder wb = world.getWorldBorder();
                 wb.setCenter(0, 0);
                 wb.setSize(nuz.getSettings().getWbInitialSize() / ((world.getEnvironment() == World.Environment.NETHER) ? 8d : 1d));
+                wb.setDamageAmount(3);
+                wb.setDamageBuffer(0);
 
                 switch (nuz.getSettings().getWbWarningType().toLowerCase()) {
                     case "distance":
@@ -37,7 +39,7 @@ public class Worldborder extends BukkitRunnable {
             });
             setup = true;
         }
-        if(time == nuz.getSettings().getWbShrinkDelay() * 60 &&
+        if(time == Math.max(1, nuz.getSettings().getWbShrinkDelay() * 60) &&
                 nuz.getSettings().isWbShrinkEnabled() &&
                 nuz.getSettings().getWbInitialSize() != nuz.getSettings().getWbEndSize() &&
                 nuz.getSettings().getWbShrinkDuration() > 0) {

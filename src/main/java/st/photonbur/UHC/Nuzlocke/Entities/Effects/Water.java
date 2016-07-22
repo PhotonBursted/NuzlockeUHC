@@ -2,6 +2,7 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -14,10 +15,11 @@ import st.photonbur.UHC.Nuzlocke.StringLib;
 
 import java.util.HashMap;
 
-public class Steel extends Type {
+public class Water extends Type {
     HashMap<Player, Double> water = new HashMap<>();
     HashMap<Player, Boolean> weak = new HashMap<>();
-    public Steel(Nuzlocke nuz) {
+
+    public Water(Nuzlocke nuz) {
         super(nuz);
     }
 
@@ -26,14 +28,10 @@ public class Steel extends Type {
         nuz.getPlayerManager().getPlayers().stream()
                 .filter(p -> p.getRole() == Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
-                .filter(p -> p.getType() == Pokemon.Type.STEEL)
+                .filter(p -> p.getType() == Pokemon.Type.WATER)
                 .forEach(p -> {
                     Player player = Bukkit.getPlayer(p.getName());
-                    player.addPotionEffect(
-                            new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, false)
-                    );
-                    player.setMaxHealth(22d);
-                    if(startup) player.setHealth(22d);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 1, false, false));
                 });
     }
 
@@ -51,32 +49,42 @@ public class Steel extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.STEEL)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.WATER) &&
                         nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) { this.cancel(); water.clear(); weak.clear(); }
+                        !nuz.getGameManager().isGameInProgress()) this.cancel();
                 else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.STEEL))
+                        .filter(p -> p.getType() == Pokemon.Type.WATER)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             Location l = player.getLocation();
+
+                            if(l.getBlock().getType() == Material.WATER || l.getBlock().getType() == Material.STATIONARY_WATER ||
+                                    (l.getBlockY() >= l.getWorld().getHighestBlockYAt(l.getBlockX(), l.getBlockZ()) && l.getWorld().hasStorm())) {
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, false, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, false, false));
+                            } else {
+                                player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                                player.removePotionEffect(PotionEffectType.SPEED);
+                            }
+
                             if (water.containsKey(player)) water.replace(player,
                                     Math.min(Math.max(-600, (l.getBlock().isLiquid() ||
                                             (l.getBlockY() >= l.getWorld().getHighestBlockYAt(l.getBlockX(), l.getBlockZ()) && l.getWorld().hasStorm())) ?
-                                            (water.get(player) + 3) : (water.get(player) - 10)), 2000));
+                                            (water.get(player) -30) : (water.get(player) + 3)), 2000));
                             else water.put(player, 0d);
 
                             if (water.get(player) >= 1750) {
-                                if (!weak.getOrDefault(player, false)) player.sendMessage(StringLib.Steel$Rusty);
+                                if (!weak.getOrDefault(player, false)) player.sendMessage(StringLib.Water$Dehydrated);
                                 weak.replace(player, true);
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false));
                             } else if (weak.containsKey(player)) {
                                 weak.replace(player, false);
-                                player.removePotionEffect(PotionEffectType.SLOW);
+                                player.removePotionEffect(PotionEffectType.HUNGER);
                             } else weak.put(player, false);
                         });
             }
-        }.runTaskTimer(nuz, 0L, 20L);
+        }.runTaskTimer(nuz, 0L, 10L);
     }
 }

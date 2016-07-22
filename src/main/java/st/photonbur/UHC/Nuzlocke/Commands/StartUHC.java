@@ -15,8 +15,8 @@ public class StartUHC implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
-        if(command.getName().equalsIgnoreCase("startmatch")) {
+    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
+        if(cmd.getName().equalsIgnoreCase("startmatch")) {
             if(nuz.getGameManager().isGameInProgress()) {
                 sender.sendMessage(StringLib.StartUHC$GameUnderway);
             } else if(nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count() == 0) {

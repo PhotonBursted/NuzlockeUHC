@@ -17,8 +17,8 @@ public class Redeem implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (command.getName().equalsIgnoreCase("redeem")) {
+    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("redeem")) {
             st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(sender.getName());
             if (p.getRole() == Role.PARTICIPANT) if (p instanceof Pokemon) {
                 if (p.getType() == Pokemon.Type.DRAGON) nuz.getEffectManager().getDRG().redeem(sender, 25);

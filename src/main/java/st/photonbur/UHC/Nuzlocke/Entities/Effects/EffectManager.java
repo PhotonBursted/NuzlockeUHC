@@ -12,15 +12,15 @@ public class EffectManager {
 
     Bug bug; Dark drk; Dragon drg; Electric elc;
     Fighting fgt; Fire fir; Flying fly; Ghost gho;
-    Grass gra; Ground grd; Poison psn; Psychic psy;
-    Steel stl; Trainer tra;
+    Grass gra; Ground grd; Ice ice; Poison psn;
+    Psychic psy; Steel stl; Trainer tra; Water wat;
 
     public EffectManager(Nuzlocke nuz) {
         this.nuz = nuz;
         registerTypes(bug = new Bug(nuz), drk = new Dark(nuz), drg = new Dragon(nuz), elc = new Electric(nuz),
                       fgt = new Fighting(nuz), fir = new Fire(nuz), fly = new Flying(nuz), gho = new Ghost(nuz),
-                      gra = new Grass(nuz), grd = new Ground(nuz), psn = new Poison(nuz), psy = new Psychic(nuz),
-                      stl = new Steel(nuz), tra = new Trainer(nuz));
+                      gra = new Grass(nuz), grd = new Ground(nuz), ice = new Ice(nuz), psn = new Poison(nuz),
+                      psy = new Psychic(nuz), stl = new Steel(nuz), tra = new Trainer(nuz), wat = new Water(nuz));
     }
 
     public void giveEffects() {

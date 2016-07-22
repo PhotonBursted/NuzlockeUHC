@@ -17,7 +17,6 @@ import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-import java.util.Collection;
 import java.util.Random;
 
 public class Fire extends Type implements Listener {
@@ -34,11 +33,14 @@ public class Fire extends Type implements Listener {
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
         if(p.getRole() == Role.PARTICIPANT) if(p instanceof Pokemon) if(p.getType() == Pokemon.Type.FIRE)
             if(r.nextDouble() <= .05) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 1, 1);
-                Collection<ItemStack> drops = e.getBlock().getDrops(); drops.clear();
-                if(e.getBlock().getType() == Material.GOLD_ORE) drops.add(new ItemStack(Material.GOLD_INGOT));
-                if(e.getBlock().getType() == Material.IRON_ORE) drops.add(new ItemStack(Material.IRON_INGOT));
-                if(e.getBlock().getType() == Material.LOG || e.getBlock().getType() == Material.LOG_2) drops.add(new Coal(CoalType.CHARCOAL).toItemStack());
+                e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.8f, 1);
+                e.setCancelled(true);
+                if(e.getBlock().getType() == Material.GOLD_ORE)
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
+                if(e.getBlock().getType() == Material.IRON_ORE)
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT));
+                if(e.getBlock().getType() == Material.LOG || e.getBlock().getType() == Material.LOG_2)
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new Coal(CoalType.CHARCOAL).toItemStack());
             }
     }
 
@@ -59,13 +61,13 @@ public class Fire extends Type implements Listener {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.FIRE)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.FIRE) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.FIRE))
+                        .filter(p -> p.getType() == Pokemon.Type.FIRE)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             Block b = player.getLocation().add(0, -1, 0).getBlock();

@@ -5,7 +5,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -58,7 +57,6 @@ public class GameManager {
     public void initGame() {
         nuz.getDiscordBot().announce(DiscordBot.Event.START);
 
-        regulatePvP();
         preparePlayers();
         nuz.getTaskManager().registerTasks();
         nuz.getTaskManager().startLauncher();
@@ -78,19 +76,12 @@ public class GameManager {
     private void preparePlayers() {
         nuz.getPlayerManager().removeClasses();
         for(Player player: nuz.getServer().getOnlinePlayers()) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1, 10, true));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, 20, true));
+            player.setSaturation(5);
+            player.setFoodLevel(10);
+            player.setHealth(20);
+            player.getInventory().clear();
+            player.setTotalExperience(0);
         }
-    }
-
-    private void regulatePvP() {
-        truceActive = true;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                truceActive = false;
-            }
-        }.runTaskLater(nuz, getSettings().getCountDownLength() * 20L + getSettings().getGentlemenDuration() * 60L * 20L);
     }
 
     private void setPlayerEffects() {
@@ -105,9 +96,14 @@ public class GameManager {
         });
     }
 
+    public void setTruceActive(boolean b) {
+        truceActive = b;
+    }
+
     public void startGame() {
         gameInProgress = true;
         nuz.getEffectManager().giveEffects();
+        nuz.getTaskManager().getLauncher().startTruceRegulator();
 
         setPlayerEffects();
     }

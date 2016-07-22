@@ -1,5 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Tasks;
 
+import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
@@ -25,6 +26,7 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
     public void run() {
         if(time == (nuz.getSettings().getGentlemenDuration() * 60) && nuz.getSettings().getGentlemenDuration() > 0) {
             nuz.getServer().broadcastMessage(StringLib.EMA$GentlemenRuleEnd);
+            nuz.getServer().getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_WOLF_HOWL, 0.8f, 1));
         }
 
         if(time % (nuz.getSettings().getEpisodeDuration() * 60) == 0 && nuz.getSettings().getEpisodeDuration() > 0) {
@@ -32,6 +34,7 @@ public class EventMarkerAnnouncer extends BukkitRunnable {
                 nuz.getServer().broadcastMessage(StringLib.EMA$MarkerStart);
             } else {
                 nuz.getServer().broadcastMessage(String.format(StringLib.EMA$EpisodeEnd, getEpisodeNo()));
+                nuz.getServer().getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1));
             }
 
             episodeCounter++;

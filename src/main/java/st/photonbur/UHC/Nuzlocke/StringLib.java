@@ -41,6 +41,37 @@ public interface StringLib {
     String GCD$CountdownProgress                = ChatColor.GOLD + "[!] " + ChatColor.BOLD + "%s" + ChatColor.GOLD + "...";
     String GCD$CountdownStart                   = ChatColor.GOLD + "[!] Match starts in " + ChatColor.BOLD + "%s" + ChatColor.GOLD + "...";
 
+    String GiveInfo$Bug                         = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Slowly heal when there's over 16 leaves surrounding you";
+    String GiveInfo$Dark                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Long exposure to light leads to weakness\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " 40% chance of poking another player's eyes (causes blindness)";
+    String GiveInfo$Dragon                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in cold biomes occasionally causes freezing in place\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 25+ XP levels to buy a set of elytra for 10 levels";
+    String GiveInfo$Electric                    = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Attacks have a (5 + XP)% chance of landing a (5 + XP)/10 second paralysis. Also, getting attacked has a (5 + XP)% chance of paralysis.";
+    String GiveInfo$Fighting                    = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Having nothing in hand gives Strength 1 and Haste 1";
+    String GiveInfo$Fire                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Chopping wood/mining ore blocks have a 5% chance of burning/smelting";
+    String GiveInfo$Flying                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Every so often, 1-3 feathers spawn where you have just walked";
+    String GiveInfo$Ghost                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when above 9 haunches";
+    String GiveInfo$Grass                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when hiding in a plant\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Stepping water gives slowness and absorption";
+    String GiveInfo$Ground                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Acrophobia; too high altitudes give slight nausea\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Shovel or pick in hand gives Haste 1";
+    String GiveInfo$Ice                         = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Resistance against all slowness\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent frost walker\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Weakness and slowness in hot, arid biomes";
+    String GiveInfo$Normal                      = "- " + ChatColor.BLUE + ChatColor.ITALIC + "No special effects or redemptions. Just, normal.";
+    String GiveInfo$Poison                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Poison resistance, replaced by unharmful effects\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to get 1 free splash potion of poison";
+    String GiveInfo$Psychic                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent weakness 1\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem [levels to spend] at 5+ XP levels to scan players within (5 + XP) blocks";
+    String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 amd 1 extra heart. Tanky!\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in rain or water for too long inflicts 'rust'";
+    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently 5 extra hearts\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to get a Pokéball";
+    String GiveInfo$Water                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being out of water or rain causes dehydration\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in water gives speed, haste and respiration effects";
+
+    String GiveInfo$NeedsArguments              = ChatColor.RED + "[!] As you haven't got a type appointed, try a type as argument!";
+
     String ListPlayers$NoPlayersFound           = "- " + ChatColor.BLUE + ChatColor.ITALIC + "No players found";
     String ListPlayers$Participants             = "" + ChatColor.BLUE + ChatColor.BOLD + "Participants:";
     String ListPlayers$Spectators               = "" + ChatColor.BLUE + ChatColor.BOLD + "Spectators:";
@@ -71,6 +102,8 @@ public interface StringLib {
     String PokeballDetector$TargetOnTeamAlready = ChatColor.RED + "[!] The player you hit was already on a team!";
     String PokeballDetector$TeamAlreadyFull     = ChatColor.RED + "[!] Your team is already full!";
 
+    String Pokemon$Type                         = ChatColor.RED + "[!] You've been selected to be %s" + ChatColor.RED + "! Do /info to give details when needed";
+
     String Psychic$NoPlayersInRange             = ChatColor.DARK_GREEN + "[!] There weren't any players close by!";
     String Psychic$NotEnoughXP                  = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
     String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Players within %s blocks of you:";
@@ -87,4 +120,6 @@ public interface StringLib {
     String StopUHC$Stopped                      = ChatColor.DARK_RED + "[!] The match was stopped!";
 
     String Trainer$NotEnoughXP                  = ChatColor.DARK_GREEN + "[!] You'll need a little more XP to do that!";
+
+    String Water$Dehydrated                     = ChatColor.DARK_GREEN + "[!] Hmmm, it might be best to head for a little refreshment!";
 }

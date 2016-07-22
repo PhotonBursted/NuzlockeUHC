@@ -49,34 +49,37 @@ public class Bug extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.BUG)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.BUG) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.BUG))
-                        .forEach(p -> {
-                            Player player = Bukkit.getPlayer(p.getName());
-                            Location l = player.getLocation();
-                            int leafcount = 0;
-                            for (int x = l.getBlockX() - 1; x < l.getBlockX() + 2; x++) {
-                                for (int y = l.getBlockY() - 1; y < l.getBlockY() + 3; y++) {
-                                    for (int z = l.getBlockZ() - 1; z < l.getBlockZ() + 2; z++) {
-                                        if (l.getWorld().getBlockAt(x, y, z).getType() == Material.LEAVES ||
-                                                l.getWorld().getBlockAt(x, y, z).getType() == Material.LEAVES_2) {
-                                            leafcount++;
-                                            if (r.nextDouble() <= 0.0085) l.getWorld().getBlockAt(x, y, z).breakNaturally();
+                else {
+                    nuz.getPlayerManager().getPlayers().stream()
+                            .filter(p -> p.getRole() == Role.PARTICIPANT)
+                            .filter(p -> p instanceof Pokemon)
+                            .filter(p -> p.getType() == Pokemon.Type.BUG)
+                            .forEach(p -> {
+                                Player player = Bukkit.getPlayer(p.getName());
+                                Location l = player.getLocation();
+                                int leafcount = 0;
+                                for (int x = l.getBlockX() - 1; x < l.getBlockX() + 2; x++) {
+                                    for (int y = l.getBlockY() - 1; y < l.getBlockY() + 3; y++) {
+                                        for (int z = l.getBlockZ() - 1; z < l.getBlockZ() + 2; z++) {
+                                            if (l.getWorld().getBlockAt(x, y, z).getType() == Material.LEAVES ||
+                                                    l.getWorld().getBlockAt(x, y, z).getType() == Material.LEAVES_2) {
+                                                leafcount++;
+                                                if (r.nextDouble() <= 0.0085)
+                                                    l.getWorld().getBlockAt(x, y, z).breakNaturally();
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            if (leafcount > 16 && time % 15 == 0) {
-                                player.setFoodLevel(Math.min(20, player.getFoodLevel() + 1));
-                                player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + .5d));
-                            }
-                        });
-                time++;
+                                if (leafcount > 16 && time % 15 == 0) {
+                                    player.setFoodLevel(Math.min(20, player.getFoodLevel() + 1));
+                                    player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + .5d));
+                                }
+                            });
+                    time++;
+                }
             }
         }.runTaskTimer(nuz, 0L, 20L);
     }

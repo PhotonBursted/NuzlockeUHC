@@ -36,24 +36,23 @@ public class Grass extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GRASS)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.GRASS) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.GRASS))
+                        .filter(p -> p.getType() == Pokemon.Type.GRASS)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             Location l = player.getLocation();
 
                             if(l.getBlock().getType() == Material.DOUBLE_PLANT)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
                             else player.removePotionEffect(PotionEffectType.INVISIBILITY);
 
-                            if(l.getBlock().getType() == Material.WATER) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, true, false));
+                            if(l.getBlock().getType() == Material.WATER || l.getBlock().getType() == Material.STATIONARY_WATER) {
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, false, false));
                                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 0, true, false));
                             } else {
                                 player.removePotionEffect(PotionEffectType.SLOW);
@@ -70,7 +69,7 @@ public class Grass extends Type {
                                     player.getInventory().getItemInOffHand().getType() == Material.GOLD_SWORD ||
                                     player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD ||
                                     player.getInventory().getItemInOffHand().getType() == Material.DIAMOND_SWORD)
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 1, true, false));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false));
                             else player.removePotionEffect(PotionEffectType.WEAKNESS);
                         });
             }

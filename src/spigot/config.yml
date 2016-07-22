@@ -17,7 +17,7 @@ game:
     worldborder:
       enable: true
 
-      initialSize: 15
+      initialSize: 25
       endSize: 10
 
       shrink:
@@ -30,8 +30,8 @@ game:
         amount: 10
 
   markers:
-    episodeDuration: 1
-    gentlemenDuration: 1
+    episodeDuration: 20
+    gentlemenDuration: 10
     worldborder:
       start: true
       progress: 1

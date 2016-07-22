@@ -33,13 +33,13 @@ public class Ghost extends Type {
                 if(nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType().equals(Pokemon.Type.GHOST)) &&
+                        .noneMatch(p -> p.getType() == Pokemon.Type.GHOST) &&
                         nuz.getGameManager().isGameInProgress() ||
                         !nuz.getGameManager().isGameInProgress()) this.cancel();
-                nuz.getPlayerManager().getPlayers().stream()
+                else nuz.getPlayerManager().getPlayers().stream()
                         .filter(p -> p.getRole() == Role.PARTICIPANT)
                         .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType().equals(Pokemon.Type.GHOST))
+                        .filter(p -> p.getType() == Pokemon.Type.GHOST)
                         .forEach(p -> {
                             Player player = Bukkit.getPlayer(p.getName());
                             if(player.getFoodLevel() > 18)

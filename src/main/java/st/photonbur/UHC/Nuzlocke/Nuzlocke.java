@@ -30,8 +30,11 @@ public class Nuzlocke extends JavaPlugin {
      * Links classes to commands
      */
     private void loadCommands() {
+        GiveInfo giveInfo = new GiveInfo(this);
         getCommand("deregister").setExecutor(new DeregisterPlayer(this));
         getCommand("list").setExecutor(new ListPlayers(this));
+        getCommand("info").setExecutor(giveInfo);
+        getCommand("info").setTabCompleter(giveInfo);
         getCommand("redeem").setExecutor(new Redeem(this));
         getCommand("register").setExecutor(new RegisterPlayer(this));
         getCommand("startMatch").setExecutor(new StartUHC(this));
@@ -54,6 +57,8 @@ public class Nuzlocke extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().log(Level.INFO, "Your nuz seems locked...");
+
+        saveDefaultConfig();
 
         discordBot = new DiscordBot(this);
         effectManager = new EffectManager(this);

@@ -48,7 +48,7 @@ public class DamageManager implements Listener {
             Player victim = (Player) e.getEntity();
             if(nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
                 if (nuz.getGameManager().isTruceActive() || e.getDamager().getType() == EntityType.SNOWBALL)
-                    e.setDamage(0);
+                    e.setCancelled(true);
                 else {
                     Player damager = (Player) (e.getDamager() instanceof Projectile ? ((Projectile) e.getDamager()).getShooter() : e.getDamager());
                     int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
