@@ -1,16 +1,23 @@
 package st.photonbur.UHC.Nuzlocke.Listeners;
 
+import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
+import st.photonbur.UHC.Nuzlocke.Entities.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Trainer;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PokeballDetector implements Listener {
     private final Nuzlocke nuz;
@@ -20,45 +27,81 @@ public class PokeballDetector implements Listener {
     }
 
     @EventHandler
-    public void onHit(EntityDamageByEntityEvent e) {
+    public void onHit(ProjectileHitEvent e) {
         if(nuz.getGameManager().isGameInProgress()) {
-            if(e.getDamager().getType() == EntityType.SNOWBALL) {
-                if(e.getEntityType() == EntityType.PLAYER) {
-                    Player victim = (Player) e.getEntity();
-                    Snowball s = (Snowball) e.getDamager();
-                    Player thrower = (Player) s.getShooter();
+            if(e.getEntity().getType() == EntityType.SNOWBALL) {
+                Snowball s = (Snowball) e.getEntity();
 
-                    // Player should be Pokémon and also alive
-                    if (nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon &&
-                            nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
-                        if (nuz.getGameManager().getScoreboard().getEntryTeam(victim.getName()) == null) {
-                            if (nuz.getPlayerManager().getPlayer(thrower.getName()) instanceof Trainer &&
-                                    nuz.getPlayerManager().getPlayer(thrower.getName()).getRole() == Role.PARTICIPANT) {
-                                if (nuz.getTeamManager().getTeams().stream()
-                                        .filter(t -> t.contains(thrower.getName())).findFirst().orElse(null).getMembers().size() < nuz.getSettings().getTeamSize()) {
-                                    nuz.getTeamManager().addPlayer(victim.getName(), thrower.getName());
-                                    victim.sendMessage(String.format(StringLib.PokeballDetector$CaughtVictim,
-                                            nuz.getGameManager().getScoreboard().getEntryTeam(thrower.getName()).getPrefix() +
-                                                    "Team " + nuz.getPlayerManager().getPlayer(thrower).getName())
-                                    );
-                                    thrower.sendMessage(String.format(StringLib.PokeballDetector$CaughtThrower,
-                                            nuz.getPlayerManager().getPlayer(victim).getType().getColor() +
-                                                    nuz.getPlayerManager().getPlayer(victim).getType().getName() +
+                HashMap<Player, Double> ne = new HashMap<>();
+                nuz.getServer().getOnlinePlayers().stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT)
+                        .forEach(p -> ne.put(p, p.getLocation().distance(s.getLocation())));
+
+                Map.Entry<Player, Double> min = null;
+                for (Map.Entry<Player, Double> entry : ne.entrySet()) {
+                    if (min == null || min.getValue() > entry.getValue()) {
+                        min = entry;
+                    }
+                }
+
+                Player victim = min != null ? min.getKey() : null;
+                if(victim != null) {
+                    if(s.getShooter() instanceof CraftPlayer) {
+                        Player thrower = (Player) s.getShooter();
+
+                        // Player should be Pokémon and also alive
+                        if (nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon &&
+                                nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
+                            if (nuz.getGameManager().getScoreboard().getEntryTeam(victim.getName()) == null) {
+                                if (nuz.getPlayerManager().getPlayer(thrower.getName()) instanceof Trainer &&
+                                        nuz.getPlayerManager().getPlayer(thrower.getName()).getRole() == Role.PARTICIPANT) {
+                                    if (nuz.getTeamManager().getTeams().stream()
+                                            .filter(t -> t.contains(thrower.getName())).findFirst().orElse(null)
+                                            .getMembers().size() < nuz.getSettings().getTeamSize() + nuz.getGameManager().teamCapBonus) {
+                                        nuz.getTeamManager().addPlayer(victim.getName(), thrower.getName());
+                                        if(!teamWin(nuz.getTeamManager().getTeams().stream().filter(t -> t.contains(thrower.getName())).findFirst().get())) {
+                                            victim.sendMessage(String.format(StringLib.PokeballDetector$CaughtVictim,
                                                     nuz.getGameManager().getScoreboard().getEntryTeam(thrower.getName()).getPrefix() +
-                                                    " " + victim.getName())
-                                    );
+                                                            "Team " + nuz.getPlayerManager().getPlayer(thrower).getName())
+                                            );
+                                            thrower.sendMessage(String.format(StringLib.PokeballDetector$CaughtThrower,
+                                                    nuz.getPlayerManager().getPlayer(victim).getType().getColor() +
+                                                            nuz.getPlayerManager().getPlayer(victim).getType().getName() +
+                                                            nuz.getGameManager().getScoreboard().getEntryTeam(thrower.getName()).getPrefix() +
+                                                            " " + victim.getName())
+                                            );
+                                        }
+                                    } else {
+                                        thrower.sendMessage(StringLib.PokeballDetector$TeamAlreadyFull);
+                                    }
                                 } else {
-                                    thrower.sendMessage(StringLib.PokeballDetector$TeamAlreadyFull);
+                                    thrower.sendMessage(StringLib.PokeballDetector$NotATrainer);
                                 }
                             } else {
-                                thrower.sendMessage(StringLib.PokeballDetector$NotATrainer);
+                                thrower.sendMessage(StringLib.PokeballDetector$TargetOnTeamAlready);
                             }
-                        } else {
-                            thrower.sendMessage(StringLib.PokeballDetector$TargetOnTeamAlready);
                         }
                     }
                 }
             }
         }
+    }
+
+    boolean teamWin(Team team) {
+        if(nuz.getTeamManager().teamsAliveCount() == 1) {
+            String members = team.membersToString();
+            String teamName = team.getName();
+
+            nuz.getDiscordBot().announce(DiscordBot.Event.WIN,
+                    String.format(StringLib.DiscordBot$Win, "**__"+ teamName +"__**", members, nuz.getSettings().getEventName())
+            );
+            nuz.getServer().broadcastMessage(
+                    String.format(StringLib.DeathListener$Win,
+                            nuz.getGameManager().getScoreboard().getTeam(teamName).getPrefix() + ChatColor.BOLD + team.getName() + ChatColor.RED,
+                            team.membersToString(),
+                            ChatColor.BOLD + nuz.getSettings().getEventName())
+            );
+            nuz.getGameManager().stopGame();
+            return true;
+        } else return false;
     }
 }
