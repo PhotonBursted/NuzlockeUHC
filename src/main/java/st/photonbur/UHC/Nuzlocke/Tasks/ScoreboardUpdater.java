@@ -14,7 +14,7 @@ import java.util.Map;
 public class ScoreboardUpdater extends BukkitRunnable {
     private Map<String, String> buffer = new LinkedHashMap<>();
     private final Map<String, String> entries = new LinkedHashMap<>();
-    private Objective eventInfo;
+    private Objective eventInfo, health;
     private final Nuzlocke nuz;
     private final Scoreboard scoreboard;
 
@@ -23,6 +23,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
         this.scoreboard = nuz.getGameManager().getScoreboard();
 
         launchSidebar();
+        setupHealthDisplay();
         setupEntries("playersLeft", "teamsLeft", "separator|---------------", "episode", "timeLeft");
     }
 
@@ -67,6 +68,11 @@ public class ScoreboardUpdater extends BukkitRunnable {
                 entries.put(s, "");
             }
         }
+    }
+
+    private void setupHealthDisplay() {
+        health = scoreboard.registerNewObjective("Health", "health");
+        health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
     }
 
     public void updateScores() {

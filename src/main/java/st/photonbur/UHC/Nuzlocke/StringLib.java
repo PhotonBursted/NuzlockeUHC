@@ -15,7 +15,7 @@ public interface StringLib {
 
     String DeathListener$DeathMove              = ChatColor.RED + "[!] You will be moved over to the spectator channel within %s seconds";
     String DeathListener$TeamWipe               = ChatColor.RED + "[!] Oh no! %s has been wiped! %s teams remain...";
-    String DeathListener$TrainerWipe            = ChatColor.RED + "[!] Trainer %s has gone, meaning all team caps have grown by 1!";
+    String DeathListener$TrainerWipe            = ChatColor.RED + "[!] Trainer %s has gone, meaning their team can't grow anymore! Also, all team caps have been raised by 1 to %s.";
     String DeathListener$Win                    = ChatColor.RED + "[!] THAT'S IT! Give a big hand to %s, consisting of %s, for reigning supreme in the %s!";
 
     String DiscordBot$AnnounceStart             = "@here Let the games begin!";
@@ -44,7 +44,8 @@ public interface StringLib {
     String GCD$CountdownProgress                = ChatColor.GOLD + "[!] " + ChatColor.BOLD + "%s" + ChatColor.GOLD + "...";
     String GCD$CountdownStart                   = ChatColor.GOLD + "[!] Match starts in " + ChatColor.BOLD + "%s" + ChatColor.GOLD + "...";
 
-    String GiveInfo$Bug                         = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Slowly heal when there's over 16 leaves surrounding you";
+    String GiveInfo$Bug                         = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Slowly heal when there's over 16 leaves surrounding you\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Leaves around you despawn faster than normal, even placed ones";
     String GiveInfo$Dark                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Long exposure to light leads to weakness\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " 40% chance of poking another player's eyes (causes blindness)";
     String GiveInfo$Dragon                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in cold biomes occasionally causes freezing in place\n" + ChatColor.RESET +
@@ -55,7 +56,8 @@ public interface StringLib {
     String GiveInfo$Flying                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Every so often, 1-3 feathers spawn where you have just walked";
     String GiveInfo$Ghost                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when above 9 haunches";
     String GiveInfo$Grass                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Invisibility when hiding in a plant\n" + ChatColor.RESET +
-                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Stepping water gives slowness and absorption";
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Swimming in water gives slowness and absorption\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Holding a sword gives slight weakness";
     String GiveInfo$Ground                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Acrophobia; too high altitudes give slight nausea\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Shovel or pick in hand gives Haste 1";
     String GiveInfo$Ice                         = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Resistance against all slowness\n" + ChatColor.RESET +
@@ -68,9 +70,9 @@ public interface StringLib {
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem [levels to spend] at 5+ XP levels to scan players within (5 + XP) blocks";
     String GiveInfo$Rock                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Fortune (on ores, but also rocks\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Carrying 6 stacks of (cobble)stone will increase strength and resistance, but reduce speed";
-    String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 amd 1 extra heart. Tanky!\n" + ChatColor.RESET +
+    String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 and 1 extra heart. Tanky!\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in rain or water for too long inflicts 'rust'";
-    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently 5 extra hearts\n" + ChatColor.RESET +
+    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently get 5 extra hearts\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to get a Pokéball";
     String GiveInfo$Water                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being out of water or rain causes dehydration\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in water gives speed, haste and respiration effects";

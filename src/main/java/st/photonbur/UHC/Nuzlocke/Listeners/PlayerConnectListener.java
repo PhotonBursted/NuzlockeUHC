@@ -2,6 +2,7 @@ package st.photonbur.UHC.Nuzlocke.Listeners;
 
 import net.dv8tion.jda.OnlineStatus;
 import net.dv8tion.jda.entities.User;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +31,17 @@ public class PlayerConnectListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if(!nuz.getGameManager().isGameInProgress()) {
-            nuz.getPlayerManager().registerPlayer(p.getName());
+        if(nuz.getPlayerManager().getPlayers().stream().noneMatch(player -> player.getName().equals(p.getName()))) {
+            if (!nuz.getGameManager().isGameInProgress()) {
+                nuz.getPlayerManager().registerPlayer(p.getName());
+                p.setGameMode(GameMode.SURVIVAL);
+            } else {
+                nuz.getPlayerManager().deregisterPlayer(p.getName());
+                p.setGameMode(GameMode.SPECTATOR);
+            }
         } else {
-            nuz.getPlayerManager().deregisterPlayer(p.getName());
+            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.SPECTATOR) p.setGameMode(GameMode.SPECTATOR);
+            else p.setGameMode(GameMode.SURVIVAL);
         }
     }
 

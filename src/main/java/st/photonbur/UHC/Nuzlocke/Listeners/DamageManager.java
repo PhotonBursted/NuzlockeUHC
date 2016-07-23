@@ -52,16 +52,19 @@ public class DamageManager implements Listener {
                         e.setCancelled(true);
                     else {
                         Player damager = (Player) (e.getDamager() instanceof Projectile ? ((Projectile) e.getDamager()).getShooter() : e.getDamager());
-                        int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
-                                ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
-                        int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon
-                                ? nuz.getPlayerManager().getPlayer(victim.getName()).getType().getID() : 0;
-                        double modifier = atkMods[dTypeID][vTypeID];
-                        if (modifier == 0) damager.sendMessage(StringLib.DamageManager$Immune);
-                        if (modifier == NE) damager.sendMessage(StringLib.DamageManager$NotEffective);
-                        if (modifier == SE) damager.sendMessage(StringLib.DamageManager$SuperEffective);
+                        if(nuz.getTeamManager().getTeams().stream().noneMatch(t -> t.contains(damager.getName()))) e.setCancelled(true);
+                        else {
+                            int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
+                                    ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
+                            int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon
+                                    ? nuz.getPlayerManager().getPlayer(victim.getName()).getType().getID() : 0;
+                            double modifier = atkMods[dTypeID][vTypeID];
+                            if (modifier == 0) damager.sendMessage(StringLib.DamageManager$Immune);
+                            if (modifier == NE) damager.sendMessage(StringLib.DamageManager$NotEffective);
+                            if (modifier == SE) damager.sendMessage(StringLib.DamageManager$SuperEffective);
 
-                        e.setDamage(e.getFinalDamage() * modifier);
+                            e.setDamage(e.getFinalDamage() * modifier);
+                        }
                     }
                 }
             }
