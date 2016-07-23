@@ -95,11 +95,10 @@ public class PokeballDetector implements Listener {
                     String.format(StringLib.DiscordBot$Win, "**__"+ teamName +"__**", members, nuz.getSettings().getEventName())
             );
             nuz.getServer().broadcastMessage(
-                    String.format(StringLib.DeathListener$Win,
+                     String.format(StringLib.DeathListener$Win,
                             nuz.getGameManager().getScoreboard().getTeams().stream().filter(t -> t.getDisplayName().equals(teamName)).findFirst().get().getPrefix()
-                                    + ChatColor.BOLD + team.getName() + ChatColor.RED,
-                            team.membersToString(),
-                            ChatColor.BOLD + nuz.getSettings().getEventName())
+                                    + ChatColor.BOLD + teamName + ChatColor.RED,
+                            members, ChatColor.BOLD + nuz.getSettings().getEventName())
             );
             nuz.getGameManager().stopGame();
             return true;

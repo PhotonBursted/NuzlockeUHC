@@ -17,7 +17,7 @@ class DiscordListener implements EventListener {
     public void onEvent(Event e) {
         if(e instanceof ReadyEvent) {
             bot.guild = e.getJDA().getGuilds().get(0);
-            bot.general = bot.guild.getTextChannels().stream().filter(tc -> tc.getName().equals("bottest")).findFirst().get();
+            bot.general = bot.guild.getTextChannels().stream().filter(tc -> tc.getName().equals("event-chat")).findFirst().get();
             bot.participants = bot.guild.createCopyOfRole(bot.guild.getPublicRole());
             bot.participants.setName("Active Participants")
                     .setMentionable(true)
