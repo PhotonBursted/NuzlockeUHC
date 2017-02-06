@@ -19,6 +19,7 @@ public interface StringLib {
     String DeathListener$Win                    = ChatColor.RED + "[!] THAT'S IT! Give a big hand to %s, consisting of %s, for reigning supreme in the %s!";
 
     String DiscordBot$AnnounceStart             = "@here Let the games begin!";
+    String DiscordBot$AnnounceStop              = "The game has ended preemptively!";
     String DiscordBot$GoodbyeMessage            = "Until next time, take it easy!";
     String DiscordBot$TeamWipe                  = "RIP that team! D:\nThere are now %s teams left";
     String DiscordBot$TrainerWipe               = "RIP that trainer... As they died preemptively, their team won't be growing anymore!";
@@ -65,15 +66,15 @@ public interface StringLib {
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Weakness and slowness in hot, arid biomes";
     String GiveInfo$Normal                      = "- " + ChatColor.BLUE + ChatColor.ITALIC + "No special effects or redemptions. Just, normal.";
     String GiveInfo$Poison                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Poison resistance, replaced by unharmful effects\n" + ChatColor.RESET +
-                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to getJDA 1 free splash potion of poison";
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to get 1 free splash potion of poison";
     String GiveInfo$Psychic                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent weakness 1\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem [levels to spend] at 5+ XP levels to scan players within (5 + XP) blocks";
     String GiveInfo$Rock                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Fortune (on ores, but also rocks\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Carrying 6 stacks of (cobble)stone will increase strength and resistance, but reduce speed";
     String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 and 1 extra heart. Tanky!\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in rain or water for too long inflicts 'rust'";
-    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently getJDA 5 extra hearts\n" + ChatColor.RESET +
-                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to getJDA a Pokéball";
+    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently get 5 extra hearts\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to get a Pokéball";
     String GiveInfo$Water                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being out of water or rain causes dehydration\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in water gives speed, haste and respiration effects";
 

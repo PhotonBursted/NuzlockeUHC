@@ -260,6 +260,7 @@ public class DiscordBot {
         JOIN(StringLib.DiscordBot$WelcomeMessage),
         QUIT(StringLib.DiscordBot$GoodbyeMessage),
         START(StringLib.DiscordBot$AnnounceStart),
+        STOP(StringLib.DiscordBot$AnnounceStop),
         TEAM_WIPE(StringLib.DiscordBot$TeamWipe),
         TRAINER_WIPE(StringLib.DiscordBot$TrainerWipe),
         WIN(StringLib.DiscordBot$Win);

@@ -19,7 +19,7 @@ public class Dragon extends Type {
     private final Random r = new Random();
     private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
 
-    //Buff: At 25 levels, getJDA access to /redeem to getJDA an elytra
+    //Buff: At 25 levels, get access to /redeem to get an elytra
     //Debuff: Random freeze when in cold biome
     Dragon(Nuzlocke nuz) {
         super(nuz);

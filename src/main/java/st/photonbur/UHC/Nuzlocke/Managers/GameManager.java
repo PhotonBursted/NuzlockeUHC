@@ -201,6 +201,7 @@ public class GameManager {
     public void stopGame() {
         gameInProgress = false;
         cleanUp();
+        nuz.getDiscordBot().announce(DiscordBot.Event.STOP);
         nuz.getDiscordBot().cleanUp();
     }
 }

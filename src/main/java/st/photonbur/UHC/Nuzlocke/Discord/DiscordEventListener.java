@@ -1,12 +1,11 @@
 package st.photonbur.UHC.Nuzlocke.Discord;
 
-import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
-import net.dv8tion.jda.core.hooks.EventListener;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
-class DiscordEventListener implements EventListener {
+class DiscordEventListener extends ListenerAdapter {
     private final DiscordBot bot;
 
     DiscordEventListener(Nuzlocke nuz) {
@@ -14,18 +13,19 @@ class DiscordEventListener implements EventListener {
     }
 
     @Override
-    public void onEvent(Event e) {
-        if (e instanceof ReadyEvent) {
-            bot.guild = e.getJDA().getGuilds().get(0);
-            bot.general = bot.guild.getTextChannels().stream().filter(tc -> tc.getName().equals("bottest")).findFirst().get();
-            bot.participants = bot.guild.getController()
-                    .createCopyOfRole(bot.guild.getPublicRole())
-                    .setName("Active Participants")
-                    .setMentionable(true).complete();
+    public void onReady(ReadyEvent e) {
+        bot.guild = e.getJDA().getGuilds().get(0);
+        bot.general = bot.guild.getTextChannels().stream().filter(tc -> tc.getName().equals("bottest")).findFirst().get();
+        bot.participants = bot.guild.getController()
+                .createCopyOfRole(bot.guild.getPublicRole())
+                .setName("Active Participants")
+                .setMentionable(true).complete();
 
-            bot.announce(DiscordBot.Event.JOIN);
-        } else if (e instanceof ShutdownEvent) {
-            bot.announce(DiscordBot.Event.QUIT);
-        }
+        bot.announce(DiscordBot.Event.JOIN);
+    }
+
+    @Override
+    public void onShutdown(ShutdownEvent e) {
+        bot.announce(DiscordBot.Event.QUIT);
     }
 }
