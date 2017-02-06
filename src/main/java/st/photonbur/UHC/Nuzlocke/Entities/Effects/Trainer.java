@@ -2,6 +2,7 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,7 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class Trainer extends Type {
-    public Trainer(Nuzlocke nuz) {
+    Trainer(Nuzlocke nuz) {
         super(nuz);
     }
 
@@ -22,8 +23,10 @@ public class Trainer extends Type {
                 .filter(p -> p.getType() == Pokemon.Type.TRAINER)
                 .forEach(p -> {
                     Player player = Bukkit.getPlayer(p.getName());
-                    player.setMaxHealth(30d);
-                    if(startup) player.setHealth(30d);
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30d);
+                    if (startup) {
+                        player.setHealth(30d);
+                    }
                 });
     }
 
@@ -32,15 +35,17 @@ public class Trainer extends Type {
         return false;
     }
 
-    public void redeem(CommandSender sender, int levelsIn) {
+    public void redeem(CommandSender sender, @SuppressWarnings("SameParameterValue") int levelsIn) {
         Player player = Bukkit.getPlayer(sender.getName());
-        if(player.getLevel() < levelsIn) sender.sendMessage(StringLib.Trainer$NotEnoughXP);
-        else {
+        if (player.getLevel() < levelsIn) {
+            sender.sendMessage(StringLib.Trainer$NotEnoughXP);
+        } else {
             player.giveExpLevels(-levelsIn);
             player.getInventory().addItem(new ItemStack(Material.SNOW_BALL));
         }
     }
 
     @Override
-    void runContinuousEffect() { }
+    void runContinuousEffect() {
+    }
 }

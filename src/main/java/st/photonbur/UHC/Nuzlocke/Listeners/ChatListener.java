@@ -11,14 +11,6 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class ChatListener implements Listener {
-    public enum ChatMessageFormat {
-        GLOBAL, TEAM, SPECTATOR
-    }
-
-    public enum PlayerState {
-        ONLINE, TEAMMEMBER, SPECTATOR, SELF
-    }
-
     private final Nuzlocke nuz;
 
     public ChatListener(Nuzlocke nuz) {
@@ -26,9 +18,9 @@ public class ChatListener implements Listener {
     }
 
     private void addPlayersBeing(PlayerState ps, AsyncPlayerChatEvent e) {
-        switch(ps) {
+        switch (ps) {
             case ONLINE:
-                for(Player p: Bukkit.getOnlinePlayers()) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
                     e.getRecipients().add(p);
                 }
                 break;
@@ -37,7 +29,7 @@ public class ChatListener implements Listener {
                         .stream()
                         .filter(p -> nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(p.getName()) != null)
                         .filter(p -> nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(p.getName()).equals(nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(e.getPlayer().getName())))
-                        .forEach(p -> e.getRecipients().add(p));
+                        .forEach(e.getRecipients()::add);
                 break;
             case SELF:
                 e.getRecipients().add(e.getPlayer());
@@ -46,7 +38,7 @@ public class ChatListener implements Listener {
                 Bukkit.getOnlinePlayers()
                         .stream()
                         .filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == Role.SPECTATOR)
-                        .forEach(p -> e.getRecipients().add(p));
+                        .forEach(e.getRecipients()::add);
                 break;
             default:
                 break;
@@ -60,23 +52,23 @@ public class ChatListener implements Listener {
         String message = e.getMessage();
         String prefix = nuz.getSettings().getGlobalChatPrefix();
 
-        if(nuz.getGameManager().isGameInProgress()) {
+        if (nuz.getGameManager().isGameInProgress()) {
             e.getRecipients().clear();
 
-            if(nuz.getPlayerManager().getPlayer(player).getRole() == Role.PARTICIPANT) {
-                if(message.startsWith(prefix)) {
+            if (nuz.getPlayerManager().getPlayer(player).getRole() == Role.PARTICIPANT) {
+                if (message.startsWith(prefix)) {
                     addPlayersBeing(PlayerState.ONLINE, e);
                     setFormat(ChatMessageFormat.GLOBAL, e);
                 } else {
-                    addPlayersBeing(team == null? PlayerState.SELF: PlayerState.TEAMMEMBER, e);
-                    if(nuz.getSettings().doSpectatorSeeAll()) {
+                    addPlayersBeing(team == null ? PlayerState.SELF : PlayerState.TEAMMEMBER, e);
+                    if (nuz.getSettings().doSpectatorSeeAll()) {
                         addPlayersBeing(PlayerState.SPECTATOR, e);
                     }
                     setFormat(ChatMessageFormat.TEAM, e);
                 }
             } else {
-                if(message.startsWith(prefix)) {
-                    if(nuz.getSettings().doSpectatorGlobalTalk()) {
+                if (message.startsWith(prefix)) {
+                    if (nuz.getSettings().doSpectatorGlobalTalk()) {
                         addPlayersBeing(PlayerState.ONLINE, e);
                         setFormat(ChatMessageFormat.GLOBAL, e);
                     } else {
@@ -97,12 +89,12 @@ public class ChatListener implements Listener {
         String messageStart = "";
         Team team = nuz.getServer().getScoreboardManager().getMainScoreboard().getEntryTeam(e.getPlayer().getName());
         String prefix = "", suffix = "";
-        if(team != null) {
+        if (team != null) {
             prefix = team.getPrefix();
             suffix = team.getSuffix();
         }
 
-        switch(cmf) {
+        switch (cmf) {
             case GLOBAL:
                 messageStart += "[G]";
                 break;
@@ -119,13 +111,21 @@ public class ChatListener implements Listener {
                 e.getMessage().startsWith(nuz.getSettings().getGlobalChatPrefix()) ? nuz.getSettings().getGlobalChatPrefix().length() : 0,
                 e.getMessage().length()
         );
-        if(message.length() == 0) {
+        if (message.length() == 0) {
             e.setCancelled(true);
         } else {
             e.setFormat(messageStart
-                        + " <" + prefix + e.getPlayer().getName() + suffix + "> "
-                        + message
+                    + " <" + prefix + e.getPlayer().getName() + suffix + "> "
+                    + message
             );
         }
+    }
+
+    public enum ChatMessageFormat {
+        GLOBAL, TEAM, SPECTATOR
+    }
+
+    public enum PlayerState {
+        ONLINE, TEAMMEMBER, SPECTATOR, SELF
     }
 }

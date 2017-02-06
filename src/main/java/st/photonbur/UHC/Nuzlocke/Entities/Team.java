@@ -41,10 +41,14 @@ public class Team {
 
     public String membersToString() {
         String res = "";
-        for(int i=0; i<members.size(); i++) {
+        for (int i = 0; i < members.size(); i++) {
             res += members.get(i).getName();
-            if(i == members.size() - 2) res += " & ";
-            if(i < members.size() - 2) res += ", ";
+            if (i == members.size() - 2) {
+                res += " & ";
+            }
+            if (i < members.size() - 2) {
+                res += ", ";
+            }
         }
         return res;
     }

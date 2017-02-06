@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Game;
+package st.photonbur.UHC.Nuzlocke.Managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,14 +17,20 @@ public class TeamManager {
         private final ChatColor cc;
         private final Color c;
 
-        public ColorCollection(ChatColor cc, Color c) {
+        ColorCollection(ChatColor cc, Color c) {
             this.cc = cc;
             this.c = c;
         }
 
-        ChatColor getChatColor() { return cc; }
-        Color getColor() { return c; }
+        ChatColor getChatColor() {
+            return cc;
+        }
+
+        Color getColor() {
+            return c;
+        }
     }
+
     private final ArrayList<st.photonbur.UHC.Nuzlocke.Entities.Team> teams = new ArrayList<>();
     private final Map<String, ColorCollection> colors = generateColorMap();
     private final Nuzlocke nuz;
@@ -57,31 +63,36 @@ public class TeamManager {
 
     public void addPlayer(String playerName, String teamName) {
         st.photonbur.UHC.Nuzlocke.Entities.Team target = getTeams().stream().filter(t -> t.contains(teamName)).findFirst().orElse(null);
-        if(target != null) {
+        if (target != null) {
             target.addPlayer(nuz.getPlayerManager().getPlayer(playerName));
             nuz.getGameManager().getScoreboard().getTeams().stream()
                     .filter(t -> t.getEntries().contains(teamName))
                     .findFirst().get().addEntry(playerName);
-            nuz.getDiscordBot().movePlayer(playerName, "Team "+ teamName);
+            nuz.getDiscordBot().movePlayer(playerName, "Team " + teamName);
             nuz.getDiscordBot().addRole(playerName, "Team " + teamName);
         }
     }
 
-    public void createTeam(String playerName) {
-        final String[] teamName = new String[1];
-        do {
-            teamName[0] = randomTeamColorName();
-        } while (nuz.getGameManager().getScoreboard().getTeam(teamName[0]) != null);
+    void createDiscordTeams() {
+        teams.forEach(t -> nuz.getDiscordBot().addTeam(
+                t.getMembers().get(0).getName(),
+                colors.get(nuz.getGameManager().getScoreboard().getEntryTeam(t.getMembers().get(0).getName()).getName()).getColor()
+        ));
+    }
 
-        Team team = nuz.getGameManager().getScoreboard().registerNewTeam(teamName[0]);
-        team.setPrefix(colors.get(teamName[0]).getChatColor().toString());
+    void createTeam(String playerName) {
+        String teamName;
+        do {
+            teamName = randomTeamColorName();
+        } while (nuz.getGameManager().getScoreboard().getTeam(teamName) != null);
+
+        Team team = nuz.getGameManager().getScoreboard().registerNewTeam(teamName);
+        team.setPrefix(colors.get(teamName).getChatColor() + "");
         team.setSuffix(ChatColor.RESET + "");
         team.setDisplayName("Team " + playerName);
         team.addEntry(playerName);
 
-        nuz.getDiscordBot().addTeam(playerName, colors.get(teamName[0]).getColor());
-
-        teams.add(new st.photonbur.UHC.Nuzlocke.Entities.Team(nuz, nuz.getPlayerManager().getPlayer(playerName), "Team "+ playerName));
+        teams.add(new st.photonbur.UHC.Nuzlocke.Entities.Team(nuz, nuz.getPlayerManager().getPlayer(playerName), "Team " + playerName));
 
         synchronized (nuz.getPlayerManager().teamBuilderLock) {
             nuz.getPlayerManager().isBuildingTeam = false;
@@ -95,9 +106,9 @@ public class TeamManager {
 
     public int teamsAliveCount() {
         return (int) (getTeams().stream().filter(team -> team.countStillAlive() > 0).count()
-                    + Bukkit.getOnlinePlayers().stream().filter(
-                        p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT
-                    ).count());
+                + Bukkit.getOnlinePlayers().stream().filter(
+                p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT
+        ).count());
     }
 
     private String randomTeamColorName() {

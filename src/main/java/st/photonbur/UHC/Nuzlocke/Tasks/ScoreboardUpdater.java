@@ -8,17 +8,18 @@ import org.bukkit.scoreboard.Scoreboard;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ScoreboardUpdater extends BukkitRunnable {
-    private Map<String, String> buffer = new LinkedHashMap<>();
+    private final ArrayList<LinkedHashMap<String, String>> buffer = new ArrayList<>();
     private final Map<String, String> entries = new LinkedHashMap<>();
-    private Objective eventInfo, health;
+    private Objective eventInfo;
     private final Nuzlocke nuz;
     private final Scoreboard scoreboard;
 
-    public ScoreboardUpdater(Nuzlocke nuz) {
+    ScoreboardUpdater(Nuzlocke nuz) {
         this.nuz = nuz;
         this.scoreboard = nuz.getGameManager().getScoreboard();
 
@@ -28,7 +29,9 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     private void clearScores() {
-        buffer.values().forEach(scoreboard::resetScores);
+        scoreboard.getEntries().stream()
+                .filter(e -> scoreboard.getObjective(DisplaySlot.SIDEBAR).getScore(e) != null)
+                .forEach(scoreboard::resetScores);
     }
 
     private void displayScores() {
@@ -54,7 +57,8 @@ public class ScoreboardUpdater extends BukkitRunnable {
 
     @Override
     public void run() {
-        buffer = new LinkedHashMap<>(entries);
+        buffer.add(new LinkedHashMap<>(entries));
+        if(buffer.size() > 2) buffer.remove(0);
 
         updateScores();
     }
@@ -71,7 +75,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     private void setupHealthDisplay() {
-        health = scoreboard.registerNewObjective("Health", "health");
+        Objective health = scoreboard.registerNewObjective("Health", "health");
         health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
     }
 

@@ -15,8 +15,8 @@ public class StopUHC implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("stopmatch")) {
-            if(!nuz.getGameManager().isGameInProgress()) {
+        if (cmd.getName().equalsIgnoreCase("stopmatch")) {
+            if (!nuz.getGameManager().isGameInProgress()) {
                 sender.sendMessage(StringLib.StopUHC$GameNotUnderway);
             } else {
                 nuz.getServer().broadcastMessage(StringLib.StopUHC$Stopped);

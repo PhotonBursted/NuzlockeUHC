@@ -1,14 +1,11 @@
 package st.photonbur.UHC.Nuzlocke.Discord;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.JDABuilder;
-import net.dv8tion.jda.Permission;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.entities.VoiceChannel;
-import net.dv8tion.jda.managers.ChannelManager;
-import net.dv8tion.jda.managers.RoleManager;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -16,9 +13,248 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DiscordBot {
+    private final Nuzlocke nuz;
+    private final ArrayList<Channel> channels = new ArrayList<>();
+    private final ArrayList<Role> roles = new ArrayList<>();
+    private final Object LOCK = new Object();
+    Guild guild;
+    Role participants;
+    TextChannel general;
+    private JDA bot;
+    private String commandPrefix;
+    private String token;
+    private boolean running;
+    private Channel participantsHangout;
+
+    public DiscordBot(Nuzlocke nuz) {
+        this.nuz = nuz;
+        this.running = false;
+    }
+
+    public void addTeam(String playerName, Color color) {
+        synchronized (LOCK) {
+            while (guild.getVoiceChannels().stream().noneMatch(vc -> vc.getName().equalsIgnoreCase("Participants Hangout")))
+                try {
+                    LOCK.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+        }
+        Permission[] serverAllowed = {
+                Permission.NICKNAME_CHANGE, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
+                Permission.MESSAGE_HISTORY, Permission.MESSAGE_EMBED_LINKS, Permission.VOICE_USE_VAD
+        };
+        Role newRole = guild.getController().createRole()
+                .setPermissions(serverAllowed)
+                .setPermissions(invertPermissions(new ArrayList<>(Arrays.asList(serverAllowed)), true))
+                .setName("Team " + playerName)
+                .setMentionable(true)
+                .setColor(color)
+                .setHoisted(true)
+                .complete();
+        addRole(getMemberByLink(playerName), newRole);
+
+        List<Permission> channelAllowedTeam = Arrays.asList(Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.VOICE_USE_VAD);
+        List<Permission> channelAllowedSpec = Collections.singletonList(Permission.VOICE_CONNECT);
+        Channel newVC = guild.getController().createVoiceChannel("Team " + playerName)
+                .addPermissionOverride(newRole, channelAllowedTeam, invertPermissions(channelAllowedTeam, false))
+                .addPermissionOverride(participants, 0, Permission.getRaw(Permission.VOICE_CONNECT))
+                .addPermissionOverride(guild.getPublicRole(), channelAllowedSpec, invertPermissions(channelAllowedSpec, false))
+                .complete();
+        if (getMemberByLink(playerName) != null) {
+            if (getMemberByLink(playerName).getVoiceState().inVoiceChannel()) {
+                movePlayer(getMemberByLink(playerName), (VoiceChannel) newVC);
+            }
+        }
+
+        channels.add(newVC);
+        roles.add(newRole);
+    }
+
+    public void addRole(String playerName, String teamName) {
+        addRole(getMemberByLink(playerName), teamName);
+    }
+
+    private void addRole(Member member, String teamName) {
+        addRole(member, roles.stream().filter(r -> r.getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
+    }
+
+    private void addRole(Member member, Role role) {
+        guild.getController().addRolesToMember(member, role);
+    }
+
+    public void announce(Event e) {
+        announce(e, e.getMessage());
+    }
+
+    public void announce(Event e, String msg) {
+        logMessage(general, e.name(), msg);
+    }
+
+    public void cleanUp() {
+        guild.getMembers().stream()
+                .filter(m -> m.getVoiceState().inVoiceChannel())
+                .forEach(m -> guild.getController().moveVoiceMember(m, guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get()));
+        channels.forEach(c -> c.delete().queue());
+        channels.clear();
+
+        guild.getVoiceChannels().stream()
+                .filter(vc -> vc.getName().equalsIgnoreCase("general"))
+                .findFirst().get().getPermissionOverride(participants).delete().queue();
+
+        roles.forEach(r -> {
+            nuz.getLogger().info("Deleting role " + r.getName());
+            r.delete();
+        });
+        roles.clear();
+    }
+
+    public void deregisterPlayer(String p) {
+        guild.getController().removeRolesFromMember(getMemberByLink(p), participants).queue();
+
+        if (nuz.getGameManager().isGameInProgress() && getMemberByLink(p).getVoiceState().inVoiceChannel()) {
+            guild.getController().moveVoiceMember(getMemberByLink(p), guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get());
+        }
+    }
+
+    public JDA getJDA() {
+        return bot;
+    }
+
+    private Member getMemberByLink(String ign) {
+        return guild.getMember(nuz.getServerLinkManager().getLinkedUser(ign));
+    }
+
+    private void logMessage(TextChannel tc, String purpose, String msg) {
+        tc.sendMessage("**[" + purpose.toUpperCase() + "]** " + msg).queue();
+    }
+
+    private List<Permission> invertPermissions(List<Permission> allowed, boolean targetGuild) {
+        List<Permission> denied = new ArrayList<>();
+        for (Permission p : Permission.values()) {
+            if (!allowed.contains(p) && (targetGuild ? p.isGuild() : p.isChannel())) {
+                denied.add(p);
+            }
+        }
+        return denied;
+    }
+
+    public void movePlayer(String playerName, String teamName) {
+        movePlayer(getMemberByLink(playerName), teamName);
+    }
+
+    private void movePlayer(Member member, String teamName) {
+        movePlayer(member, guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
+    }
+
+    private void movePlayer(Member member, VoiceChannel vc) {
+        if (member.getVoiceState().inVoiceChannel()) {
+            guild.getController().moveVoiceMember(member, vc);
+        }
+    }
+
+    public void prepareGame() {
+        synchronized (LOCK) {
+            List<Permission> allowedEveryone = Collections.singletonList(Permission.VOICE_CONNECT);
+            participantsHangout = guild.getController().createVoiceChannel("Participants Hangout")
+                    .addPermissionOverride(guild.getPublicRole(), allowedEveryone, invertPermissions(allowedEveryone, false))
+                    .complete();
+            channels.add(participantsHangout);
+
+            guild.getMembersWithRoles(participants).stream()
+                    .filter(m -> m.getVoiceState().inVoiceChannel())
+                    .forEach(m -> movePlayer(m, (VoiceChannel) participantsHangout));
+
+            List<Permission> allowedParticipant = Collections.emptyList();
+            guild.getVoiceChannels().stream().filter(vc -> vc.getName().equals("General")).findFirst().get()
+                    .createPermissionOverride(participants).complete().getManagerUpdatable().grant(allowedParticipant).deny(invertPermissions(allowedParticipant, false))
+                    .update().complete();
+
+            LOCK.notifyAll();
+        }
+    }
+
+    public void registerPlayer(String p) {
+        guild.getController().addRolesToMember(getMemberByLink(p), participants).queue();
+
+        if (nuz.getGameManager().isGameInProgress() && getMemberByLink(p).getVoiceState().inVoiceChannel()) {
+            if (nuz.getGameManager().getScoreboard().getEntryTeam(p) != null) {
+                VoiceChannel teamChannel = guild.getVoiceChannels().stream()
+                        .filter(vc -> vc.getName().equals(nuz.getGameManager().getScoreboard().getEntryTeam(p).getName()))
+                        .findFirst().orElse(null);
+                if (teamChannel != null) {
+                    guild.getController().moveVoiceMember(guild.getMember(nuz.getServerLinkManager().getLinkedUser(p)), teamChannel);
+                }
+            } else {
+                guild.getController().moveVoiceMember(getMemberByLink(p), (VoiceChannel) participantsHangout);
+            }
+        }
+    }
+
+    void showHelp(MessageChannel c) {
+        c.sendMessage("" +
+                "This bot is directly connected with the UHC Minecraft server, and will mirror the actions on the server back to here.\n" +
+                "Additionally, this bot is used as a registration mechanism to be able to enter the server using `+link <MCIGN>`." +
+                "").queue();
+    }
+
+    public void start() {
+        try {
+            bot = new JDABuilder(AccountType.BOT)
+                    .setToken(token)
+                    .addListener(new DiscordEventListener(nuz))
+                    .addListener(new DiscordChatListener(nuz))
+                    .buildBlocking();
+
+            running = true;
+        } catch (LoginException | InterruptedException | RateLimitedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        participants.delete().complete();
+        bot.shutdown(false);
+
+        running = false;
+    }
+
+    public String getCommandPrefix() {
+        return commandPrefix;
+    }
+
+    void setCommandPrefix(String newPrefix) {
+        setCommandPrefix(newPrefix, true);
+    }
+
+    public Guild getGuild() {
+        return guild;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String newToken) {
+        this.token = newToken;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setCommandPrefix(String newPrefix, boolean doSave) {
+        this.commandPrefix = newPrefix;
+
+        if (doSave) {
+            nuz.getJSONManager().writeDiscordConfig();
+        }
+    }
+
     public enum Event {
         DEATH("Well, someone died."),
         JOIN(StringLib.DiscordBot$WelcomeMessage),
@@ -38,199 +274,4 @@ public class DiscordBot {
             return message;
         }
     }
-
-    private JDA bot;
-    private final Nuzlocke nuz;
-
-    private final ArrayList<RoleManager> roles = new ArrayList<>();
-    private final ArrayList<ChannelManager> channels = new ArrayList<>();
-    private ChannelManager participantsHangout;
-    Guild guild;
-    private final Object LOCK = new Object();
-    RoleManager participants;
-    TextChannel general;
-
-    public DiscordBot (Nuzlocke nuz) {
-        this.nuz = nuz;
-    }
-
-    public void addTeam(String playerName, Color color) {
-        synchronized(LOCK) {
-            while (guild.getVoiceChannels().stream().noneMatch(vc -> vc.getName().equalsIgnoreCase("Participants Hangout"))) try {
-                LOCK.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Permission[] serverAllowed = {
-                Permission.NICKNAME_CHANGE, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
-                Permission.MESSAGE_HISTORY, Permission.MESSAGE_EMBED_LINKS, Permission.VOICE_USE_VAD
-        };
-        RoleManager newRole = guild.createRole()
-                .give(serverAllowed)
-                .revoke(invertPermissions(new ArrayList<>(Arrays.asList(serverAllowed)), true))
-                .setName("Team "+ playerName)
-                .setMentionable(true)
-                .setColor(color)
-                .setGrouped(true);
-        newRole.update();
-        addRole(getUser(playerName), newRole);
-
-        Permission[] channelAllowedTeam = {
-                Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.VOICE_USE_VAD
-        };
-        Permission[] channelAllowedSpec = {
-                Permission.VOICE_CONNECT
-        };
-        ChannelManager newVC = guild.createVoiceChannel("Team "+ playerName);
-        newVC.getChannel().createPermissionOverride(newRole.getRole())
-                .grant(channelAllowedTeam)
-                .deny(invertPermissions(new ArrayList<>(Arrays.asList(channelAllowedTeam)), false))
-                .update();
-        newVC.getChannel().createPermissionOverride(participants.getRole())
-                .deny(Permission.VOICE_CONNECT)
-                .update();
-        newVC.getChannel().createPermissionOverride(guild.getPublicRole())
-                .grant(channelAllowedSpec)
-                .deny(invertPermissions(new ArrayList<>(Arrays.asList(channelAllowedSpec)), false))
-                .update();
-        newVC.update();
-        if(getUser(playerName) != null) if(guild.getVoiceStatusOfUser(getUser(playerName)).inVoiceChannel()) {
-            movePlayer(getUser(playerName), (VoiceChannel) newVC.getChannel());
-        }
-
-        channels.add(newVC);
-        roles.add(newRole);
-    }
-
-    public void addRole(String playerName, String teamName) {
-        addRole(getUser(playerName), teamName);
-    }
-
-    private void addRole(User user, String teamName) {
-        addRole(user, roles.stream().filter(r -> r.getRole().getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
-    }
-
-    private void addRole(User user, RoleManager role) {
-        guild.getManager().addRoleToUser(user, role.getRole()).update();
-    }
-
-    public void announce(Event e) {
-        announce(e, e.getMessage());
-    }
-
-    public void announce(Event e, String msg) {
-        logMessage(general, e.name(), msg);
-    }
-
-    public void cleanUp() {
-        guild.getUsers().stream()
-                .filter(u -> guild.getVoiceStatusOfUser(u).inVoiceChannel())
-                .forEach(u -> guild.getManager().moveVoiceUser(u, guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get()));
-        channels.forEach(ChannelManager::delete);
-        channels.clear();
-        guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get().createPermissionOverride(participants.getRole()).reset();
-        roles.forEach(r -> {
-            nuz.getLogger().info("Deleting role "+ r.getRole().getName());
-            r.delete();
-        });
-        roles.clear();
-    }
-
-    public void deregisterPlayer(String p) {
-        guild.getManager().removeRoleFromUser(getUser(p), participants.getRole()).update();
-
-        if(nuz.getGameManager().isGameInProgress() && guild.getVoiceStatusOfUser(getUser(p)).inVoiceChannel()) {
-            guild.getManager().moveVoiceUser(getUser(p), guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get());
-        }
-    }
-
-    public JDA get() {
-        return bot;
-    }
-
-    private User getUser(String name) {
-        return bot.getUsersByName(name).stream().filter(u -> u.getUsername().equals(name)).findFirst().orElse(null);
-    }
-
-    private void logMessage(TextChannel tc, String purpose, String msg) {
-        tc.sendMessage("**[" + purpose.toUpperCase() + "]** " + msg);
-    }
-
-    private Permission[] invertPermissions(ArrayList<Permission> allowed, boolean targetGuild) {
-        List<Permission> denied = new ArrayList<>();
-        for(Permission p: Permission.values()) {
-            if(!allowed.contains(p) && (targetGuild ? p.isGuild() : p.isChannel())) denied.add(p);
-        }
-        return denied.toArray(new Permission[denied.size()]);
-    }
-
-    public void movePlayer(String playerName, String teamName) {
-        movePlayer(getUser(playerName), teamName);
-    }
-
-    private void movePlayer(User user, String teamName) {
-        movePlayer(user, guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase(teamName)).findFirst().orElse(null));
-    }
-
-    private void movePlayer(User user, VoiceChannel vc) {
-        if(guild.getVoiceStatusOfUser(user).inVoiceChannel()) guild.getManager().moveVoiceUser(user, vc);
-    }
-
-    public void prepareGame() {
-        synchronized (LOCK) {
-            Permission[] allowedEveryone = {Permission.VOICE_CONNECT};
-            participantsHangout = guild.createVoiceChannel("Participants Hangout");
-            participantsHangout.getChannel().createPermissionOverride(guild.getPublicRole())
-                    .grant(allowedEveryone)
-                    .deny(invertPermissions(new ArrayList<>(Arrays.asList(allowedEveryone)), false))
-                    .update();
-
-            channels.add(participantsHangout);
-            guild.getUsersWithRole(participants.getRole()).stream()
-                    .filter(u -> guild.getVoiceStatusOfUser(u).inVoiceChannel())
-                    .forEach(
-                            u -> movePlayer(u, (VoiceChannel) participantsHangout.getChannel())
-                    );
-
-            Permission[] allowedParticipant = {};
-            guild.getVoiceChannels().stream().filter(vc -> vc.getName().equalsIgnoreCase("general")).findFirst().get()
-                    .createPermissionOverride(participants.getRole())
-                    .grant(allowedParticipant)
-                    .deny(invertPermissions(new ArrayList<>(Arrays.asList(allowedParticipant)), true))
-                    .update();
-
-            LOCK.notifyAll();
-        }
-    }
-
-    public void registerPlayer(String p) {
-        guild.getManager().addRoleToUser(getUser(p), participants.getRole()).update();
-        if (nuz.getGameManager().isGameInProgress() && guild.getVoiceStatusOfUser(getUser(p)).inVoiceChannel()) {
-            if (nuz.getGameManager().getScoreboard().getEntryTeam(p) != null) {
-                VoiceChannel teamChannel = guild.getVoiceChannels().stream()
-                        .filter(vc -> vc.getName().equals(nuz.getGameManager().getScoreboard().getEntryTeam(p).getName()))
-                        .findFirst().orElse(null);
-                if(teamChannel != null) guild.getManager().moveVoiceUser(getUser(p), teamChannel);
-            } else {
-                guild.getManager().moveVoiceUser(
-                        getUser(p), (VoiceChannel) participantsHangout.getChannel()
-                );
-            }
-        }
-    }
-
-    public void start() {
-        try {
-            bot = new JDABuilder().setBotToken("MjAyNjY1MjE0NzQxNTc3NzI4.CmdqMA.6FnFJgLRxoHxWoenLabblZxu5Tk").addListener(new DiscordListener(nuz)).buildBlocking();
-        } catch (LoginException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void stop() {
-        participants.delete();
-        bot.shutdown();
-    }
-
 }

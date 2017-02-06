@@ -16,10 +16,10 @@ public class StartUHC implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("startmatch")) {
-            if(nuz.getGameManager().isGameInProgress()) {
+        if (cmd.getName().equalsIgnoreCase("startmatch")) {
+            if (nuz.getGameManager().isGameInProgress()) {
                 sender.sendMessage(StringLib.StartUHC$GameUnderway);
-            } else if(nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count() == 0) {
+            } else if (nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count() == 0) {
                 sender.sendMessage(StringLib.StartUHC$NoParticipants);
             } else {
                 nuz.getGameManager().initGame();

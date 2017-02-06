@@ -3,6 +3,7 @@ package st.photonbur.UHC.Nuzlocke.Entities.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,77 +17,95 @@ import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
-public class Rock extends Type implements Listener {
-    private final Random r = new Random();
+class Rock extends Type implements Listener {
     private final int[] stoneAmount = {0};
+    private final Pokemon.Type _TYPE = Pokemon.Type.valueOf(getClass().getSimpleName().toUpperCase());
+    private final Random r = new Random();
+    private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
 
-    public Rock(Nuzlocke nuz) {
+    Rock(Nuzlocke nuz) {
         super(nuz);
     }
 
     @EventHandler
     private void onBlockBreak(BlockBreakEvent e) {
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
-        if (p.getRole() == Role.PARTICIPANT) if (p instanceof Pokemon) if (p.getType() == Pokemon.Type.ROCK)
-            if (r.nextDouble() <= .2) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_STONE_BREAK, 0.8f, 1);
-                e.setCancelled(true);
-                e.getBlock().setType(Material.AIR);
-                if (e.getBlock().getType() == Material.GOLD_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.GOLD_ORE, r.nextInt(3)));
-                if (e.getBlock().getType() == Material.IRON_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT, r.nextInt(3)));
-                if (e.getBlock().getType() == Material.DIAMOND_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.DIAMOND, r.nextInt(3)));
-                if (e.getBlock().getType() == Material.LAPIS_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.INK_SACK, r.nextInt(9) + 4, (short) 4));
-                if (e.getBlock().getType() == Material.REDSTONE_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.REDSTONE, r.nextInt(6) + 5));
-                if (e.getBlock().getType() == Material.STONE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.STONE));
+        if (p.getRole() == Role.PARTICIPANT) {
+            if (p instanceof Pokemon) {
+                if (p.getType() == Pokemon.Type.ROCK) {
+                    if (r.nextDouble() <= .2) {
+                        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_STONE_BREAK, 0.8f, 1);
+                        e.setCancelled(true);
+                        Block b = e.getBlock();
+
+                        switch (b.getType()) {
+                            case GOLD_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.GOLD_INGOT, r.nextInt(3) + 1));
+                                break;
+                            case IRON_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.IRON_INGOT, r.nextInt(3) + 1));
+                                break;
+                            case DIAMOND_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.DIAMOND, r.nextInt(3) + 1));
+                                break;
+                            case LAPIS_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.INK_SACK, r.nextInt(9) + 4, (short) 4));
+                                break;
+                            case REDSTONE_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.REDSTONE, r.nextInt(6) + 5));
+                                break;
+                            case STONE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.STONE));
+                        }
+
+                        b.setType(Material.AIR);
+                    }
+                }
             }
+        }
     }
 
     @Override
-    void giveInitialEffects(boolean startup) { }
+    void giveInitialEffects(boolean startup) {
+    }
 
     @Override
-    boolean hasEvent() { return true; }
+    boolean hasEvent() {
+        return true;
+    }
 
     @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType() == Pokemon.Type.ROCK) &&
-                        nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) this.cancel();
-                else nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType() == Pokemon.Type.ROCK)
-                        .forEach(p -> {
-                            Player player = Bukkit.getPlayer(p.getName());
-                            stoneAmount[0] = 0;
-                            Arrays.asList(player.getInventory().getContents()).stream()
-                                    .filter(s -> s != null)
-                                    .filter(s -> s.getType() == Material.STONE || s.getType() == Material.COBBLESTONE)
-                                    .forEach(s -> stoneAmount[0] += s.getAmount());
-                            if(stoneAmount[0] >= 6 * 64) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0));
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
-                            } else {
-                                player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-                                player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                                player.removePotionEffect(PotionEffectType.SLOW);
-                            }
-                        });
+                pp = getPlayerPool(_TYPE);
+
+                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() || !nuz.getGameManager().isGameInProgress()) {
+                    this.cancel();
+                } else {
+                    pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
+                        Player player = Bukkit.getPlayer(p.getName());
+                        stoneAmount[0] = 0;
+                        Arrays.stream(player.getInventory().getContents())
+                                .filter(Objects::nonNull)
+                                .filter(slot -> slot.getType() == Material.STONE || slot.getType() == Material.COBBLESTONE)
+                                .forEach(slot -> stoneAmount[0] += slot.getAmount());
+                        if (stoneAmount[0] >= 6 * 64) {
+                            applyPotionEffect(player, new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
+                            applyPotionEffect(player, new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0));
+                            applyPotionEffect(player, new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
+                        } else {
+                            player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+                            player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+                            player.removePotionEffect(PotionEffectType.SLOW);
+                        }
+                    });
+                }
             }
         }.runTaskTimer(nuz, 0L, 200L);
     }

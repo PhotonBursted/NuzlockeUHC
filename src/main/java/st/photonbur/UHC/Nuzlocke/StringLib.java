@@ -65,19 +65,20 @@ public interface StringLib {
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Weakness and slowness in hot, arid biomes";
     String GiveInfo$Normal                      = "- " + ChatColor.BLUE + ChatColor.ITALIC + "No special effects or redemptions. Just, normal.";
     String GiveInfo$Poison                      = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Poison resistance, replaced by unharmful effects\n" + ChatColor.RESET +
-                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to get 1 free splash potion of poison";
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 20+ XP levels to getJDA 1 free splash potion of poison";
     String GiveInfo$Psychic                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent weakness 1\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem [levels to spend] at 5+ XP levels to scan players within (5 + XP) blocks";
     String GiveInfo$Rock                        = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Fortune (on ores, but also rocks\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Carrying 6 stacks of (cobble)stone will increase strength and resistance, but reduce speed";
     String GiveInfo$Steel                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanent Resistance 1 and 1 extra heart. Tanky!\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in rain or water for too long inflicts 'rust'";
-    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently get 5 extra hearts\n" + ChatColor.RESET +
-                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to get a Pokéball";
+    String GiveInfo$Trainer                     = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Permanently getJDA 5 extra hearts\n" + ChatColor.RESET +
+                                                  "- " + ChatColor.BLUE + ChatColor.BOLD + "Active:" + ChatColor.BLUE + " /redeem at 2+ XP levels to getJDA a Pokéball";
     String GiveInfo$Water                       = "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being out of water or rain causes dehydration\n" + ChatColor.RESET +
                                                   "- " + ChatColor.BLUE + ChatColor.BOLD + "Passive:"+ ChatColor.BLUE + " Being in water gives speed, haste and respiration effects";
 
     String GiveInfo$NeedsArguments              = ChatColor.RED + "[!] As you haven't got a type appointed, try a type as argument!";
+    String GiveInfo$TypeNotFound                = ChatColor.RED + "[!] That type couldn't be found! Try /info list for a list of possibilities";
 
     String ListPlayers$NoPlayersFound           = "- " + ChatColor.BLUE + ChatColor.ITALIC + "No players found";
     String ListPlayers$Participants             = "" + ChatColor.BLUE + ChatColor.BOLD + "Participants:";
@@ -99,6 +100,8 @@ public interface StringLib {
     String PlayerManager$RegisteredSelf         = ChatColor.RED + "[!] You just registered yourself for the upcoming match.";
     String PlayerManager$RegisterFail           = ChatColor.RED + "[!] You failed to register " + ChatColor.BOLD + "%s" + ChatColor.RED + " as they couldn't be found.";
 
+    String PlayerManager$SettingUpDiscord       = ChatColor.GOLD + "[!] Setting up Discord... This might produce a bit of lag!";
+
     String Poison$AlreadyRedeemed               = ChatColor.DARK_GREEN + "[!] You've already redeemed your free potion!";
     String Poison$NotEnoughXP                   = ChatColor.DARK_GREEN + "[!] Oh no, you don't have enough levels to do that!";
     String Poison$RedeemedPotion                = ChatColor.DARK_GREEN + "[!] Redeemed your free poison potion!";
@@ -116,7 +119,7 @@ public interface StringLib {
     String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Players within %s blocks of you:";
 
     String Redeem$InvalidArgLength              = ChatColor.RED + "[!] This redeem operation needs at least 1 argument!";
-    String Redeem$InvalidInput                  = ChatColor.RED + "[!] You ned to put in at least 5 levels!";
+    String Redeem$InvalidInput                  = ChatColor.RED + "[!] You need to invest at least 5 levels!";
 
     String StartUHC$GameUnderway                = ChatColor.DARK_RED + "[!] Game is already underway!";
     String StartUHC$NoParticipants              = ChatColor.DARK_RED + "[!] No volunteers to start the game with!";

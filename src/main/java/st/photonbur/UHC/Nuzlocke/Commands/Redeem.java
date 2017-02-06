@@ -22,13 +22,24 @@ public class Redeem implements CommandExecutor {
             st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(sender.getName());
             if (p.getRole() == Role.PARTICIPANT) {
                 if (p instanceof Pokemon) {
-                    if (p.getType() == Pokemon.Type.DRAGON) nuz.getEffectManager().getDRG().redeem(sender, 25);
-                    if (p.getType() == Pokemon.Type.POISON) nuz.getEffectManager().getPSN().redeem(sender, 20);
-                    if (p.getType() == Pokemon.Type.PSYCHIC)
-                        if (args.length == 0) sender.sendMessage(StringLib.Redeem$InvalidArgLength);
-                        else if (Integer.parseInt(args[0]) < 5) sender.sendMessage(StringLib.Redeem$InvalidInput);
-                        else nuz.getEffectManager().getPSY().redeem(sender, Integer.parseInt(args[0]));
-                } else if (p instanceof Trainer) nuz.getEffectManager().getTRA().redeem(sender, 2);
+                    if (p.getType() == Pokemon.Type.DRAGON) {
+                        nuz.getEffectManager().getDRG().redeem(sender);
+                    }
+                    if (p.getType() == Pokemon.Type.POISON) {
+                        nuz.getEffectManager().getPSN().redeem(sender, 20);
+                    }
+                    if (p.getType() == Pokemon.Type.PSYCHIC) {
+                        if (args.length == 0) {
+                            sender.sendMessage(StringLib.Redeem$InvalidArgLength);
+                        } else if (Integer.parseInt(args[0]) < 5) {
+                            sender.sendMessage(StringLib.Redeem$InvalidInput);
+                        } else {
+                            nuz.getEffectManager().getPSY().redeem(sender, Integer.parseInt(args[0]));
+                        }
+                    }
+                } else if (p instanceof Trainer) {
+                    nuz.getEffectManager().getTRA().redeem(sender, 2);
+                }
             }
         }
 

@@ -15,7 +15,7 @@ import st.photonbur.UHC.Nuzlocke.StringLib;
 import java.util.ArrayList;
 
 public class Psychic extends Type {
-    public Psychic(Nuzlocke nuz) {
+    Psychic(Nuzlocke nuz) {
         super(nuz);
     }
 
@@ -25,18 +25,19 @@ public class Psychic extends Type {
                 .filter(p -> p.getRole() == Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
                 .filter(p -> p.getType() == Pokemon.Type.PSYCHIC)
-                .forEach(p -> Bukkit.getPlayer(p.getName()).addPotionEffect(
-                        new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false)
-                ));
+                .forEach(p -> applyPotionEffect(Bukkit.getPlayer(p.getName()), new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false)));
     }
 
     @Override
-    boolean hasEvent() { return false; }
+    boolean hasEvent() {
+        return false;
+    }
 
     public void redeem(CommandSender sender, int levelsIn) {
         Player player = Bukkit.getPlayer(sender.getName());
-        if(levelsIn > player.getLevel()) sender.sendMessage(StringLib.Psychic$NotEnoughXP);
-        else {
+        if (levelsIn > player.getLevel()) {
+            sender.sendMessage(StringLib.Psychic$NotEnoughXP);
+        } else {
             player.giveExpLevels(-levelsIn);
             double radius = 5 + levelsIn;
             sender.sendMessage(String.format(StringLib.Psychic$RedeemedPerk, radius));
@@ -46,15 +47,19 @@ public class Psychic extends Type {
                     .filter(entity -> entity.getType() == EntityType.PLAYER)
                     .filter(entity -> nuz.getPlayerManager().getPlayer(entity.getName()).getRole() == Role.PARTICIPANT)
                     .filter(entity -> nuz.getGameManager().getScoreboard().getEntryTeam(entity.getName())
-                             != nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) ||
-                                nuz.getGameManager().getScoreboard().getEntryTeam(entity.getName()) == null)
+                            != nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) ||
+                            nuz.getGameManager().getScoreboard().getEntryTeam(entity.getName()) == null)
                     .forEach(entity -> nearbyEntities.add(entity.getName()));
             nearbyEntities.sort(String.CASE_INSENSITIVE_ORDER);
-            if(nearbyEntities.size() > 0) sender.sendMessage(ListPlayers.formatList(nearbyEntities, true, sender, nuz));
-            else sender.sendMessage(StringLib.Psychic$NoPlayersInRange);
+            if (nearbyEntities.size() > 0) {
+                sender.sendMessage(ListPlayers.formatList(nearbyEntities, true, sender, nuz));
+            } else {
+                sender.sendMessage(StringLib.Psychic$NoPlayersInRange);
+            }
         }
     }
 
     @Override
-    void runContinuousEffect() { }
+    void runContinuousEffect() {
+    }
 }

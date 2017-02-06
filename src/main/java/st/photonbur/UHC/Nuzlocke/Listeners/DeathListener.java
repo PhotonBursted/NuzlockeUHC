@@ -23,22 +23,24 @@ public class DeathListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        if(nuz.getGameManager().isGameInProgress()) {
+        if (nuz.getGameManager().isGameInProgress()) {
             Player p = e.getEntity().getPlayer();
 
-            if(nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT) {
+            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT) {
                 nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
-                if(nuz.getSettings().getDeathHandleDelay() != -1) {
+                if (nuz.getSettings().getDeathHandleDelay() != -1) {
                     p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
                     p.setGameMode(GameMode.SPECTATOR);
+                    p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
                     new HandleDeadPlayer(p).runTaskLaterAsynchronously(nuz, nuz.getSettings().getDeathHandleDelay() * 20L);
                 }
 
+                nuz.getDiscordBot().announce(DiscordBot.Event.DEATH, e.getDeathMessage().replaceAll("§.", ""));
                 Team team = nuz.getTeamManager().getTeams().stream()
                         .filter(t -> t.contains(p.getName())).findFirst().orElse(null);
                 // Checks for a count of one as the team hasn't been updated on the death yet
-                if(team == null || team.countStillAlive() == 0) {
-                    if(nuz.getTeamManager().teamsAliveCount() == 1) {
+                if (team == null || team.countStillAlive() == 0) {
+                    if (nuz.getTeamManager().teamsAliveCount() == 1) {
                         String teamName, members;
 
                         Team otherTeam = nuz.getTeamManager().getTeams().stream()
@@ -48,14 +50,14 @@ public class DeathListener implements Listener {
                             members = nuz.getPlayerManager().getPlayers().stream()
                                     .filter(player -> player.getRole() == Role.PARTICIPANT && !player.getName().equals(p.getName()))
                                     .findFirst().get().getName();
-                            teamName = "Team "+ members;
+                            teamName = "Team " + members;
                         } else {
                             members = otherTeam.membersToString();
                             teamName = otherTeam.getName();
                         }
 
                         nuz.getDiscordBot().announce(DiscordBot.Event.WIN,
-                                String.format(StringLib.DiscordBot$Win, "**__"+ teamName +"__**", members, nuz.getSettings().getEventName())
+                                String.format(StringLib.DiscordBot$Win, "**__" + teamName + "__**", members, nuz.getSettings().getEventName())
                         );
                         nuz.getServer().broadcastMessage(
                                 otherTeam == null ? String.format(StringLib.DeathListener$Win, teamName, members, ChatColor.BOLD + nuz.getSettings().getEventName())
@@ -71,16 +73,17 @@ public class DeathListener implements Listener {
                         nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TeamWipe,
                                 "Team " + p.getName(), nuz.getTeamManager().teamsAliveCount()));
                     }
-                } else if(nuz.getPlayerManager().getPlayer(p.getName()) instanceof Trainer) {
+                } else if (nuz.getPlayerManager().getPlayer(p.getName()) instanceof Trainer) {
                     nuz.getGameManager().teamCapBonus++;
 
                     nuz.getDiscordBot().announce(DiscordBot.Event.TRAINER_WIPE);
                     nuz.getServer().broadcastMessage(String.format(StringLib.DeathListener$TrainerWipe,
-                            p.getName(), nuz.getGameManager().teamCapBonus + nuz.getSettings().getTeamSize()));
+                            p.getName(), nuz.getGameManager().getTeamCap()));
                 }
 
-                nuz.getDiscordBot().announce(DiscordBot.Event.DEATH, e.getDeathMessage().replaceAll("§.", ""));
-                if(nuz.getGameManager().isGameInProgress()) nuz.getTaskManager().getSBU().updateScores();
+                if (nuz.getGameManager().isGameInProgress()) {
+                    nuz.getTaskManager().getSBU().updateScores();
+                }
             }
         }
     }
@@ -88,7 +91,7 @@ public class DeathListener implements Listener {
     private class HandleDeadPlayer extends BukkitRunnable {
         final Player p;
 
-        public HandleDeadPlayer(Player p) {
+        HandleDeadPlayer(Player p) {
             this.p = p;
         }
 

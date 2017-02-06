@@ -10,29 +10,36 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
+import java.util.List;
+
 public class Poison extends Type {
+    private final Pokemon.Type _TYPE = Pokemon.Type.valueOf(getClass().getSimpleName().toUpperCase());
+    private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
     private boolean redeemed = false;
 
     //Buff: Poison resistance, short poison potion redemption
     //Debuff: Poison turns to nausea
-    public Poison(Nuzlocke nuz) {
+    Poison(Nuzlocke nuz) {
         super(nuz);
     }
 
     @Override
-    void giveInitialEffects(boolean startup) { }
+    void giveInitialEffects(boolean startup) {
+    }
 
     @Override
-    boolean hasEvent() { return false; }
+    boolean hasEvent() {
+        return false;
+    }
 
-    public void redeem(CommandSender sender, int levelsIn) {
-        if(redeemed) sender.sendMessage(StringLib.Poison$AlreadyRedeemed);
-        else {
-            if (((Player) sender).getLevel() >= 20) {
+    public void redeem(CommandSender sender, @SuppressWarnings("SameParameterValue") int levelsIn) {
+        if (redeemed) {
+            sender.sendMessage(StringLib.Poison$AlreadyRedeemed);
+        } else {
+            if (((Player) sender).getLevel() >= levelsIn) {
                 redeemed = true;
 
                 ItemStack potion = new ItemStack(Material.SPLASH_POTION);
@@ -42,7 +49,9 @@ public class Poison extends Type {
 
                 ((Player) sender).getInventory().addItem(potion);
                 sender.sendMessage(StringLib.Poison$RedeemedPotion);
-            } else sender.sendMessage(StringLib.Poison$NotEnoughXP);
+            } else {
+                sender.sendMessage(StringLib.Poison$NotEnoughXP);
+            }
         }
     }
 
@@ -51,28 +60,23 @@ public class Poison extends Type {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType() == Pokemon.Type.POISON) &&
-                        nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) this.cancel();
-                else nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType() == Pokemon.Type.POISON)
-                        .forEach(p -> {
-                            Player player = Bukkit.getPlayer(p.getName());
-                            PotionEffect poison = player.getActivePotionEffects().stream()
-                                    .filter(effect -> effect.toString().contains("POISON"))
-                                    .findAny().orElse(null);
-                            if(poison != null) {
-                                player.addPotionEffect(
-                                        new PotionEffect(PotionEffectType.CONFUSION, poison.getDuration(), 2)
-                                );
-                                player.removePotionEffect(PotionEffectType.POISON);
-                            }
-                        });
+                pp = getPlayerPool(_TYPE);
+
+                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() ||
+                        !nuz.getGameManager().isGameInProgress()) {
+                    this.cancel();
+                } else {
+                    pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
+                        Player player = Bukkit.getPlayer(p.getName());
+                        PotionEffect poison = player.getActivePotionEffects().stream()
+                                .filter(effect -> effect.toString().contains("POISON"))
+                                .findAny().orElse(null);
+                        if (poison != null) {
+                            applyPotionEffect(player, new PotionEffect(PotionEffectType.CONFUSION, poison.getDuration(), 2));
+                            player.removePotionEffect(PotionEffectType.POISON);
+                        }
+                    });
+                }
             }
         }.runTaskTimer(nuz, 0L, 1L);
     }

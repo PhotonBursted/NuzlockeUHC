@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("ConstantConditions")
 public class GiveInfo implements TabExecutor {
     private final Nuzlocke nuz;
 
@@ -21,26 +22,35 @@ public class GiveInfo implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("info"))
-            if(args.length > 0)
-                if(args[0].equals("list")) sender.sendMessage(getOptionsList());
-                else sender.sendMessage(Pokemon.Type.valueOf(args[0]) == null ? getOptionsList() : Pokemon.Type.valueOf(args[0]).getInfo());
-            else if (nuz.getPlayerManager().getPlayer(sender.getName()).getType() != null)
-                    sender.sendMessage(nuz.getPlayerManager().getPlayer(sender.getName()).getType().getInfo());
-            else sender.sendMessage(StringLib.GiveInfo$NeedsArguments);
+        if (cmd.getName().equalsIgnoreCase("info")) {
+            if (args.length > 0) {
+                if (args[0].equals("list")) {
+                    sender.sendMessage(getOptionsList());
+                } else if (Arrays.stream(Pokemon.Type.values()).anyMatch(t -> t.name().equalsIgnoreCase(args[0]))) {
+                    sender.sendMessage(Pokemon.Type.valueOf(args[0].toUpperCase()) == null ? getOptionsList() : Pokemon.Type.valueOf(args[0].toUpperCase()).getInfo());
+                } else {
+                    sender.sendMessage(StringLib.GiveInfo$TypeNotFound);
+                }
+            } else if (nuz.getPlayerManager().getPlayer(sender.getName()).getType() != null) {
+                sender.sendMessage(nuz.getPlayerManager().getPlayer(sender.getName()).getType().getInfo());
+            } else sender.sendMessage(StringLib.GiveInfo$NeedsArguments);
+        }
+
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("info")) {
+        if (cmd.getName().equalsIgnoreCase("info")) {
             List<String> types = new ArrayList<>();
-            Arrays.asList(Pokemon.Type.values()).stream()
+            Arrays.stream(Pokemon.Type.values())
                     .filter(type -> type.name().toLowerCase().startsWith(args[0].toLowerCase()))
                     .forEach(type -> types.add(type.name()));
             types.sort(String.CASE_INSENSITIVE_ORDER);
             return types;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     private String getOptionsList() {
@@ -49,12 +59,16 @@ public class GiveInfo implements TabExecutor {
 
         Arrays.asList(Pokemon.Type.values()).forEach(type -> types.add(type.name()));
         types.sort(String.CASE_INSENSITIVE_ORDER);
-        for(int i=0; i<types.size(); i++) {
+        for (int i = 0; i < types.size(); i++) {
             output += types.get(i);
-            if(i == types.size() - 2) output += " & ";
-            if(i < types.size() - 2) output += ", ";
+            if (i == types.size() - 2) {
+                output += " & ";
+            }
+            if (i < types.size() - 2) {
+                output += ", ";
+            }
         }
 
-        return ChatColor.ITALIC + "Available options: "+ output;
+        return ChatColor.ITALIC + "Available options: " + output;
     }
 }

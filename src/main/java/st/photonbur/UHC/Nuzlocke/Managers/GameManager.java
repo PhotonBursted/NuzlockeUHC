@@ -1,11 +1,13 @@
-package st.photonbur.UHC.Nuzlocke.Game;
+package st.photonbur.UHC.Nuzlocke.Managers;
 
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -42,19 +44,27 @@ public class GameManager {
     public void cleanUp() {
         teamCapBonus = 0;
         nuz.getPlayerManager().removeClasses();
-        getScoreboard().getTeams().stream().forEach(Team::unregister);
-        getScoreboard().getObjectives().stream().forEach(Objective::unregister);
-        nuz.getServer().getOnlinePlayers().stream().forEach(p -> {
+        getScoreboard().getTeams().forEach(Team::unregister);
+        getScoreboard().getObjectives().forEach(Objective::unregister);
+
+        nuz.getServer().getOnlinePlayers().forEach(p -> {
             p.teleport(new Location(getOverworld(), 0, getOverworld().getHighestBlockYAt(0, 0), 0));
             p.setGameMode(GameMode.SURVIVAL);
         });
-        if(nuz.getTaskManager().getWB() != null) nuz.getTaskManager().getWB().reset();
+
+        if (nuz.getTaskManager().getWB() != null) {
+            nuz.getTaskManager().getWB().reset();
+        }
+
         nuz.getTaskManager().cancelAll();
         nuz.getTeamManager().getTeams().clear();
+
         Bukkit.getOnlinePlayers().forEach(p -> {
-            p.setMaxHealth(20d); p.setHealth(20d);
+            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20d);
+            p.setHealth(20d);
             p.getActivePotionEffects().forEach(e -> p.removePotionEffect(e.getType()));
         });
+
         nuz.getServer().getWorlds().forEach(w -> {
             w.setGameRuleValue("naturalRegeneration", "true");
             w.setGameRuleValue("keepInventory", "true");
@@ -74,6 +84,10 @@ public class GameManager {
         return settings;
     }
 
+    public int getTeamCap() {
+        return teamCapBonus + settings.getTeamSize();
+    }
+
     public void initGame() {
         nuz.getDiscordBot().announce(DiscordBot.Event.START);
         nuz.getServer().broadcastMessage(StringLib.GameManager$MatchStart);
@@ -81,8 +95,9 @@ public class GameManager {
         preparePlayers();
         nuz.getTaskManager().registerTasks();
         nuz.getTaskManager().startLauncher();
-        if(getSettings().getEpisodeDuration() > 0) nuz.getTaskManager().getLauncher().startCountdown();
-        if(getSettings().isWbEnabled()) nuz.getTaskManager().getLauncher().startWorldBorder();
+        if (getSettings().isWbEnabled()) {
+            nuz.getTaskManager().getLauncher().startWorldBorder();
+        }
 
         nuz.getDiscordBot().prepareGame();
         nuz.getPlayerManager().divideRoles();
@@ -90,31 +105,41 @@ public class GameManager {
         preparePlayers();
 
         spreadPlayers();
+        if (getSettings().getCountDownLength() > 0) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    nuz.getTaskManager().getLauncher().startCountdown();
+                }
+            }.runTaskLater(nuz, 100L);
+        }
     }
 
     public boolean isGameInProgress() {
         return gameInProgress;
     }
 
-    public boolean isTruceActive() { return truceActive; }
+    public boolean isTruceActive() {
+        return truceActive;
+    }
 
     private void preparePlayers() {
-        for(st.photonbur.UHC.Nuzlocke.Entities.Player p: nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.PARTICIPANT).collect(Collectors.toList())) {
+        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.PARTICIPANT).collect(Collectors.toList())) {
             Player player = Bukkit.getPlayer(p.getName());
             player.setSaturation(5);
             player.setFoodLevel(20);
             player.setHealth(20d);
             player.setGameMode(GameMode.SURVIVAL);
-            player.setTotalExperience(0);
+            player.giveExpLevels(-9999);
             player.getInventory().setContents(new ItemStack[36]);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, getSettings().getCountDownLength() * 20, 10));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, getSettings().getCountDownLength() * 20, 40));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, getSettings().getCountDownLength() * 20, 40));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, getSettings().getCountDownLength() * 20, -2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 10));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 40));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, Integer.MAX_VALUE, 40));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, -2));
         }
-        for(st.photonbur.UHC.Nuzlocke.Entities.Player p: nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.SPECTATOR).collect(Collectors.toList())) {
-            Player player = Bukkit.getPlayer(p.getName());
-            player.setGameMode(GameMode.SPECTATOR);
+
+        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.SPECTATOR).collect(Collectors.toList())) {
+            Bukkit.getPlayer(p.getName()).setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -123,11 +148,11 @@ public class GameManager {
                 .stream()
                 .filter(player -> nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> player.getName().equals(p.getName())))
                 .forEach(player -> {
-            for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.removePotionEffect(effect.getType());
-            }
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, getSettings().getResistanceLength() * 20 + getSettings().getCountDownLength() * 20, 10, true));
-        });
+                    for (PotionEffect effect : player.getActivePotionEffects()) {
+                        player.removePotionEffect(effect.getType());
+                    }
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, getSettings().getResistanceLength() * 20, 10, true));
+                });
     }
 
     public void setTruceActive(boolean b) {
@@ -142,7 +167,7 @@ public class GameManager {
             int z = r.nextInt(nuz.getSettings().getWbInitialSize()) - (int) (0.5 * nuz.getSettings().getWbInitialSize());
             int y = nuz.getGameManager().getOverworld().getHighestBlockYAt(x, z);
 
-            if(Arrays.asList(blacklistBiomes).contains(nuz.getGameManager().getOverworld().getBlockAt(x, y, z).getBiome())
+            if (Arrays.asList(blacklistBiomes).contains(nuz.getGameManager().getOverworld().getBlockAt(x, y, z).getBiome())
                     || nuz.getGameManager().getOverworld().getBlockAt(x, y, z).isLiquid())
                 spreadPlayers();
             else Bukkit.getPlayer(p.getName()).teleport(new Location(nuz.getGameManager().getOverworld(), x, y + 2, z));
@@ -151,12 +176,22 @@ public class GameManager {
 
     public void startGame() {
         gameInProgress = true;
-        nuz.getEffectManager().giveEffects();
-        if(nuz.getSettings().getGentlemenDuration() > 0) nuz.getTaskManager().getLauncher().startTruceRegulator();
-        if(nuz.getSettings().getEternalDaylight() > -1) nuz.getTaskManager().getLauncher().startDaylightManager();
+        setPlayerEffects();
+        nuz.getEffectManager().giveTypeEffects();
+        if (nuz.getSettings().getGentlemenDuration() > 0) {
+            nuz.getTaskManager().getLauncher().startTruceRegulator();
+        }
+        if (nuz.getSettings().getEternalDaylight() > -1) {
+            nuz.getTaskManager().getLauncher().startDaylightManager();
+        }
+        nuz.getServer().getOnlinePlayers().forEach(p -> Arrays.asList(Achievement.values()).forEach(a -> {
+            if (p.hasAchievement(a)) {
+                p.removeAchievement(a);
+            }
+        }));
 
         nuz.getServer().getWorlds().forEach(w -> {
-            w.setTime(0);
+            w.setFullTime(0L);
             w.setGameRuleValue("naturalRegeneration", "false");
             w.setGameRuleValue("keepInventory", "false");
             w.setDifficulty(Difficulty.HARD);

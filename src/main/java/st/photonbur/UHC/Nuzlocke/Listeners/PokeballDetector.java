@@ -1,7 +1,6 @@
 package st.photonbur.UHC.Nuzlocke.Listeners;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -28,24 +27,25 @@ public class PokeballDetector implements Listener {
 
     @EventHandler
     public void onHit(ProjectileHitEvent e) {
-        if(nuz.getGameManager().isGameInProgress()) {
-            if(e.getEntity().getType() == EntityType.SNOWBALL) {
+        if (nuz.getGameManager().isGameInProgress()) {
+            if (e.getEntity().getType() == EntityType.SNOWBALL) {
                 Snowball s = (Snowball) e.getEntity();
 
                 HashMap<Player, Double> ne = new HashMap<>();
                 nuz.getServer().getOnlinePlayers().stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT)
+                        .filter(p -> p.getWorld().equals(s.getWorld()))
                         .forEach(p -> ne.put(p, p.getLocation().distance(s.getLocation())));
 
-                Map.Entry<Player, Double> min = null;
+                Map.Entry<Player, Double> target = null;
                 for (Map.Entry<Player, Double> entry : ne.entrySet()) {
-                    if (min == null || min.getValue() > entry.getValue()) {
-                        min = entry;
+                    if (target == null || target.getValue() > entry.getValue()) {
+                        target = entry;
                     }
                 }
 
-                Player victim = min != null ? min.getKey() : null;
-                if(victim != null) {
-                    if(s.getShooter() instanceof CraftPlayer) {
+                Player victim = target != null ? target.getKey() : null;
+                if (victim != null) {
+                    if (s.getShooter() instanceof Player) {
                         Player thrower = (Player) s.getShooter();
 
                         // Player should be Pokémon and also alive
@@ -56,9 +56,9 @@ public class PokeballDetector implements Listener {
                                         nuz.getPlayerManager().getPlayer(thrower.getName()).getRole() == Role.PARTICIPANT) {
                                     if (nuz.getTeamManager().getTeams().stream()
                                             .filter(t -> t.contains(thrower.getName())).findFirst().orElse(null)
-                                            .getMembers().size() < nuz.getSettings().getTeamSize() + nuz.getGameManager().teamCapBonus) {
+                                            .getMembers().size() < nuz.getGameManager().getTeamCap()) {
                                         nuz.getTeamManager().addPlayer(victim.getName(), thrower.getName());
-                                        if(!teamWin(nuz.getTeamManager().getTeams().stream().filter(t -> t.contains(thrower.getName())).findFirst().get())) {
+                                        if (!teamWin(nuz.getTeamManager().getTeams().stream().filter(t -> t.contains(thrower.getName())).findFirst().get())) {
                                             victim.sendMessage(String.format(StringLib.PokeballDetector$CaughtVictim,
                                                     nuz.getGameManager().getScoreboard().getEntryTeam(thrower.getName()).getPrefix() +
                                                             "Team " + nuz.getPlayerManager().getPlayer(thrower).getName())
@@ -86,16 +86,16 @@ public class PokeballDetector implements Listener {
         }
     }
 
-    boolean teamWin(Team team) {
-        if(nuz.getTeamManager().teamsAliveCount() == 1) {
+    private boolean teamWin(Team team) {
+        if (nuz.getTeamManager().teamsAliveCount() == 1) {
             String members = team.membersToString();
             String teamName = team.getName();
 
             nuz.getDiscordBot().announce(DiscordBot.Event.WIN,
-                    String.format(StringLib.DiscordBot$Win, "**__"+ teamName +"__**", members, nuz.getSettings().getEventName())
+                    String.format(StringLib.DiscordBot$Win, "**__" + teamName + "__**", members, nuz.getSettings().getEventName())
             );
             nuz.getServer().broadcastMessage(
-                     String.format(StringLib.DeathListener$Win,
+                    String.format(StringLib.DeathListener$Win,
                             nuz.getGameManager().getScoreboard().getTeams().stream().filter(t -> t.getDisplayName().equals(teamName)).findFirst().get().getPrefix()
                                     + ChatColor.BOLD + teamName + ChatColor.RED,
                             members, ChatColor.BOLD + nuz.getSettings().getEventName())

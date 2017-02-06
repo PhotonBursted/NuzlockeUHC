@@ -1,6 +1,5 @@
 package st.photonbur.UHC.Nuzlocke.Tasks;
 
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
@@ -23,7 +22,10 @@ public class TaskManager {
     }
 
     public void cancelAll() {
-        tasks.stream().filter(t -> Bukkit.getScheduler().isCurrentlyRunning(t.getTaskId())).forEach(BukkitRunnable::cancel);
+        tasks.stream().filter(t ->
+                nuz.getServer().getScheduler().isCurrentlyRunning(t.getTaskId()) ||
+                nuz.getServer().getScheduler().isQueued(t.getTaskId()))
+                .forEach(BukkitRunnable::cancel);
     }
 
     private void register(BukkitRunnable... brs) {
@@ -42,7 +44,7 @@ public class TaskManager {
         );
     }
 
-    public EventMarkerAnnouncer getEMA() {
+    EventMarkerAnnouncer getEMA() {
         return ema;
     }
 
@@ -108,10 +110,11 @@ public class TaskManager {
             startCountdown = true;
         }
         public void startDaylightManager() { startDaylightManager = true; }
-        public void startEventMarkers() {
+
+        void startEventMarkers() {
             startEventMarkers = true;
         }
-        public void startScoreboardUpdater() {
+        void startScoreboardUpdater() {
             startScoreboardUpdater = true;
         }
         public void startTruceRegulator() {

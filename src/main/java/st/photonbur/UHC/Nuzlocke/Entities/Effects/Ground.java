@@ -7,53 +7,52 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
+import java.util.List;
 import java.util.Set;
 
-public class Ground extends Type {
+class Ground extends Type {
+    private final Pokemon.Type _TYPE = Pokemon.Type.valueOf(getClass().getSimpleName().toUpperCase());
+    private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
+
     //Buff: Fuzt diggah.
     //Debuff: Acrophobia
-    public Ground(Nuzlocke nuz) {
+    Ground(Nuzlocke nuz) {
         super(nuz);
     }
 
     @Override
     void giveInitialEffects(boolean startup) {
-        nuz.getPlayerManager().getPlayers().stream()
-                .filter(p -> p.getRole() == Role.PARTICIPANT)
-                .filter(p -> p instanceof Pokemon)
-                .filter(p -> p.getType() == Pokemon.Type.GROUND)
-                .forEach(p ->
-                        Bukkit.getPlayer(p.getName()).addPotionEffect(
-                                new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1)
-                        )
-                );
+        pp = getPlayerPool(_TYPE);
+
+        pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p ->
+                Bukkit.getPlayer(p.getName()).addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1))
+        );
     }
 
     @Override
-    boolean hasEvent() { return false; }
+    boolean hasEvent() {
+        return false;
+    }
 
     @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType() == Pokemon.Type.GROUND) ||
-                        !nuz.getGameManager().isGameInProgress()) this.cancel();
-                else nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType() == Pokemon.Type.GROUND)
-                        .forEach(p -> {
-                            Player player = Bukkit.getPlayer(p.getName());
-                            if(player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 140, 0));
-                        });
+                pp = getPlayerPool(_TYPE);
+
+                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() ||
+                        !nuz.getGameManager().isGameInProgress()) {
+                    this.cancel();
+                } else {
+                    pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
+                        Player player = Bukkit.getPlayer(p.getName());
+                        if (player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
+                            applyPotionEffect(player, new PotionEffect(PotionEffectType.CONFUSION, 140, 0));
+                    });
+                }
             }
         }.runTaskTimer(nuz, 0L, 20L);
     }

@@ -1,9 +1,9 @@
 package st.photonbur.UHC.Nuzlocke.Entities;
 
 public class Player {
+    Pokemon.Type type;
     private String name;
     private Role role;
-    Pokemon.Type type;
 
     public Player(String name, Role role) {
         setName(name);
@@ -15,20 +15,20 @@ public class Player {
         return name;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public Pokemon.Type getType() {
-        return type;
-    }
-
     private void setName(String newName) {
         name = newName;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public void setRole(Role newRole) {
         role = newRole;
+    }
+
+    public Pokemon.Type getType() {
+        return type;
     }
 
     void setType(Pokemon.Type newType) {

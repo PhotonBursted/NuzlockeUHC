@@ -1,4 +1,4 @@
-package st.photonbur.UHC.Nuzlocke.Game;
+package st.photonbur.UHC.Nuzlocke.Managers;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -29,7 +29,7 @@ public class Settings {
     private int wbWarningAmount;
     private String wbWarningType;
 
-    public Settings(FileConfiguration config) {
+    Settings(FileConfiguration config) {
         this.config = config;
         loadSettings();
     }
@@ -60,27 +60,95 @@ public class Settings {
         wbWarningType = config.getString("game.environment.worldborder.warning.type");
     }
 
-    public int getCountDownLength() { return countDownLength; }
-    public int getDeathHandleDelay() { return deathHandleDelay; }
-    public int getEpisodeDuration() { return episodeDuration; }
-    public int getEternalDaylight() { return eternalDaylight; }
-    public String getEventName() { return eventName; }
-    public int getGentlemenDuration() { return gentlemenDuration; }
-    public String getGlobalChatPrefix() { return globalChatPrefix; }
-    public int getResistanceLength() { return resistanceLength;}
-    public boolean doSeeTeammateDetails() { return seeTeammateDetails; }
-    public boolean doSpectatorSeeAll() { return spectatorSeeAll; }
-    public boolean doSpectatorGlobalTalk() { return spectatorGlobalTalk; }
-    public int getTeamSize() { return teamSize; }
-    public boolean isWbEnabled() { return wbEnabled; }
-    public boolean doWbEndMarker() { return wbEndNotification; }
-    public int getWbEndSize() { return wbEndSize; }
-    public int getWbInitialSize() { return wbInitialSize; }
-    public int getWbProgressMarkerInterval() { return wbProgressMarkerInterval; }
-    public int getWbShrinkDelay() { return wbShrinkDelay; }
-    public int getWbShrinkDuration() { return wbShrinkDuration; }
-    public boolean isWbShrinkEnabled() { return wbShrinkEnabled; }
-    public boolean doWbStartMarker() { return wbStartMarker; }
-    public int getWbWarningAmount() { return wbWarningAmount; }
-    public String getWbWarningType() { return wbWarningType; }
+    public int getCountDownLength() {
+        return countDownLength;
+    }
+
+    public int getDeathHandleDelay() {
+        return deathHandleDelay;
+    }
+
+    public int getEpisodeDuration() {
+        return episodeDuration;
+    }
+
+    public int getEternalDaylight() {
+        return eternalDaylight;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public int getGentlemenDuration() {
+        return gentlemenDuration;
+    }
+
+    public String getGlobalChatPrefix() {
+        return globalChatPrefix;
+    }
+
+    int getResistanceLength() {
+        return resistanceLength;
+    }
+
+    public boolean doSeeTeammateDetails() {
+        return seeTeammateDetails;
+    }
+
+    public boolean doSpectatorSeeAll() {
+        return spectatorSeeAll;
+    }
+
+    public boolean doSpectatorGlobalTalk() {
+        return spectatorGlobalTalk;
+    }
+
+    int getTeamSize() {
+        return teamSize;
+    }
+
+    boolean isWbEnabled() {
+        return wbEnabled;
+    }
+
+    public boolean doWbEndMarker() {
+        return wbEndNotification;
+    }
+
+    public int getWbEndSize() {
+        return wbEndSize;
+    }
+
+    public int getWbInitialSize() {
+        return wbInitialSize;
+    }
+
+    public int getWbProgressMarkerInterval() {
+        return wbProgressMarkerInterval;
+    }
+
+    public int getWbShrinkDelay() {
+        return wbShrinkDelay;
+    }
+
+    public int getWbShrinkDuration() {
+        return wbShrinkDuration;
+    }
+
+    public boolean isWbShrinkEnabled() {
+        return wbShrinkEnabled;
+    }
+
+    public boolean doWbStartMarker() {
+        return wbStartMarker;
+    }
+
+    public int getWbWarningAmount() {
+        return wbWarningAmount;
+    }
+
+    public String getWbWarningType() {
+        return wbWarningType;
+    }
 }

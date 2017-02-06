@@ -16,68 +16,91 @@ import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
+import java.util.List;
 import java.util.Random;
 
-public class Fire extends Type implements Listener {
+class Fire extends Type implements Listener {
+    private final Pokemon.Type _TYPE = Pokemon.Type.valueOf(getClass().getSimpleName().toUpperCase());
     private final Random r = new Random();
+    private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
 
     //Buff: Smelts blocks upon mining
     //Debuff: Melts ice and snow under feet
-    public Fire(Nuzlocke nuz) {
+    Fire(Nuzlocke nuz) {
         super(nuz);
     }
 
     @EventHandler
     private void onBlockBreak(BlockBreakEvent e) {
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
-        if (p.getRole() == Role.PARTICIPANT) if(p instanceof Pokemon) if(p.getType() == Pokemon.Type.FIRE)
-            if (r.nextDouble() <= .05) {
-                e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.8f, 1);
-                e.getBlock().setType(Material.AIR);
-                if (e.getBlock().getType() == Material.GOLD_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
-                if (e.getBlock().getType() == Material.IRON_ORE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT));
-                if (e.getBlock().getType() == Material.LOG || e.getBlock().getType() == Material.LOG_2)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new Coal(CoalType.CHARCOAL).toItemStack());
-                if (e.getBlock().getType() == Material.STONE)
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), new ItemStack(Material.STONE));
+        if (p.getRole() == Role.PARTICIPANT) {
+            if (p instanceof Pokemon) {
+                if (p.getType() == Pokemon.Type.FIRE) {
+                    if (r.nextDouble() <= .05) {
+                        e.getPlayer().playSound(e.getBlock().getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.5f, 1);
+                        Block b = e.getBlock();
+
+                        switch (b.getType()) {
+                            case GOLD_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.GOLD_INGOT));
+                                break;
+                            case IRON_ORE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.IRON_INGOT));
+                                break;
+                            case LOG:
+                            case LOG_2:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new Coal(CoalType.CHARCOAL).toItemStack());
+                                break;
+                            case STONE:
+                                b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.STONE));
+                                break;
+                        }
+
+                        b.setType(Material.AIR);
+                    }
+                }
             }
+        }
     }
 
     @Override
-    void giveInitialEffects(boolean startup) { }
+    void giveInitialEffects(boolean startup) {
+    }
 
     @Override
-    boolean hasEvent() { return true; }
+    boolean hasEvent() {
+        return true;
+    }
 
     @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .noneMatch(p -> p.getType() == Pokemon.Type.FIRE) &&
-                        nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) this.cancel();
-                else nuz.getPlayerManager().getPlayers().stream()
-                        .filter(p -> p.getRole() == Role.PARTICIPANT)
-                        .filter(p -> p instanceof Pokemon)
-                        .filter(p -> p.getType() == Pokemon.Type.FIRE)
-                        .forEach(p -> {
-                            Player player = Bukkit.getPlayer(p.getName());
-                            Block b = player.getLocation().add(0, -1, 0).getBlock();
-                            if(b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW || b.getType() == Material.ICE
-                                    || b.getType() == Material.FROSTED_ICE || b.getType() == Material.PACKED_ICE)
+                pp = getPlayerPool(_TYPE);
+
+                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() || !nuz.getGameManager().isGameInProgress()) {
+                    this.cancel();
+                } else {
+                    pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
+                        Player player = Bukkit.getPlayer(p.getName());
+                        Block b = player.getLocation().add(0, -1, 0).getBlock();
+
+                        switch (b.getType()) {
+                            case SNOW_BLOCK:
+                            case SNOW:
+                            case ICE:
+                            case FROSTED_ICE:
+                            case PACKED_ICE:
                                 new BukkitRunnable() {
                                     @Override
                                     public void run() {
                                         b.setType(Material.WATER);
                                     }
                                 }.runTaskLater(nuz, 40L);
-                        });
+                        }
+                    });
+                }
             }
         }.runTaskTimer(nuz, 0, 1L);
     }

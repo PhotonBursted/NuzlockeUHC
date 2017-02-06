@@ -9,7 +9,7 @@ public class Worldborder extends BukkitRunnable {
     private boolean setup = false;
     private final Nuzlocke nuz;
 
-    public Worldborder(Nuzlocke nuz) {
+    Worldborder(Nuzlocke nuz) {
         this.nuz = nuz;
     }
 
@@ -22,7 +22,7 @@ public class Worldborder extends BukkitRunnable {
                 WorldBorder wb = world.getWorldBorder();
                 wb.setCenter(0, 0);
                 wb.setSize(nuz.getSettings().getWbInitialSize() / ((world.getEnvironment() == World.Environment.NETHER) ? 8d : 1d));
-                wb.setDamageAmount(3);
+                wb.setDamageAmount(0.5);
                 wb.setDamageBuffer(0);
 
                 switch (nuz.getSettings().getWbWarningType().toLowerCase()) {

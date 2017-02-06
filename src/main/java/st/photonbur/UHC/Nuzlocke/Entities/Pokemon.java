@@ -5,6 +5,21 @@ import org.bukkit.ChatColor;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
 public class Pokemon extends Player {
+    public Pokemon(String name, @SuppressWarnings("SameParameterValue") Role role) {
+        super(name, role);
+        setType(Type.getRandom());
+        Bukkit.getPlayer(name).sendMessage(String.format(StringLib.Pokemon$Type, type.getColor() + "" + ChatColor.BOLD + type.name()));
+    }
+
+    public Pokemon(String name, Role role, Type type) {
+        super(name, role);
+        if (type == null) {
+            setType(Type.getRandom());
+        } else {
+            setType(type);
+        }
+    }
+
     public enum Type {
         TRAINER("[Trainer]", ChatColor.WHITE, 0, StringLib.GiveInfo$Trainer),
         NORMAL("[NRM]", ChatColor.DARK_GRAY, 1, StringLib.GiveInfo$Normal),
@@ -38,38 +53,27 @@ public class Pokemon extends Player {
             this.info = info;
         }
 
-        public ChatColor getColor() {
-            return color;
-        }
-        public int getID() {
-            return id;
-        }
-        public String getInfo() {
-            String message = ""+ ChatColor.BLUE + ChatColor.BOLD + "Type: " + color + ChatColor.ITALIC + name + ChatColor.RESET + "\n";
-            message += info;
-            return message;
-        }
-        public String getName() {
-            return name;
-        }
         public static Type getRandom() {
             Type t;
             return (t = values()[(int) (Math.random() * values().length)]) == TRAINER ? getRandom() : t;
         }
-    }
 
-    public Pokemon(String name, Role role) {
-        super(name, role);
-        setType(Type.getRandom());
-        Bukkit.getPlayer(name).sendMessage(String.format(StringLib.Pokemon$Type, type.getColor() +""+ ChatColor.BOLD + type.name()));
-    }
+        public ChatColor getColor() {
+            return color;
+        }
 
-    public Pokemon(String name, Role role, Type type) {
-        super(name, role);
-        if(type == null) {
-            setType(Type.getRandom());
-        } else {
-            setType(type);
+        public int getID() {
+            return id;
+        }
+
+        public String getInfo() {
+            String message = "" + ChatColor.BLUE + ChatColor.BOLD + "Type: " + color + ChatColor.ITALIC + name + ChatColor.RESET + "\n";
+            message += info;
+            return message;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

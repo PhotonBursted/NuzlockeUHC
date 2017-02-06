@@ -6,11 +6,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import st.photonbur.UHC.Nuzlocke.Commands.*;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
 import st.photonbur.UHC.Nuzlocke.Entities.Effects.EffectManager;
-import st.photonbur.UHC.Nuzlocke.Game.GameManager;
-import st.photonbur.UHC.Nuzlocke.Game.PlayerManager;
-import st.photonbur.UHC.Nuzlocke.Game.Settings;
-import st.photonbur.UHC.Nuzlocke.Game.TeamManager;
 import st.photonbur.UHC.Nuzlocke.Listeners.*;
+import st.photonbur.UHC.Nuzlocke.Managers.*;
 import st.photonbur.UHC.Nuzlocke.Tasks.TaskManager;
 
 import java.util.logging.Level;
@@ -21,10 +18,15 @@ import java.util.logging.Level;
 public class Nuzlocke extends JavaPlugin {
     private DiscordBot discordBot;
     private EffectManager effectManager;
+    private JSONManager jsonManager;
     private GameManager gameManager;
     private PlayerManager playerManager;
+    private ServerLinkManager serverLinkManager;
     private TaskManager taskManager;
     private TeamManager teamManager;
+
+    private String configFilename;
+    private String linkFilename;
 
     /**
      * Links classes to commands
@@ -43,10 +45,11 @@ public class Nuzlocke extends JavaPlugin {
 
     /**
      * Links classes to commands
+     *
      * @param ls A list of variable length, containing listeners to be registered to the plugin
      */
     public void loadListeners(Listener... ls) {
-        for(Listener l: ls) {
+        for (Listener l : ls) {
             Bukkit.getPluginManager().registerEvents(l, this);
         }
     }
@@ -58,26 +61,31 @@ public class Nuzlocke extends JavaPlugin {
     public void onEnable() {
         getLogger().log(Level.INFO, "Your nuz seems locked...");
 
+        configFilename = getDataFolder().getPath() + "/discord.json";
+        linkFilename = getDataFolder().getPath() + "/serverLinks.json";
+
         saveDefaultConfig();
 
         discordBot = new DiscordBot(this);
         effectManager = new EffectManager(this);
+        jsonManager = new JSONManager(this);
         gameManager = new GameManager(this);
         playerManager = new PlayerManager(this);
+        serverLinkManager = new ServerLinkManager(this);
         taskManager = new TaskManager(this);
         teamManager = new TeamManager(this);
 
         loadCommands();
         loadListeners(
-            new ChatListener(this),
-            new DamageManager(this),
-            new DeathListener(this),
-            new PlayerConnectListener(this),
-            new PokeballDetector(this)
+                new ChatListener(this),
+                new DamageManager(this),
+                new DeathListener(this),
+                new PlayerConnectListener(this),
+                new PokeballDetector(this)
         );
 
-        Bukkit.getOnlinePlayers().stream().forEach(p -> playerManager.registerPlayer(p.getName()));
-        discordBot.start();
+        jsonManager.readAllConfigs();
+        Bukkit.getOnlinePlayers().forEach(p -> playerManager.registerPlayer(p.getName()));
     }
 
     /**
@@ -86,26 +94,51 @@ public class Nuzlocke extends JavaPlugin {
     @Override
     public void onDisable() {
         gameManager.cleanUp();
+        jsonManager.writeAllConfigs();
         discordBot.stop();
     }
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
-    public EffectManager getEffectManager() { return effectManager; }
+
+    public EffectManager getEffectManager() {
+        return effectManager;
+    }
+
+    public JSONManager getJSONManager() {
+        return jsonManager;
+    }
+
     public GameManager getGameManager() {
         return gameManager;
     }
+
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
+
+    public ServerLinkManager getServerLinkManager() {
+        return serverLinkManager;
+    }
+
     public Settings getSettings() {
         return gameManager.getSettings();
     }
+
     public TaskManager getTaskManager() {
         return taskManager;
     }
+
     public TeamManager getTeamManager() {
         return teamManager;
+    }
+
+    public String getConfigFilename() {
+        return configFilename;
+    }
+
+    public String getLinkFilename() {
+        return linkFilename;
     }
 }
