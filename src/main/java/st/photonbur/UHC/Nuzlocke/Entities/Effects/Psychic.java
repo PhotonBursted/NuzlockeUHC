@@ -8,7 +8,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import st.photonbur.UHC.Nuzlocke.Commands.ListPlayers;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -22,7 +21,7 @@ public class Psychic extends Type {
     @Override
     void giveInitialEffects(boolean startup) {
         nuz.getPlayerManager().getPlayers().stream()
-                .filter(p -> p.getRole() == Role.PARTICIPANT)
+                .filter(p -> p.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
                 .filter(p -> p.getType() == Pokemon.Type.PSYCHIC)
                 .forEach(p -> applyPotionEffect(Bukkit.getPlayer(p.getName()), new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0, true, false)));
@@ -45,7 +44,7 @@ public class Psychic extends Type {
             ArrayList<String> nearbyEntities = new ArrayList<>();
             player.getNearbyEntities(radius, radius, radius).stream()
                     .filter(entity -> entity.getType() == EntityType.PLAYER)
-                    .filter(entity -> nuz.getPlayerManager().getPlayer(entity.getName()).getRole() == Role.PARTICIPANT)
+                    .filter(entity -> nuz.getPlayerManager().getPlayer(entity.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT)
                     .filter(entity -> nuz.getGameManager().getScoreboard().getEntryTeam(entity.getName())
                             != nuz.getGameManager().getScoreboard().getEntryTeam(sender.getName()) ||
                             nuz.getGameManager().getScoreboard().getEntryTeam(entity.getName()) == null)

@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.potion.PotionEffect;
 import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.List;
@@ -23,7 +22,7 @@ abstract class Type implements Listener {
 
     List<Player> getPlayerPool(Pokemon.Type t) {
         return nuz.getPlayerManager().getPlayers().stream()
-                .filter(p -> p.getRole() == Role.PARTICIPANT)
+                .filter(p -> p.getRole() == Player.Role.PARTICIPANT)
                 .filter(p -> p instanceof Pokemon)
                 .filter(p -> p.getType() == t)
                 .collect(Collectors.toList());
@@ -36,9 +35,13 @@ abstract class Type implements Listener {
         }
     }
 
-    <T extends LivingEntity> void applyPotionEffect(T le, PotionEffect potion) {
-        if (!le.hasPotionEffect(potion.getType())) {
-            le.addPotionEffect(potion);
+    <T extends LivingEntity> void applyPotionEffect(T entity, PotionEffect potion) {
+        if (!entity.hasPotionEffect(potion.getType()) ||
+                (entity.hasPotionEffect(potion.getType()) &&
+                        (entity.getPotionEffect(potion.getType()).getDuration()) < potion.getDuration() && potion.getDuration() != Integer.MAX_VALUE
+                )
+        ) {
+            entity.addPotionEffect(potion);
         }
     }
 

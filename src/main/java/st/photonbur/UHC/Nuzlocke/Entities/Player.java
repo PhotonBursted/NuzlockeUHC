@@ -34,4 +34,8 @@ public class Player {
     void setType(Pokemon.Type newType) {
         type = newType;
     }
+
+    public enum Role {
+        PARTICIPANT, SPECTATOR
+    }
 }

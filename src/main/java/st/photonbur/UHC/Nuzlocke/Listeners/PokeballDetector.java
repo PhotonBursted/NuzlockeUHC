@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Entities.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Trainer;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
@@ -32,7 +31,7 @@ public class PokeballDetector implements Listener {
                 Snowball s = (Snowball) e.getEntity();
 
                 HashMap<Player, Double> ne = new HashMap<>();
-                nuz.getServer().getOnlinePlayers().stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT)
+                nuz.getServer().getOnlinePlayers().stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT)
                         .filter(p -> p.getWorld().equals(s.getWorld()))
                         .forEach(p -> ne.put(p, p.getLocation().distance(s.getLocation())));
 
@@ -50,10 +49,10 @@ public class PokeballDetector implements Listener {
 
                         // Player should be Pokémon and also alive
                         if (nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon &&
-                                nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
+                                nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                             if (nuz.getGameManager().getScoreboard().getEntryTeam(victim.getName()) == null) {
                                 if (nuz.getPlayerManager().getPlayer(thrower.getName()) instanceof Trainer &&
-                                        nuz.getPlayerManager().getPlayer(thrower.getName()).getRole() == Role.PARTICIPANT) {
+                                        nuz.getPlayerManager().getPlayer(thrower.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                                     if (nuz.getTeamManager().getTeams().stream()
                                             .filter(t -> t.contains(thrower.getName())).findFirst().orElse(null)
                                             .getMembers().size() < nuz.getGameManager().getTeamCap()) {

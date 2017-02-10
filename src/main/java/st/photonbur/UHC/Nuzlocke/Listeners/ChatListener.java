@@ -6,7 +6,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scoreboard.Team;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -37,7 +36,7 @@ public class ChatListener implements Listener {
             case SPECTATOR:
                 Bukkit.getOnlinePlayers()
                         .stream()
-                        .filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == Role.SPECTATOR)
+                        .filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.SPECTATOR)
                         .forEach(e.getRecipients()::add);
                 break;
             default:
@@ -55,7 +54,7 @@ public class ChatListener implements Listener {
         if (nuz.getGameManager().isGameInProgress()) {
             e.getRecipients().clear();
 
-            if (nuz.getPlayerManager().getPlayer(player).getRole() == Role.PARTICIPANT) {
+            if (nuz.getPlayerManager().getPlayer(player).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                 if (message.startsWith(prefix)) {
                     addPlayersBeing(PlayerState.ONLINE, e);
                     setFormat(ChatMessageFormat.GLOBAL, e);

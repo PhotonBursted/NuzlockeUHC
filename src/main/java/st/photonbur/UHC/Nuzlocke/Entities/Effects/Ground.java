@@ -27,7 +27,7 @@ class Ground extends Type {
         pp = getPlayerPool(_TYPE);
 
         pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p ->
-                Bukkit.getPlayer(p.getName()).addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1))
+                applyPotionEffect(Bukkit.getPlayer(p.getName()), new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1))
         );
     }
 

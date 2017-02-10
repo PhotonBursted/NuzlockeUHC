@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 public class PlayerConnectListener implements Listener {
@@ -41,7 +40,7 @@ public class PlayerConnectListener implements Listener {
                 p.setGameMode(GameMode.SPECTATOR);
             }
         } else {
-            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.SPECTATOR)
+            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.SPECTATOR)
                 p.setGameMode(GameMode.SPECTATOR);
             else {
                 p.setGameMode(GameMode.SURVIVAL);
@@ -52,7 +51,7 @@ public class PlayerConnectListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if (!nuz.getGameManager().isGameInProgress() || nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.SPECTATOR) {
+        if (!nuz.getGameManager().isGameInProgress() || nuz.getPlayerManager().getPlayer(p.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.SPECTATOR) {
             nuz.getPlayerManager().getPlayers().remove(
                     nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getName().equals(p.getName())).findFirst().orElse(null)
             );

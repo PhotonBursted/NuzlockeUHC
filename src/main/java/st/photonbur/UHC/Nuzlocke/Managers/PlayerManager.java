@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Entities.Trainer;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
@@ -33,7 +32,7 @@ public class PlayerManager {
 
     public void deregisterPlayer(String targetName) {
         nuz.getDiscordBot().deregisterPlayer(targetName);
-        substitutePlayer(targetName, Role.SPECTATOR);
+        substitutePlayer(targetName, Player.Role.SPECTATOR);
     }
 
     public void deregisterPlayer(String targetName, CommandSender sender) {
@@ -42,7 +41,7 @@ public class PlayerManager {
                 deregisterPlayer(targetName);
                 sender.sendMessage(String.format(StringLib.PlayerManager$DeregisteredOther, targetName));
                 Bukkit.getPlayer(targetName).sendMessage(String.format(StringLib.PlayerManager$DeregisteredBy, sender.getName()));
-            } else if (getPlayer(targetName).getRole() == Role.PARTICIPANT) {
+            } else if (getPlayer(targetName).getRole() == Player.Role.PARTICIPANT) {
                 deregisterPlayer(targetName);
                 if (sender.getName().equals(targetName)) {
                     sender.sendMessage(StringLib.PlayerManager$DeregisteredSelf);
@@ -81,17 +80,17 @@ public class PlayerManager {
                     }
                 }
             }
-            toAdd.add(new Trainer(target.getName(), Role.PARTICIPANT));
+            toAdd.add(new Trainer(target.getName(), Player.Role.PARTICIPANT));
             toRemove.add(target);
         }
 
         players.stream()
                 .filter(p -> !(p instanceof Trainer)
                         && toAdd.stream().noneMatch(player -> player.getName().equals(p.getName()))
-                        && p.getRole() == Role.PARTICIPANT)
+                        && p.getRole() == Player.Role.PARTICIPANT)
                 .forEach(
                         p -> {
-                            toAdd.add(new Pokemon(p.getName(), Role.PARTICIPANT));
+                            toAdd.add(new Pokemon(p.getName(), Player.Role.PARTICIPANT));
                             toRemove.add(p);
                         }
                 );
@@ -104,7 +103,7 @@ public class PlayerManager {
 
     private Player findNewTrainer() {
         List<Player> candidates = players.stream()
-                .filter(p -> p.getRole() == Role.PARTICIPANT && nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null)
+                .filter(p -> p.getRole() == Player.Role.PARTICIPANT && nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null)
                 .collect(Collectors.toList());
         return candidates.get(r.nextInt(candidates.size()));
     }
@@ -127,11 +126,11 @@ public class PlayerManager {
                 Bukkit.getPlayer(targetName).sendMessage(StringLib.PlayerManager$MatchStarted);
             } else {
                 nuz.getDiscordBot().registerPlayer(targetName);
-                substitutePlayer(targetName, Role.PARTICIPANT);
+                substitutePlayer(targetName, Player.Role.PARTICIPANT);
             }
         } else {
             nuz.getDiscordBot().registerPlayer(targetName);
-            substitutePlayer(targetName, Role.PARTICIPANT);
+            substitutePlayer(targetName, Player.Role.PARTICIPANT);
         }
     }
 
@@ -141,7 +140,7 @@ public class PlayerManager {
                 registerPlayer(targetName);
                 sender.sendMessage(String.format(StringLib.PlayerManager$RegisteredOther, targetName));
                 Bukkit.getPlayer(targetName).sendMessage(String.format(StringLib.PlayerManager$RegisteredBy, sender.getName()));
-            } else if (getPlayer(targetName).getRole() == Role.SPECTATOR) {
+            } else if (getPlayer(targetName).getRole() == Player.Role.SPECTATOR) {
                 registerPlayer(targetName);
                 if (sender.getName().equals(targetName)) {
                     sender.sendMessage(StringLib.PlayerManager$RegisteredSelf);
@@ -180,7 +179,7 @@ public class PlayerManager {
         getPlayers().addAll(toAdd);
     }
 
-    private void substitutePlayer(String name, Role newRole) {
+    private void substitutePlayer(String name, Player.Role newRole) {
         substitutePlayer(
                 name,
                 newRole,
@@ -189,7 +188,7 @@ public class PlayerManager {
         );
     }
 
-    private void substitutePlayer(String name, Role newRole, String pc) {
+    private void substitutePlayer(String name, Player.Role newRole, String pc) {
         if (pc != null) {
             Pokemon.Type pt = null;
             if (pc.equals("Pokemon")) {

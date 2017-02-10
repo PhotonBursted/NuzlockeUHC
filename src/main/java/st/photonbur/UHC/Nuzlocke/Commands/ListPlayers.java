@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
  * Command regarding the listing of players. It separates players and spectators, and shows who's in what group on demand.
  *
  * @see st.photonbur.UHC.Nuzlocke.Entities.Player
- * @see Role
+ * @see Player.Role
  */
 public class ListPlayers implements CommandExecutor {
     /**
@@ -96,15 +95,15 @@ public class ListPlayers implements CommandExecutor {
             sender.sendMessage(StringLib.ListPlayers$Participants);
 
             // Decide whether or not to show specifics per player (Pokemon.Type for example)
-            if (nuz.getGameManager().isGameInProgress() && nuz.getPlayerManager().getPlayer(sender.getName()).getRole() == Role.SPECTATOR) {
-                sender.sendMessage(listPlayersByRole(sender, Role.PARTICIPANT, true));
+            if (nuz.getGameManager().isGameInProgress() && nuz.getPlayerManager().getPlayer(sender.getName()).getRole() == Player.Role.SPECTATOR) {
+                sender.sendMessage(listPlayersByRole(sender, Player.Role.PARTICIPANT, true));
             } else {
-                sender.sendMessage(listPlayersByRole(sender, Role.PARTICIPANT, false));
+                sender.sendMessage(listPlayersByRole(sender, Player.Role.PARTICIPANT, false));
             }
 
             // List all spectators
             sender.sendMessage(StringLib.ListPlayers$Spectators);
-            sender.sendMessage(listPlayersByRole(sender, Role.SPECTATOR, false));
+            sender.sendMessage(listPlayersByRole(sender, Player.Role.SPECTATOR, false));
         }
 
         return true;
@@ -117,7 +116,7 @@ public class ListPlayers implements CommandExecutor {
      * @param showDetails Whether or not to show specifics of the player
      * @return The message to show
      */
-    private String listPlayersByRole(CommandSender sender, Role role, boolean showDetails) {
+    private String listPlayersByRole(CommandSender sender, Player.Role role, boolean showDetails) {
         String message = "";
         final ArrayList<String> playerList = new ArrayList<>();
         if (nuz.getPlayerManager().getPlayers().stream().anyMatch(p -> p.getRole() == role)) {
@@ -132,7 +131,7 @@ public class ListPlayers implements CommandExecutor {
         return message;
     }
 
-    private List<String> teamedPlayers(Role role) {
+    private List<String> teamedPlayers(Player.Role role) {
         List<String> playerList = new ArrayList<>();
         nuz.getGameManager().getScoreboard().getTeams().forEach(t -> {
                     List<String> entries = t.getEntries().stream().filter(p -> nuz.getPlayerManager().getPlayer(p).getRole() == role)
@@ -144,7 +143,7 @@ public class ListPlayers implements CommandExecutor {
         return playerList;
     }
 
-    private List<String> teamlessPlayers(Role role) {
+    private List<String> teamlessPlayers(Player.Role role) {
         List<Player> teamlessPlayers = nuz.getPlayerManager().getPlayers().stream()
                 .filter(p -> nuz.getGameManager().getScoreboard().getTeams().stream().noneMatch(t -> t.getEntries().contains(p.getName())))
                 .filter(p -> p.getRole() == role)

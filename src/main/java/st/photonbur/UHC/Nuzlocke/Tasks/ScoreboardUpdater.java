@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
+import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class ScoreboardUpdater extends BukkitRunnable {
     }
 
     public void updateScores() {
-        entries.replace("playersLeft", "Players left: " + ChatColor.BOLD + (int) nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).count());
+        entries.replace("playersLeft", "Players left: " + ChatColor.BOLD + (int) nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Player.Role.PARTICIPANT).count());
         entries.replace("teamsLeft", "Teams left: " + ChatColor.BOLD + nuz.getTeamManager().teamsAliveCount());
         entries.replace("episode", "     Episode "+ ChatColor.BOLD + nuz.getTaskManager().getEMA().getEpisodeNo());
         entries.replace("timeLeft", "       .: "+ getEpisodeTimeLeft() +" :.");

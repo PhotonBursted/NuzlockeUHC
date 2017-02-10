@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Entities.Team;
 import st.photonbur.UHC.Nuzlocke.Entities.Trainer;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
@@ -26,8 +25,8 @@ public class DeathListener implements Listener {
         if (nuz.getGameManager().isGameInProgress()) {
             Player p = e.getEntity().getPlayer();
 
-            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT) {
-                nuz.getPlayerManager().getPlayer(p.getName()).setRole(Role.SPECTATOR);
+            if (nuz.getPlayerManager().getPlayer(p.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
+                nuz.getPlayerManager().getPlayer(p.getName()).setRole(st.photonbur.UHC.Nuzlocke.Entities.Player.Role.SPECTATOR);
                 if (nuz.getSettings().getDeathHandleDelay() != -1) {
                     p.sendMessage(String.format(StringLib.DeathListener$DeathMove, nuz.getSettings().getDeathHandleDelay()));
                     p.setGameMode(GameMode.SPECTATOR);
@@ -48,7 +47,7 @@ public class DeathListener implements Listener {
                                 .findFirst().orElse(null);
                         if (otherTeam == null) {
                             members = nuz.getPlayerManager().getPlayers().stream()
-                                    .filter(player -> player.getRole() == Role.PARTICIPANT && !player.getName().equals(p.getName()))
+                                    .filter(player -> player.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT && !player.getName().equals(p.getName()))
                                     .findFirst().get().getName();
                             teamName = "Team " + members;
                         } else {

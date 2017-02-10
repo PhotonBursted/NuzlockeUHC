@@ -13,7 +13,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.util.Arrays;
@@ -34,7 +33,7 @@ class Rock extends Type implements Listener {
     @EventHandler
     private void onBlockBreak(BlockBreakEvent e) {
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
-        if (p.getRole() == Role.PARTICIPANT) {
+        if (p.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
             if (p instanceof Pokemon) {
                 if (p.getType() == Pokemon.Type.ROCK) {
                     if (r.nextDouble() <= .2) {

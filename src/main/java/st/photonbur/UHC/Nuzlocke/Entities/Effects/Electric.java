@@ -7,7 +7,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -34,7 +33,7 @@ class Electric extends Type implements Listener {
             st.photonbur.UHC.Nuzlocke.Entities.Player v = nuz.getPlayerManager().getPlayer(victim);
 
             if (v != null) {
-                if (v.getRole() == Role.PARTICIPANT) {
+                if (v.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                     if (v instanceof Pokemon) {
                         if (v.getType() == Pokemon.Type.ELECTRIC) {
                             if (r.nextDouble() <= (10 + victim.getLevel() * 2) / 100F) {
@@ -45,7 +44,7 @@ class Electric extends Type implements Listener {
                 }
             }
             if (d != null) {
-                if (d.getRole() == Role.PARTICIPANT) {
+                if (d.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                     if (d instanceof Pokemon) {
                         if (d.getType() == Pokemon.Type.ELECTRIC) {
                             if (r.nextDouble() <= (10 + damager.getLevel() * 2) / 100F) {

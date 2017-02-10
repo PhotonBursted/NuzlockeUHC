@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -47,7 +46,7 @@ public class DamageManager implements Listener {
         if (e.getEntity().getType() == EntityType.PLAYER) {
             Player victim = (Player) e.getEntity();
             if (nuz.getGameManager().isGameInProgress()) {
-                if (nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == Role.PARTICIPANT) {
+                if (nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                     if ((nuz.getGameManager().isTruceActive() && e.getDamager().getType() == EntityType.PLAYER) ||
                             e.getDamager().getType() == EntityType.SNOWBALL)
                         e.setCancelled(true);

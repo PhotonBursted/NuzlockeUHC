@@ -3,7 +3,7 @@ package st.photonbur.UHC.Nuzlocke.Managers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Team;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
+import st.photonbur.UHC.Nuzlocke.Entities.Player;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 
 import java.awt.*;
@@ -107,7 +107,7 @@ public class TeamManager {
     public int teamsAliveCount() {
         return (int) (getTeams().stream().filter(team -> team.countStillAlive() > 0).count()
                 + Bukkit.getOnlinePlayers().stream().filter(
-                p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT
+                p -> nuz.getGameManager().getScoreboard().getEntryTeam(p.getName()) == null && nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Player.Role.PARTICIPANT
         ).count());
     }
 

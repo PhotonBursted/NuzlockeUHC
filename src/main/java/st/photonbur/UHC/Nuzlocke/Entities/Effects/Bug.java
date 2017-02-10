@@ -75,7 +75,7 @@ class Bug extends Type {
                         }
 
                         // If there's enough leaves around the player, heal it and add a little bit of food.
-                        if (leafcount > 16 && time % 15 == 0) {
+                        if (leafcount >= 16 && time % 15 == 0) {
                             player.setFoodLevel(Math.min(20, player.getFoodLevel() + 1));
                             player.setHealth(Math.min(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), player.getHealth() + .5d));
                         }

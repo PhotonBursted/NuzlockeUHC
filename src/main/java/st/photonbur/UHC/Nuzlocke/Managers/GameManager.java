@@ -12,7 +12,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import st.photonbur.UHC.Nuzlocke.Discord.DiscordBot;
-import st.photonbur.UHC.Nuzlocke.Entities.Role;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
@@ -124,7 +123,7 @@ public class GameManager {
     }
 
     private void preparePlayers() {
-        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.PARTICIPANT).collect(Collectors.toList())) {
+        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT).collect(Collectors.toList())) {
             Player player = Bukkit.getPlayer(p.getName());
             player.setSaturation(5);
             player.setFoodLevel(20);
@@ -138,7 +137,7 @@ public class GameManager {
             player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, -2));
         }
 
-        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == Role.SPECTATOR).collect(Collectors.toList())) {
+        for (st.photonbur.UHC.Nuzlocke.Entities.Player p : nuz.getPlayerManager().getPlayers().stream().filter(player -> player.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.SPECTATOR).collect(Collectors.toList())) {
             Bukkit.getPlayer(p.getName()).setGameMode(GameMode.SPECTATOR);
         }
     }
@@ -162,7 +161,7 @@ public class GameManager {
     private void spreadPlayers() {
         Biome[] blacklistBiomes = {Biome.DEEP_OCEAN, Biome.OCEAN, Biome.RIVER, Biome.FROZEN_OCEAN};
 
-        nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == Role.PARTICIPANT).forEach(p -> {
+        nuz.getPlayerManager().getPlayers().stream().filter(p -> p.getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT).forEach(p -> {
             int x = r.nextInt(nuz.getSettings().getWbInitialSize()) - (int) (0.5 * nuz.getSettings().getWbInitialSize());
             int z = r.nextInt(nuz.getSettings().getWbInitialSize()) - (int) (0.5 * nuz.getSettings().getWbInitialSize());
             int y = nuz.getGameManager().getOverworld().getHighestBlockYAt(x, z);

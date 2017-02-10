@@ -24,7 +24,7 @@ public class Team {
     }
 
     public int countStillAlive() {
-        return (int) members.stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Role.PARTICIPANT).count();
+        return (int) members.stream().filter(p -> nuz.getPlayerManager().getPlayer(p.getName()).getRole() == Player.Role.PARTICIPANT).count();
     }
 
     public ArrayList<Player> getMembers() {
