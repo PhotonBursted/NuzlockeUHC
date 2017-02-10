@@ -5,20 +5,20 @@ import org.bukkit.scheduler.BukkitRunnable;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
-public class EventMarkerAnnouncer extends BukkitRunnable {
+class EventMarkerAnnouncer extends BukkitRunnable {
     private final Nuzlocke nuz;
     private long time = 0;
     private int episodeCounter = 0;
 
-    public EventMarkerAnnouncer(Nuzlocke nuz) {
+    EventMarkerAnnouncer(Nuzlocke nuz) {
         this.nuz = nuz;
     }
 
-    public String getEpisodeNo() {
+    String getEpisodeNo() {
         return (episodeCounter < 10 ? "0" : "") + episodeCounter;
     }
 
-    public long getRawTime() {
+    long getRawTime() {
         return time;
     }
 
