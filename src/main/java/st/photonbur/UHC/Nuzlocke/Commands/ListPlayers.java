@@ -134,6 +134,7 @@ public class ListPlayers implements CommandExecutor {
     /**
      * Lists the players in a certain role
      *
+     * @param sender      A reference to who executed the command
      * @param role        The role to check for
      * @param showDetails Whether or not to show specifics of the player (e.g. Pokémon type)
      * @return The formatted message to show

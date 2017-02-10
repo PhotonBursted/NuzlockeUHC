@@ -36,11 +36,12 @@ abstract class Type implements Listener {
     }
 
     <T extends LivingEntity> void applyPotionEffect(T entity, PotionEffect potion) {
-        if (!entity.hasPotionEffect(potion.getType()) ||
-                (entity.hasPotionEffect(potion.getType()) &&
-                        (entity.getPotionEffect(potion.getType()).getDuration()) < potion.getDuration() && potion.getDuration() != Integer.MAX_VALUE
+        if (!entity.hasPotionEffect(potion.getType()) || (
+                entity.hasPotionEffect(potion.getType()) && (
+                        entity.getPotionEffect(potion.getType()).getDuration() < potion.getDuration() &&
+                        potion.getDuration() != Integer.MAX_VALUE
                 )
-        ) {
+        )) {
             entity.addPotionEffect(potion);
         }
     }
