@@ -48,7 +48,7 @@ public class EffectManager {
 
         ArrayList<Listener> listeners = new ArrayList<>();
         for (Type t : types) {
-            if (t.hasEvent()) {
+            if (Listener.class.isAssignableFrom(t.getClass())) {
                 listeners.add(t);
             }
         }

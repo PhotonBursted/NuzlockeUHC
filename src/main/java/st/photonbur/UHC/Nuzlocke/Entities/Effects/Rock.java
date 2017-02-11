@@ -65,6 +65,7 @@ class Rock extends Type implements Listener {
     private void onBlockBreak(BlockBreakEvent e) {
         // Retrieve the player breaking a block
         st.photonbur.UHC.Nuzlocke.Entities.Player p = nuz.getPlayerManager().getPlayer(e.getPlayer());
+        // Refresh the player pool
         pp = getPlayerPool(_TYPE);
 
         // Check if the player is an actual participant
@@ -80,7 +81,7 @@ class Rock extends Type implements Listener {
 
                         // Get the location of the broken block
                         Block b = e.getBlock();
-                        // Get the type of the broken block, then drop it as an itemstack
+                        // Get the type of the broken block, then drop its drops as an itemstack
                         switch (b.getType()) {
                             case GOLD_ORE:
                                 b.getWorld().dropItemNaturally(b.getLocation(), new ItemStack(Material.GOLD_INGOT, r.nextInt(3) + 1));
@@ -106,6 +107,7 @@ class Rock extends Type implements Listener {
                         // Actually shows the block particles!
                         b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND, b.getType());
                         b.setType(Material.AIR);
+                        e.setExpToDrop(e.getExpToDrop());
                     }
                 }
             }
@@ -122,23 +124,14 @@ class Rock extends Type implements Listener {
     }
 
     /**
-     * Returns if the type actually has event listeners
-     *
-     * @return Whether the type actually has an event listener
-     */
-    @Override
-    boolean hasEvent() {
-        return true;
-    }
-
-    /**
-     * Applies effects which have to be running continuously
+     * Applies effects which have to be running or checked continuously
      */
     @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
+                // Refresh the player pool
                 pp = getPlayerPool(_TYPE);
 
                 // If the player pool is 0 or the game isn't in progress, cancel the timers
@@ -149,6 +142,7 @@ class Rock extends Type implements Listener {
                     pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
                         Player player = Bukkit.getPlayer(p.getName());
                         int stoneAmount = 0;
+
                         // Check the player's inventory for stone and count it all
                         for (ItemStack inventorySlot : player.getInventory().getContents()) {
                             if (inventorySlot != null) {
@@ -164,12 +158,13 @@ class Rock extends Type implements Listener {
                             applyPotionEffect(player, new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0));
                             applyPotionEffect(player, new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
                         } else {
-                            player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-                            player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                            player.removePotionEffect(PotionEffectType.SLOW);
+                            removePotionEffect(player, PotionEffectType.INCREASE_DAMAGE);
+                            removePotionEffect(player, PotionEffectType.DAMAGE_RESISTANCE);
+                            removePotionEffect(player, PotionEffectType.SLOW);
                         }
                     });
                 }
+        // Run every 10 seconds
             }
         // Runs the check every 10 seconds
         }.runTaskTimer(nuz, 0L, 200L);

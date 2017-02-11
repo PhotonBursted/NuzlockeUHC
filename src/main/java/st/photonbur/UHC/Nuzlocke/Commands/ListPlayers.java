@@ -42,7 +42,7 @@ public class ListPlayers implements CommandExecutor {
      * @param team The team the player is in
      * @return A formatted message containing information about the player
      */
-    private String details(Player p, Team team) {
+    private static String details(Player p, Team team) {
         // Initialize the empty string to add to later
         String prefix = "";
 
@@ -65,9 +65,10 @@ public class ListPlayers implements CommandExecutor {
      * @param playerList  A list containing all online players, or at least, all the players to be listed
      * @param showDetails Determines if specific details of the players should be shown
      * @param sender      The issuer of the command
+     * @param nuz         The plugin instance. Needed because of the static nature of the method
      * @return A formatted message containing information about all players in playerList
      */
-    public String formatList(ArrayList<String> playerList, boolean showDetails, CommandSender sender) {
+    public static String formatList(ArrayList<String> playerList, boolean showDetails, CommandSender sender, Nuzlocke nuz) {
         String message = "";
 
         for (int i = 0; i < playerList.size(); i += 3) {
@@ -150,7 +151,7 @@ public class ListPlayers implements CommandExecutor {
             playerList.addAll(teamlessPlayers(role));
 
             // Add the formatted string of all players to the list
-            message += formatList(playerList, showDetails, sender);
+            message += formatList(playerList, showDetails, sender, nuz);
         } else {
             // Return an error message
             message += StringLib.ListPlayers$NoPlayersFound;

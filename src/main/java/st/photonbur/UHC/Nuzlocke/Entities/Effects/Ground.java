@@ -12,12 +12,35 @@ import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Controls effects concerning Ground type Pokémon.<br>
+ *<br>
+ * <table summary="perks">
+ *     <tbody>
+ *         <tr>
+ *             <td colspan="2">Perks:</td>
+ *         </tr>
+ *         <tr>
+ *             <td>"Accustomed Hands"</td>
+ *             <td>Haste 2. Permanently</td>
+ *         </tr>
+ *         <tr>
+ *             <td>"Acrophobia"</td>
+ *             <td>The lower the level, the more the elevation you are looking at will determine how nauseous you get.</td>
+ *         </tr>
+ *     </tbody>
+ * </table>
+ */
 class Ground extends Type {
+    /**
+     * Holds the type of the Pokémon by means of the classname
+     */
     private final Pokemon.Type _TYPE = Pokemon.Type.valueOf(getClass().getSimpleName().toUpperCase());
+    /**
+     * Holds the player pool of people having this type
+     */
     private List<st.photonbur.UHC.Nuzlocke.Entities.Player> pp;
 
-    //Buff: Fuzt diggah.
-    //Debuff: Acrophobia
     Ground(Nuzlocke nuz) {
         super(nuz);
     }
@@ -31,28 +54,31 @@ class Ground extends Type {
         );
     }
 
-    @Override
-    boolean hasEvent() {
-        return false;
-    }
-
+    /**
+     * Applies effects which have to be running or checked continuously
+     */
     @Override
     void runContinuousEffect() {
         new BukkitRunnable() {
             @Override
             public void run() {
+                // Refresh the player pool
                 pp = getPlayerPool(_TYPE);
 
-                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() ||
-                        !nuz.getGameManager().isGameInProgress()) {
+                // If the player pool is 0 or the game isn't in progress, cancel the timers
+                if (pp.size() == 0 && nuz.getGameManager().isGameInProgress() || !nuz.getGameManager().isGameInProgress()) {
                     this.cancel();
                 } else {
+                    // Get all the online players in the type's player pool
                     pp.stream().filter(p -> nuz.getServer().getOnlinePlayers().contains(nuz.getServer().getPlayer(p.getName()))).forEach(p -> {
                         Player player = Bukkit.getPlayer(p.getName());
+
+                        // Apply nausea when looking at too high heights
                         if (player.getLocation().getY() - player.getTargetBlock((Set<Material>) null, 100).getY() > 10 + player.getLevel())
                             applyPotionEffect(player, new PotionEffect(PotionEffectType.CONFUSION, 140, 0));
                     });
                 }
+        // Runs every second
             }
         }.runTaskTimer(nuz, 0L, 20L);
     }
