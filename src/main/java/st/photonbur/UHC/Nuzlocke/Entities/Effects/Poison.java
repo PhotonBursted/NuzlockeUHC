@@ -13,6 +13,7 @@ import st.photonbur.UHC.Nuzlocke.Entities.Pokemon;
 import st.photonbur.UHC.Nuzlocke.Nuzlocke;
 import st.photonbur.UHC.Nuzlocke.StringLib;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ import java.util.List;
  *     </tbody>
  * </table>
  */
-public class Poison extends Type {
+public class Poison extends Type implements Redeemable {
     /**
      * Holds the type of the Pokémon by means of the classname
      */
@@ -46,7 +47,7 @@ public class Poison extends Type {
     /**
      * Tracks if a potion has been redeemed already
      */
-    private boolean redeemed = false;
+    private HashMap<Player, Boolean> redeemed = new HashMap<>();
 
     Poison(Nuzlocke nuz) {
         super(nuz);
@@ -65,23 +66,26 @@ public class Poison extends Type {
      * Executed via commands, used to purchase a perk or item through XP levels
      *
      * @param sender The issuer of the command
+     * @param levelsIn The amount of levels to need before being allowed to redeem the reward
      */
-    public void redeem(CommandSender sender, @SuppressWarnings("SameParameterValue") int levelsIn) {
-        if (redeemed) {
+    public void redeem(CommandSender sender, int levelsIn) {
+        Player player = Bukkit.getPlayer(sender.getName());
+
+        if (redeemed.get(player)) {
             sender.sendMessage(StringLib.Poison$AlreadyRedeemed);
         } else {
-            if (((Player) sender).getLevel() >= levelsIn) {
-                redeemed = true;
+            if (player.getLevel() >= levelsIn) {
+                redeemed.put(player, true);
 
                 ItemStack potion = new ItemStack(Material.SPLASH_POTION);
                 PotionMeta potionEffects = ((PotionMeta) potion.getItemMeta());
                 potionEffects.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 100, 0, true, true), true);
                 potion.setItemMeta(potionEffects);
 
-                ((Player) sender).getInventory().addItem(potion);
-                sender.sendMessage(StringLib.Poison$RedeemedPotion);
+                player.getInventory().addItem(potion);
+                player.sendMessage(StringLib.Poison$RedeemedPotion);
             } else {
-                sender.sendMessage(StringLib.Poison$NotEnoughXP);
+                player.sendMessage(StringLib.Poison$NotEnoughXP);
             }
         }
     }

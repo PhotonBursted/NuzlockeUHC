@@ -23,7 +23,7 @@ public class Redeem implements CommandExecutor {
             if (p.getRole() == Player.Role.PARTICIPANT) {
                 if (p instanceof Pokemon) {
                     if (p.getType() == Pokemon.Type.DRAGON) {
-                        nuz.getEffectManager().getDRG().redeem(sender);
+                        nuz.getEffectManager().getDRG().redeem(sender, 25);
                     }
                     if (p.getType() == Pokemon.Type.POISON) {
                         nuz.getEffectManager().getPSN().redeem(sender, 20);

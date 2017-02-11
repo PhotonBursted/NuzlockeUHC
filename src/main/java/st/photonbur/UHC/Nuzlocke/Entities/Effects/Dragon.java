@@ -33,7 +33,7 @@ import java.util.Random;
  *     </tbody>
  * </table>
  */
-public class Dragon extends Type {
+public class Dragon extends Type implements Redeemable {
     /**
      * Holds the type of the Pokémon by means of the classname
      */
@@ -64,9 +64,10 @@ public class Dragon extends Type {
      * Executed via commands, used to purchase a perk or item through XP levels
      *
      * @param sender The issuer of the command
+     * @param levelsIn The amount of levels to need before being allowed to redeem the reward
      */
-    public void redeem(CommandSender sender) {
-        if (((Player) sender).getLevel() >= 25) {
+    public void redeem(CommandSender sender, int levelsIn) {
+        if (((Player) sender).getLevel() >= levelsIn) {
             sender.sendMessage(StringLib.Dragon$RedeemedElytra);
             ((Player) sender).getInventory().addItem(new ItemStack(Material.ELYTRA));
             ((Player) sender).giveExpLevels(-10);

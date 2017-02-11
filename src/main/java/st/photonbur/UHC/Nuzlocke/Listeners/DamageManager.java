@@ -48,39 +48,44 @@ public class DamageManager implements Listener {
             if (nuz.getGameManager().isGameInProgress()) {
                 if (nuz.getPlayerManager().getPlayer(victim.getName()).getRole() == st.photonbur.UHC.Nuzlocke.Entities.Player.Role.PARTICIPANT) {
                     if ((nuz.getGameManager().isTruceActive() && e.getDamager().getType() == EntityType.PLAYER) ||
-                            e.getDamager().getType() == EntityType.SNOWBALL)
+                            e.getDamager().getType() == EntityType.SNOWBALL) {
                         e.setCancelled(true);
-                    else {
-                        final Player[] damager = new Player[1];
+                    } else {
+                        Player damager = null;
 
                         if (e.getDamager() instanceof Player) {
-                            damager[0] = ((Player) e.getDamager()).getPlayer();
+                            damager = ((Player) e.getDamager()).getPlayer();
                         } else if (e.getDamager() instanceof Projectile) {
                             if (((Projectile) e.getDamager()).getShooter() instanceof Player) {
-                                damager[0] = ((Player) ((Projectile) e.getDamager()).getShooter()).getPlayer();
+                                damager = ((Player) ((Projectile) e.getDamager()).getShooter()).getPlayer();
                             }
                         }
 
-                        if (damager[0] != null) {
-                            if (nuz.getTeamManager().getTeams().stream().noneMatch(t -> t.contains(damager[0].getName())))
+                        if (damager != null) {
+                            Player damagerF = damager;
+                            if (nuz.getTeamManager().getTeams().stream().noneMatch(t -> t.contains(damagerF.getName()))) {
                                 if (nuz.getTeamManager().getTeams().stream()
                                         .filter(t -> t.contains(victim.getName()))
-                                        .findFirst().get().getMembers().size() != nuz.getGameManager().getTeamCap())
+                                        .findFirst().get().getMembers().size() != nuz.getGameManager().getTeamCap()) {
                                     e.setCancelled(true);
-                                else {
-                                    int dTypeID = nuz.getPlayerManager().getPlayer(damager[0].getName()) instanceof Pokemon
-                                            ? nuz.getPlayerManager().getPlayer(damager[0].getName()).getType().getID() : 0;
+                                } else {
+                                    int dTypeID = nuz.getPlayerManager().getPlayer(damager.getName()) instanceof Pokemon
+                                            ? nuz.getPlayerManager().getPlayer(damager.getName()).getType().getID() : 0;
                                     int vTypeID = nuz.getPlayerManager().getPlayer(victim.getName()) instanceof Pokemon
                                             ? nuz.getPlayerManager().getPlayer(victim.getName()).getType().getID() : 0;
                                     double modifier = atkMods[dTypeID][vTypeID];
-                                    if (modifier == 0) damager[0].sendMessage(StringLib.DamageManager$Immune);
-                                    if (modifier == NE) damager[0].sendMessage(StringLib.DamageManager$NotEffective);
-                                    if (modifier == SE) damager[0].sendMessage(StringLib.DamageManager$SuperEffective);
+
+                                    if (modifier == 0) damager.sendMessage(StringLib.DamageManager$Immune);
+                                    if (modifier == NE) damager.sendMessage(StringLib.DamageManager$NotEffective);
+                                    if (modifier == SE) damager.sendMessage(StringLib.DamageManager$SuperEffective);
 
                                     e.setDamage(e.getFinalDamage() * modifier);
                                 }
+                            }
                         }
                     }
+                } else {
+                    e.setCancelled(true);
                 }
             }
         }
