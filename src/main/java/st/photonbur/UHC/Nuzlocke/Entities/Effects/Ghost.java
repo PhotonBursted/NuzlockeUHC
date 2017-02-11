@@ -19,8 +19,8 @@ import java.util.List;
  *             <td colspan="2">Perks:</td>
  *         </tr>
  *         <tr>
- *             <td>"Cloak of invisibility"</td>
- *             <td>While above 9 hunger, turn invisible</td>
+ *             <td>"Cloak of Invisibility"</td>
+ *             <td>While above 9 bars of hunger, turn invisible</td>
  *         </tr>
  *     </tbody>
  * </table>

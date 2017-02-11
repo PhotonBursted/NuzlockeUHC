@@ -27,8 +27,8 @@ import java.util.List;
  *             <td>Spend XP to see what types of Pokémon are in the surroudings</td>
  *         </tr>
  *         <tr>
- *             <td>"Rusty"</td>
- *             <td>Being in water or rain for too long inflicts slowness</td>
+ *             <td>"Wits Over Looks"</td>
+ *             <td>Permanent weakness I</td>
  *         </tr>
  *     </tbody>
  * </table>
