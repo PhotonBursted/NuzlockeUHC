@@ -120,7 +120,7 @@ public interface StringLib {
     String Psychic$RedeemedPerk                 = ChatColor.DARK_GREEN + "[!] Players within %s blocks of you:";
 
     String Redeem$InvalidArgLength              = ChatColor.RED + "[!] This redeem operation needs at least 1 argument!";
-    String Redeem$InvalidInput                  = ChatColor.RED + "[!] You need to invest at least 5 levels!";
+    String Redeem$InvalidInputPSY               = ChatColor.RED + "[!] You need to invest at least 5 levels!";
 
     String StartUHC$GameUnderway                = ChatColor.DARK_RED + "[!] Game is already underway!";
     String StartUHC$NoParticipants              = ChatColor.DARK_RED + "[!] No volunteers to start the game with!";
